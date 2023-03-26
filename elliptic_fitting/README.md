@@ -25,5 +25,5 @@ python3 draw_elliptic.py
 <img src='../images/draw_elliptic.png' width='400'>
 
 <br></br>
-## Referrences
+## References
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)
