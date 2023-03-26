@@ -10,25 +10,38 @@ def plot_base():
 
 
 def get_circle_points():
-    init_point = np.array([5, 0])
     x = []
     y = []
     for theta in range(360):
-        point = np.array([5 * np.cos(theta), 5 * np.sin(theta)])
+        point = np.array([5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))])
         x.append(point[0])
         y.append(point[1])
 
     return x, y
 
 
-def get_elliptic_points(c_x):
-    init_point = np.array([5, 0])
+def get_elliptic_points():
     x = []
     y = []
     for theta in range(360):
-        point = np.array([7.5 * np.cos(theta), 5 * np.sin(theta)])
+        point = np.array([7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))])
         x.append(point[0])
         y.append(point[1])
+
+    return x, y
+
+
+def get_elliptic_points_with_tilt():
+    x = []
+    y = []
+    tilt = 45
+    R = np.array([[np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))], [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))]])
+    for theta in range(360):
+        point = np.array([7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))])
+        rotated_point = np.dot(R, point.T)
+        print(rotated_point.shape)
+        x.append(rotated_point[0])
+        y.append(rotated_point[1])
 
     return x, y
 
@@ -36,10 +49,12 @@ def get_elliptic_points(c_x):
 def main():
     plot_base()
     c_x, c_y = get_circle_points()
-    e_x, e_y = get_elliptic_points(c_x)
+    e_x, e_y = get_elliptic_points()
+    r_x, r_y = get_elliptic_points_with_tilt()
 
     plt.scatter(c_x, c_y, marker='o', c="green")
     plt.scatter(e_x, e_y, marker='o', c="blue")
+    plt.scatter(r_x, r_y, marker='o', c="red")
     plt.show()
 
 
