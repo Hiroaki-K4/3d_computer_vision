@@ -178,6 +178,46 @@ The diagonal elements of the covariance matrix $V[\xi_\alpha]$ represent how err
 Although the covariance matrix in Eq(12) uses only $\triangle_1\xi_\alpha$, it is known that adding $\triangle_2\xi_\alpha$ has little effect on subsequent results. This is because $\triangle_2\xi_\alpha$ is extremely small compared to $\triangle_1\xi_\alpha$. Also, $V_0[\xi_\alpha]$ in Eq(14) uses the true values x,y, but is replaced by the observed values $\bar{x_\alpha}$, $\bar{y_\alpha}$ in the actual calculation. This also has little effect on the results.  
 In the following, I will show various methods to improve the accuracy of the least squares method, taking into account the statistical nature of the error described by this covariance matrix.
 
+<br></br>
+
+## **Solution2: Iterative reweight**
+### **1. Define $\theta_0=0$ and $W_\alpha=1$($\alpha=1,...,N$).**
+### **2. Calculate 6×6 matrix M.**
+
+$$
+M=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha\xi_\alpha\xi_\alpha^\intercal
+$$
+
+### **3. Solve eigenvalue problem and calculate the unit eigenvector $\theta$ for the minimum eigenvalue $\lambda$.**
+
+$$
+M\theta=\lambda\theta
+$$
+
+### **4. Return $\theta$ if $\theta\approx\theta_0$ except for the sign. Otherwise, return the step2 after updating $W_\alpha$ and $\theta_0$.**
+
+$$
+W_\alpha\leftarrow\frac{1}{(\theta,V_0[\xi_\alpha]\theta)},\theta_0\leftarrow\theta
+$$
+
+According to statistics, it is known that it is optimal to take the weight $W\alpha$ to be proportional to the inverse of the variance of each term (thus, the term with the smallest error is larger and the term with the largest error is smaller).
+
+The following commands can be used to perform a series of processes.
+
+```bash
+python3 elliptic_fitting_by_weighted_repetition.py
+```
+
+The following is a description of each of the points in the image below.
+- The blue points are points with errors.
+- The black points are true points.
+- The red points are estimated points by least square.
+- The green points are estimated points by iterative reweight
+
+<img src='../images/weighted.png' width='400'>
+
+<br></br>
+
 ## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)
