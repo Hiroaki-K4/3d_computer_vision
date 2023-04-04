@@ -2,13 +2,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import sympy
 from tqdm import tqdm
-
-
-def plot_base():
-    plt.rcParams["figure.figsize"] = [10, 10]
-    plt.xlim(-10, 10)
-    plt.ylim(-10, 10)
-    plt.grid()
+import utils
 
 
 def get_elliptic_points_with_tilt():
@@ -48,7 +42,7 @@ def elliptic_fitting_by_least_squares(noise_x, noise_y, f):
 
 
 def main():
-    plot_base()
+    utils.plot_base()
     corr_x, corr_y, noise_x, noise_y = get_elliptic_points_with_tilt()
 
     f_0 = 20

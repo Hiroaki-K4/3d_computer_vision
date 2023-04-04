@@ -1,2 +1,3 @@
 3d/
 .mypy_cache/
+elliptic_fitting/__pycache__/
