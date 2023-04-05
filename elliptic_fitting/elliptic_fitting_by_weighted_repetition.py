@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 import utils
+import elliptic_fitting_by_least_squares
 
 
 def get_elliptic_points_with_tilt():
@@ -22,21 +23,6 @@ def get_elliptic_points_with_tilt():
             n_y.append(with_noise[1])
 
     return x, y, n_x, n_y
-
-
-def elliptic_fitting_by_least_squares(noise_x, noise_y, f):
-    xi_sum = np.zeros((6, 6))
-    for i in range(len(noise_x)):
-        x = noise_x[i]
-        y = noise_y[i]
-        xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
-        xi_sum += np.dot(xi.T, xi)
-
-    M = xi_sum / len(noise_x)
-    w, v = np.linalg.eig(M)
-    min_eig_vec = v[:, np.argmin(w)]
-
-    return min_eig_vec
 
 
 def elliptic_fitting_by_weighted_repetition(noise_x, noise_y, f):
@@ -83,7 +69,7 @@ def main():
     corr_x, corr_y, noise_x, noise_y = get_elliptic_points_with_tilt()
 
     f_0 = 20
-    theta = elliptic_fitting_by_least_squares(noise_x, noise_y, f_0)
+    theta = elliptic_fitting_by_least_squares.elliptic_fitting_by_least_squares(noise_x, noise_y, f_0)
     w_theta = elliptic_fitting_by_weighted_repetition(noise_x, noise_y, f_0)
     print("theta: ", theta)
     print("weighted_theta: ", w_theta)
