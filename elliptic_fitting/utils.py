@@ -18,7 +18,6 @@ def solve_fitting(theta, corr_x, f_0):
     for x in tqdm(corr_x):
         f = theta[0]*x**2 + 2*theta[1]*x*y + theta[2]*y**2 + 2*f_0*(theta[3]*x+theta[4]*y)+f_0**2*theta[5]
         solutions=sympy.solve(f, y)
-        # print("solutions: ", solutions)
         for y_ans in solutions:
             if type(y_ans) == sympy.core.add.Add:
                 continue
@@ -30,9 +29,10 @@ def solve_fitting(theta, corr_x, f_0):
 
 def eval_pos_diff(corr_x, corr_y, est_x, est_y):
     diff_sum = 0
-    for i in range(len(corr_x)):
-        diff_sum += math.dist([corr_x[i], corr_y[i]], [est_x[i], est_y[i]])
+    for i in range(len(est_x)):
+        x_idx = corr_x.index(est_x[i])
+        diff_sum += math.dist([corr_x[x_idx], corr_y[x_idx]], [est_x[i], est_y[i]])
 
-    diff_avg = diff_sum / len(corr_x)
+    diff_avg = diff_sum / len(est_x)
 
     return diff_sum, diff_avg

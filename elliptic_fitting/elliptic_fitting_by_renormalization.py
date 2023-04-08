@@ -19,7 +19,7 @@ def get_elliptic_points_with_tilt():
         rotated_point = np.dot(R, point.T)
         x.append(rotated_point[0])
         y.append(rotated_point[1])
-        if theta % 3 == 0:
+        if theta % 3 == 0 and (theta >=0 and theta <= 210):
             with_noise = rotated_point + noise
             n_x.append(with_noise[0])
             n_y.append(with_noise[1])
@@ -84,13 +84,13 @@ def main():
     fit_x, fit_y = utils.solve_fitting(theta, corr_x, f_0)
     w_fit_x, w_fit_y = utils.solve_fitting(w_theta, corr_x, f_0)
     r_fit_x, r_fit_y = utils.solve_fitting(re_theta, corr_x, f_0)
+    print(len(fit_x))
+    print(len(w_fit_x))
+    print(len(r_fit_x))
 
     least_sq_diff, least_sq_diff_avg = utils.eval_pos_diff(corr_x, corr_y, fit_x, fit_y)
     weighted_diff, weighted_diff_avg = utils.eval_pos_diff(corr_x, corr_y, w_fit_x, w_fit_y)
     renorm_diff, renorm_diff_avg = utils.eval_pos_diff(corr_x, corr_y, r_fit_x, r_fit_y)
-    print("least_sq_diff: ", least_sq_diff)
-    print("weighted_diff: ", weighted_diff)
-    print("renorm_diff: ", renorm_diff)
     print("least_sq_diff_avg: ", least_sq_diff_avg)
     print("weighted_diff_avg: ", weighted_diff_avg)
     print("renorm_diff_avg: ", renorm_diff_avg)

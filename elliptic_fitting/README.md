@@ -185,19 +185,19 @@ In the following, I will show various methods to improve the accuracy of the lea
 ### **2. Calculate 6×6 matrix M.**
 
 $$
-M=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha\xi_\alpha\xi_\alpha^\intercal
+M=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha\xi_\alpha\xi_\alpha^\intercal...(15)
 $$
 
 ### **3. Solve eigenvalue problem and calculate the unit eigenvector $\theta$ for the minimum eigenvalue $\lambda$.**
 
 $$
-M\theta=\lambda\theta
+M\theta=\lambda\theta...(16)
 $$
 
 ### **4. Return $\theta$ if $\theta\approx\theta_0$ except for the sign. Otherwise, return the step2 after updating $W_\alpha$ and $\theta_0$.**
 
 $$
-W_\alpha\leftarrow\frac{1}{(\theta,V_0[\xi_\alpha]\theta)},\theta_0\leftarrow\theta
+W_\alpha\leftarrow\frac{1}{(\theta,V_0[\xi_\alpha]\theta)},\theta_0\leftarrow\theta...(17)
 $$
 
 According to statistics, it is known that it is optimal to take the weight $W\alpha$ to be proportional to the inverse of the variance of each term (thus, the term with the smallest error is larger and the term with the largest error is smaller).
@@ -215,6 +215,52 @@ The following is a description of each of the points in the image below.
 - The green points are estimated points by iterative reweight
 
 <img src='../images/weighted.png' width='400'>
+
+<br></br>
+
+## **Solution3: Renormalization**
+### **1. Define $\theta_0=0$ and $W_\alpha=1$($\alpha=1,...,N$).**
+### **2. Calculate 6×6 matrix M and N.**
+
+$$
+M=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha\xi_\alpha\xi_\alpha^\intercal, N=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha V_0[\xi_\alpha]...(18)
+$$
+
+### **3. Solve general eigenvalue problem and calculate the unit general eigenvector $\theta$ for the minimum general eigenvalue $\lambda$.**
+
+$$
+M\theta=\lambda N\theta...(19)
+$$
+
+### **4. Return $\theta$ if $\theta\approx\theta_0$ except for the sign. Otherwise, return the step2 after updating $W_\alpha$ and $\theta_0$.**
+
+$$
+W_\alpha\leftarrow\frac{1}{(\theta,V_0[\xi_\alpha]\theta)},\theta_0\leftarrow\theta...(20)
+$$
+
+Renormalization is a method that improves on the inaccuracy when the elliptical arcs to be fitted are short.  
+Program tools that solve general eigenvalue problems of the form in Eq(19) usually assume that $N$ is a positive-valued symmetric matrix, but as can be seen from Eq(14), $V_0[\xi_\alpha]$ is not positive-valued. Therefore, $N$ is not positive-valued. 
+However, equation (19) can be rewritten as
+
+$$
+N\theta=\frac{1}{\lambda}M\theta...(21)
+$$
+
+If there are errors in the data, $M$ is a positive-valued symmetric matrix, so the program tool can be applied. The unit general eigenvector $\theta$ for the largest general eigenvalue $\frac{1}{\lambda}$ is then calculated.
+
+The following commands can be used to perform a series of processes.
+
+```bash
+python3 elliptic_fitting_by_renormalization.py
+```
+
+The following is a description of each of the points in the image below.
+- The blue points are points with errors. Some elliptical arcs are missing.
+- The black points are true points.
+- The red points are estimated points by iterative reweight.
+- The green points are estimated points by renormalization.
+
+<img src='../images/renormalization.png' width='400'>
 
 <br></br>
 

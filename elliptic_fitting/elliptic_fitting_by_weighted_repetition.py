@@ -79,8 +79,6 @@ def main():
 
     least_sq_diff, least_sq_diff_avg = utils.eval_pos_diff(corr_x, corr_y, fit_x, fit_y)
     weighted_diff, weighted_diff_avg = utils.eval_pos_diff(corr_x, corr_y, w_fit_x, w_fit_y)
-    print("least_sq_diff: ", least_sq_diff)
-    print("weighted_diff: ", weighted_diff)
     print("least_sq_diff_avg: ", least_sq_diff_avg)
     print("weighted_diff_avg: ", weighted_diff_avg)
 
