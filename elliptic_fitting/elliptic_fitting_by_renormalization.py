@@ -40,7 +40,7 @@ def elliptic_fitting_by_renormalization(noise_x, noise_y, f):
             x = noise_x[i]
             y = noise_y[i]
             xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
-            xi_sum += np.dot(W[i], np.dot(xi.T, xi))
+            xi_sum += np.dot(np.dot(W[i], xi.T), xi)
             V0_xi = 4 * np.array([[x**2, x*y, 0, f*x, 0, 0],
                             [x*y, x**2+y**2, x*y, f*y, f*x, 0],
                             [0, x*y, y**2, 0, f*y, 0],
@@ -52,7 +52,7 @@ def elliptic_fitting_by_renormalization(noise_x, noise_y, f):
 
         M = xi_sum / len(noise_x)
         N = N_sum / len(noise_x)
-        eig_val, eig_vec =  scipy.linalg.eig(N, M)
+        eig_val, eig_vec = scipy.linalg.eig(N, M)
         theta = eig_vec[:, np.argmax(eig_val)]
 
         if np.dot(theta, theta_zero) < 0:
@@ -78,7 +78,7 @@ def main():
     w_theta = elliptic_fitting_by_weighted_repetition.elliptic_fitting_by_weighted_repetition(noise_x, noise_y, f_0)
     re_theta = elliptic_fitting_by_renormalization(noise_x, noise_y, f_0)
     print("theta: ", theta)
-    print("theta: ", w_theta)
+    print("w_theta: ", w_theta)
     print("renorm_theta: ", re_theta)
 
     fit_x, fit_y = utils.solve_fitting(theta, corr_x, f_0)
