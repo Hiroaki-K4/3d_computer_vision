@@ -264,6 +264,55 @@ The following is a description of each of the points in the image below.
 
 <br></br>
 
+## **Solution4: FNS(Fundamental Numerical Scheme) method**
+### **1. Define $\theta=\theta_0=0$ and $W_\alpha=1$($\alpha=1,...,N$).**
+### **2. Calculate 6×6 matrix M and L.**
+
+$$
+M=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha\xi_\alpha\xi_\alpha^\intercal, L=\frac{1}{N}\sum_{\alpha=1}^NW_\alpha^2(\xi_\alpha,\theta)^2 V_0[\xi_\alpha]...(22)
+$$
+
+### **3. Define matrix $X$ as $M - L$**
+$$
+X=M-L...(23)
+$$
+
+### **4. Solve eigenvalue problem and calculate the unit eigenvector $\theta$ for the minimum eigenvalue $\lambda$.**
+$$
+X\theta=\lambda\theta...(24)
+$$
+
+### **5. Return $\theta$ if $\theta\approx\theta_0$ except for the sign. Otherwise, return the step2 after updating $W_\alpha$ and $\theta_0$.**
+
+$$
+W_\alpha\leftarrow\frac{1}{(\theta,V_0[\xi_\alpha]\theta)},\theta_0\leftarrow\theta...(25)
+$$
+
+The FNS method calculates $θ$, where the gradient is zero for the Sampson error $J=\frac{1}{N}\sum_{\alpha=1}^N\frac{1}{(\xi_\alpha,\theta)^2}$, which represents the geometric distance.
+
+$$
+J=\frac{1}{N}\sum_{\alpha=1}^N\frac{(\xi_\alpha,\theta)^2}{(\theta,V_0[\xi_\alpha]\theta)}...(26)
+$$
+
+$$
+\triangledown_\theta J=2(M-L)\theta=2X\theta...(27)
+$$
+
+The following commands can be used to perform a series of processes.
+
+```bash
+python3 elliptic_fitting_by_fns.py
+```
+
+The following is a description of each of the points in the image below.
+- The blue points are points with errors.
+- The black points are true points.
+- The green points are estimated points by FNS method.
+
+<img src='../images/fns.png' width='400'>
+
+<br></br>
+
 ## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)
