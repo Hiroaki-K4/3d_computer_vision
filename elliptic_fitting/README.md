@@ -313,6 +313,43 @@ The following is a description of each of the points in the image below.
 
 <br></br>
 
+## **Solution5: Robust fitting by RANSAC**
+The actual image may not necessarily consist only of points on the ellipse, but may include the boundaries of other objects. Such a sequence of pixels that does not form an ellipse is called an outlier. In contrast, pixels that form an ellipse are called inliers. Fitting that is not easily affected by outliers is called "Robust fitting". A typical method is RANSAC(Random Sample Consensus).
+
+### **1. Randomly select 5 points from the input pixel sequence and let $\xi_1,...,\xi_5$ be the vector of Eq(2) for them.**
+
+### **2. Solve eigenvalue problem and calculate the unit eigenvector $\theta$ for the minimum eigenvalue.**
+
+$$
+M_5=\sum_{\alpha=1}^5\xi_\alpha\xi_\alpha^\intercal...(28)
+$$
+
+### **3. For the ellipse $\theta$, record the number of pixels in the input pixel sequence that satisfy the following equation, where $d$ is a threshold for how much deviation from the fitted ellipse is acceptable.**
+
+$$
+\frac{(\xi_\alpha,\theta)^2}{(\theta,V_0[\xi_\alpha]\theta)}<d^2...(29)
+$$
+
+### **4. Randomly select another 5 points from the input pixel sequence and perform the same operation. Do this many times and select the one with the largest n among the candidate ellipses.**
+
+### **5. For the finally chosen ellipse, pixels that do not satisfy Eq(29) are considered outliers and removed.**
+
+The following commands can be used to perform a series of processes.
+
+```bash
+python3 remove_outlier_by_ransac.py
+```
+
+The following is a description of each of the points in the image below.
+- The blue dot is the point considered an outlier.
+- The red dot is the point considered an inlier.
+- The black points are true points.
+- The green points are estimated points by FNS method with RANSAC.
+
+<img src='../images/ransac.png' width='400'>
+
+<br></br>
+
 ## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)
