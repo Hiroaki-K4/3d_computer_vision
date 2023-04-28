@@ -3,15 +3,33 @@ import math
 import cv2
 
 
-def euler_angle_to_rot_mat(roll, pitch, yaw):
-    x = np.cos(roll/180*math.pi)
-    y = np.cos(pitch/180*math.pi)
-    z = np.cos(yaw/180*math.pi)
+def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
+    x = x_deg / 180 * math.pi
+    y = y_deg / 180 * math.pi
+    z = z_deg / 180 * math.pi
     R_x = np.array([[1, 0, 0], [0, np.cos(x), -np.sin(x)], [0, np.sin(x), np.cos(x)]])
     R_y = np.array([[np.cos(y), 0, np.sin(y)], [0, 1, 0], [-np.sin(y), 0, np.cos(y)]])
     R_z = np.array([[np.cos(z), -np.sin(z), 0], [np.sin(z), np.cos(z), 0], [0, 0, 1]])
 
-    return R_x * R_y * R_z
+    return np.dot(np.dot(R_x, R_y), R_z)
+
+
+def RMatFromEulerAngle(xDeg, yDeg, zDeg):
+    xRad = xDeg / 180 * math.pi
+    yRad = yDeg / 180 * math.pi
+    zRad = zDeg / 180 * math.pi
+
+    Rx = np.matrix([[1, 0, 0], \
+                    [0, math.cos(xRad), -math.sin(xRad)], \
+                    [0, math.sin(xRad),  math.cos(xRad)]])
+    Ry = np.matrix([[ math.cos(yRad), 0, math.sin(yRad)], \
+                    [0, 1, 0], \
+                    [-math.sin(yRad), 0, math.cos(yRad)]])
+                    
+    Rz = np.matrix([[ math.cos(zRad), -math.sin(zRad), 0], \
+                    [ math.sin(zRad),  math.cos(zRad), 0], \
+                    [0, 0, 1]])
+    return Rx * Ry * Rz
 
 
 def create_curve_surface_points(row, col, z_scale):
@@ -28,22 +46,26 @@ def create_curve_surface_points(row, col, z_scale):
 
 def prepare_test_data(points_num: int):
     # Camera Extrinsic Parameter 0
-    rot_mat_0 = euler_angle_to_rot_mat(0, 0, -30)
+    rot_mat_0 = euler_angle_to_rot_mat(0, -30, 0)
     print(rot_mat_0)
+    rot_mat_0 = RMatFromEulerAngle(0, -30, 0)
+    print(rot_mat_0)
+    # input()
     trans_0 = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(trans_0).T
     # Camera Extrinsic Parameter 1
-    rot_mat_1 = euler_angle_to_rot_mat(0, 0, 30)
+    # rot_mat_1 = euler_angle_to_rot_mat(0, 0, 30)
+    rot_mat_1 = RMatFromEulerAngle(0, 30, 0)
     print(rot_mat_1)
     # input()
     trans_1 = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(trans_1).T
     points = create_curve_surface_points(10, 10, 0.2)
     print(points)
-    rod_0 = cv2.Rodrigues(rot_mat_0)
-    rod_1 = cv2.Rodrigues(rot_mat_1)
-    print(rod_0)
-    print(rod_1)
+    rodri_0, jac = cv2.Rodrigues(rot_mat_0)
+    rodri_1, jac = cv2.Rodrigues(rot_mat_1)
+    print(rodri_0)
+    print(rodri_1)
 
     f = 160
     width = 640
@@ -53,8 +75,26 @@ def prepare_test_data(points_num: int):
                             [0, f, pp[1]],
                             [0, 0, 1]], dtype = "double"))
     dist_coeffs = np.zeros((5, 1))
-    img_pnts_0, jac = cv2.projectPoints(points, rod_0, trans_0, camera_matrix, dist_coeffs)
-    print(img_pnts_0)
+    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, trans_0, camera_matrix, dist_coeffs)
+    print(img_pnts_0[5])
+    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, trans_1, camera_matrix, dist_coeffs)
+    print(img_pnts_1[5])
+    print(trans_0)
+    print(trans_1)
+    # input()
+
+
+    img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
+    img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
+    for pnt in img_pnts_0:
+        cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (0, 0, 0), -1)
+    for pnt in img_pnts_1:
+        cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
+
+    cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
+    cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
+    cv2.waitKey(0)
+
 
 
 if __name__ == '__main__':
