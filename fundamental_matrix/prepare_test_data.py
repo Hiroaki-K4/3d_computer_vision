@@ -14,24 +14,6 @@ def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
     return np.dot(np.dot(R_x, R_y), R_z)
 
 
-def RMatFromEulerAngle(xDeg, yDeg, zDeg):
-    xRad = xDeg / 180 * math.pi
-    yRad = yDeg / 180 * math.pi
-    zRad = zDeg / 180 * math.pi
-
-    Rx = np.matrix([[1, 0, 0], \
-                    [0, math.cos(xRad), -math.sin(xRad)], \
-                    [0, math.sin(xRad),  math.cos(xRad)]])
-    Ry = np.matrix([[ math.cos(yRad), 0, math.sin(yRad)], \
-                    [0, 1, 0], \
-                    [-math.sin(yRad), 0, math.cos(yRad)]])
-                    
-    Rz = np.matrix([[ math.cos(zRad), -math.sin(zRad), 0], \
-                    [ math.sin(zRad),  math.cos(zRad), 0], \
-                    [0, 0, 1]])
-    return Rx * Ry * Rz
-
-
 def create_curve_surface_points(row, col, z_scale):
     points = np.zeros((0, 3))
     for i in range(row+1):
@@ -45,19 +27,11 @@ def create_curve_surface_points(row, col, z_scale):
 
 
 def prepare_test_data(points_num: int):
-    # Camera Extrinsic Parameter 0
     rot_mat_0 = euler_angle_to_rot_mat(0, -30, 0)
     print(rot_mat_0)
-    rot_mat_0 = RMatFromEulerAngle(0, -30, 0)
-    print(rot_mat_0)
-    # input()
     trans_0 = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(trans_0).T
-    # Camera Extrinsic Parameter 1
-    # rot_mat_1 = euler_angle_to_rot_mat(0, 0, 30)
-    rot_mat_1 = RMatFromEulerAngle(0, 30, 0)
-    print(rot_mat_1)
-    # input()
+    rot_mat_1 = euler_angle_to_rot_mat(0, 30, 0)
     trans_1 = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(trans_1).T
     points = create_curve_surface_points(10, 10, 0.2)
