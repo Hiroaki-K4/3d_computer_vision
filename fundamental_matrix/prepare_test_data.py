@@ -26,20 +26,52 @@ def create_curve_surface_points(row, col, z_scale):
     return points
 
 
-def prepare_test_data(points_num: int):
+def create_outer_product(trans_in_camera_coord):
+    res = np.array([[0, -trans_in_camera_coord[2, 0], trans_in_camera_coord[1, 0]],
+                    [trans_in_camera_coord[2, 0], 0, -trans_in_camera_coord[0, 0]],
+                    [-trans_in_camera_coord[1, 0], trans_in_camera_coord[0, 0], 0]])
+
+    return res
+
+
+def normalize_F_matrix(F_matrix):
+    factor_sum = 0
+    for i in range(F_matrix.shape[0]):
+        for j in range(F_matrix.shape[1]):
+            factor_sum += F_matrix[j, i]
+    normalize_F_matrix = F_matrix / factor_sum ** 0.5
+
+    return normalize_F_matrix
+
+
+def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera_coord_before, T_in_camera_coord_after, camera_matrix):
+    rot_1_to_2 = rot_mat_after * rot_mat_before.T
+    trans_1_to_2_in_camera_coord = np.matrix(T_in_camera_coord_after).T - rot_1_to_2 * np.matrix(T_in_camera_coord_before).T
+    print(trans_1_to_2_in_camera_coord)
+    print(np.matrix(T_in_camera_coord_after).T)
+    print(rot_1_to_2 * np.matrix(T_in_camera_coord_before).T)
+    trans_1_to_2_in_camera_coord_outer = create_outer_product(trans_1_to_2_in_camera_coord)
+    print(trans_1_to_2_in_camera_coord_outer)
+    A_inv = np.linalg.inv(camera_matrix)
+    F_true_1_to_2 = A_inv.T * trans_1_to_2_in_camera_coord_outer * rot_1_to_2 * A_inv
+
+    return normalize_F_matrix(F_true_1_to_2)
+
+
+def prepare_test_data():
     rot_mat_0 = euler_angle_to_rot_mat(0, -30, 0)
-    print(rot_mat_0)
-    trans_0 = (0, 0, 10)
-    trans_vec_0 = np.eye(3) * np.matrix(trans_0).T
+    # print(rot_mat_0)
+    T_0_in_camera_coord = (0, 0, 10)
+    trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
     rot_mat_1 = euler_angle_to_rot_mat(0, 30, 0)
-    trans_1 = (0, 0, 10)
-    trans_vec_1 = np.eye(3) * np.matrix(trans_1).T
+    T_1_in_camera_coord = (0, 0, 10)
+    trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
     points = create_curve_surface_points(10, 10, 0.2)
-    print(points)
+    # print(points)
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
     rodri_1, jac = cv2.Rodrigues(rot_mat_1)
-    print(rodri_0)
-    print(rodri_1)
+    # print(rodri_0)
+    # print(rodri_1)
 
     f = 160
     width = 640
@@ -49,14 +81,8 @@ def prepare_test_data(points_num: int):
                             [0, f, pp[1]],
                             [0, 0, 1]], dtype = "double"))
     dist_coeffs = np.zeros((5, 1))
-    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, trans_0, camera_matrix, dist_coeffs)
-    print(img_pnts_0[5])
-    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, trans_1, camera_matrix, dist_coeffs)
-    print(img_pnts_1[5])
-    print(trans_0)
-    print(trans_1)
-    # input()
-
+    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, T_0_in_camera_coord, camera_matrix, dist_coeffs)
+    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, T_1_in_camera_coord, camera_matrix, dist_coeffs)
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
@@ -65,12 +91,19 @@ def prepare_test_data(points_num: int):
     for pnt in img_pnts_1:
         cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
 
-    cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
-    cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
-    cv2.waitKey(0)
+    F_true_1_to_2 = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
 
+    # cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
+    # cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
+    # cv2.waitKey(0)
+
+    return F_true_1_to_2
+
+
+def main():
+    F_true = prepare_test_data()
+    print(F_true)
 
 
 if __name__ == '__main__':
-    points_num = 10
-    prepare_test_data(points_num)
+    main()
