@@ -99,6 +99,7 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
     f0 = 1
 
     xi_sum = np.zeros((9, 9))
+    V0_xi_sum = np.zeros((9, 9))
     for i in range(len(img_pnts_0)):
         xi = np.array([[img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 0],
                        img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 1],
@@ -110,6 +111,9 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
                        f_0 * img_pnts_1[i, 0, 1],
                        f_0 ** 2]])
         xi_sum += np.dot(xi.T, xi)
+
+        # TODO: Add V0_xi
+        # V0_xi = np.array([[]])
 
     M = xi_sum / len(img_pnts_0)
     w, v = np.linalg.eig(M)
