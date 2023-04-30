@@ -38,7 +38,8 @@ def normalize_F_matrix(F_matrix):
     factor_sum = 0
     for i in range(F_matrix.shape[0]):
         for j in range(F_matrix.shape[1]):
-            factor_sum += F_matrix[j, i]
+            factor_sum += F_matrix[j, i] ** 2
+            # print("factor_sum: ", factor_sum)
     normalize_F_matrix = F_matrix / factor_sum ** 0.5
 
     return normalize_F_matrix
@@ -58,15 +59,75 @@ def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera
     return normalize_F_matrix(F_true_1_to_2)
 
 
+def calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1):
+    if len(img_pnts_0) != len(img_pnts_1):
+        raise RuntimeError("The number points is wrong.")
+
+    f_x = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_y = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_0 = max(f_x, f_y)
+    f0 = 1
+
+    xi_sum = np.zeros((9, 9))
+    for i in range(len(img_pnts_0)):
+        xi = np.array([[img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 0],
+                       img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 1],
+                       f_0 * img_pnts_0[i, 0, 0],
+                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 0],
+                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 1],
+                       f_0 * img_pnts_0[i, 0, 1],
+                       f_0 * img_pnts_1[i, 0, 0],
+                       f_0 * img_pnts_1[i, 0, 1],
+                       f_0 ** 2]])
+        xi_sum += np.dot(xi.T, xi)
+
+    M = xi_sum / len(img_pnts_0)
+    w, v = np.linalg.eig(M)
+    theta = v[:, np.argmin(w)]
+    reshaped = np.reshape(theta, (3, 3))
+
+    return normalize_F_matrix(reshaped)
+
+
+def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
+    if len(img_pnts_0) != len(img_pnts_1):
+        raise RuntimeError("The number points is wrong.")
+
+    f_x = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_y = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_0 = max(f_x, f_y)
+    f0 = 1
+
+    xi_sum = np.zeros((9, 9))
+    for i in range(len(img_pnts_0)):
+        xi = np.array([[img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 0],
+                       img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 1],
+                       f_0 * img_pnts_0[i, 0, 0],
+                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 0],
+                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 1],
+                       f_0 * img_pnts_0[i, 0, 1],
+                       f_0 * img_pnts_1[i, 0, 0],
+                       f_0 * img_pnts_1[i, 0, 1],
+                       f_0 ** 2]])
+        xi_sum += np.dot(xi.T, xi)
+
+    M = xi_sum / len(img_pnts_0)
+    w, v = np.linalg.eig(M)
+    theta = v[:, np.argmin(w)]
+    reshaped = np.reshape(theta, (3, 3))
+
+    return normalize_F_matrix(reshaped)
+
+
 def prepare_test_data():
-    rot_mat_0 = euler_angle_to_rot_mat(0, -30, 0)
+    rot_mat_0 = euler_angle_to_rot_mat(0, 0, 0)
     # print(rot_mat_0)
     T_0_in_camera_coord = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
     rot_mat_1 = euler_angle_to_rot_mat(0, 30, 0)
     T_1_in_camera_coord = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
-    points = create_curve_surface_points(10, 10, 0.2)
+    points = create_curve_surface_points(5, 5, 0.2)
     # print(points)
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
     rodri_1, jac = cv2.Rodrigues(rot_mat_1)
@@ -86,6 +147,8 @@ def prepare_test_data():
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
+    # print(img_pnts_0)
+    # input()
     for pnt in img_pnts_0:
         cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (0, 0, 0), -1)
     for pnt in img_pnts_1:
@@ -97,12 +160,15 @@ def prepare_test_data():
     # cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
     # cv2.waitKey(0)
 
-    return F_true_1_to_2
+    return img_pnts_0, img_pnts_1, F_true_1_to_2
 
 
 def main():
-    F_true = prepare_test_data()
-    print(F_true)
+    img_pnts_0, img_pnts_1, F_true = prepare_test_data()
+    print("F_true: ", F_true)
+    F_by_least_squares = calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1)
+    print("F_by_least_squares: ", F_by_least_squares)
+    calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1)
 
 
 if __name__ == '__main__':
