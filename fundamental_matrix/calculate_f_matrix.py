@@ -67,7 +67,6 @@ def calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1):
     f_x = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
     f_y = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
     f_0 = max(f_x, f_y)
-    f0 = 1
 
     xi_sum = np.zeros((9, 9))
     for i in range(len(img_pnts_0)):
@@ -101,7 +100,6 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
     f_x = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
     f_y = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
     f_0 = max(f_x, f_y)
-    f0 = 1
 
     xi_sum = np.zeros((9, 9))
     V0_xi_sum = np.zeros((9, 9))
@@ -136,6 +134,67 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
     N = V0_xi_sum / len(img_pnts_0)
     eig_val, eig_vec = scipy.linalg.eig(N, M)
     theta = eig_vec[:, np.argmax(eig_val)]
+    reshaped = np.reshape(theta, (3, 3))
+
+    return normalize_F_matrix(reshaped)
+
+
+def calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1):
+    f_x = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_y = max(max(img_pnts_0[:, 0, 0]), max(img_pnts_1[:, 0, 1]))
+    f_0 = max(f_x, f_y)
+
+    W = np.ones(len(img_pnts_0), dtype="float64")
+    theta_zero = np.zeros(9, dtype="float64")
+    diff = 10000.0
+
+    while diff > 1e-10:
+        xi_sum = np.zeros((9, 9))
+        L_sum = np.zeros((9, 9))
+        V0_xi_list = []
+        for i in range(len(img_pnts_0)):
+            x_0 = img_pnts_0[i, 0, 0]
+            y_0 = img_pnts_0[i, 0, 1]
+            x_1 = img_pnts_1[i, 0, 0]
+            y_1 = img_pnts_1[i, 0, 1]
+            xi = np.array([[x_0 * x_1,
+                        x_0 * y_1,
+                        f_0 * x_0,
+                        y_0 * x_1,
+                        y_0 * y_1,
+                        f_0 * y_0,
+                        f_0 * x_1,
+                        f_0 * y_1,
+                        f_0 ** 2]])
+            xi_sum += np.dot(W[i], np.dot(xi.T, xi))
+            V0_xi = np.array([[x_0**2+x_1**2, x_1*y_1, f_0*x_1, x_0*y_0, 0, 0, f_0*x_0, 0, 0],
+                            [x_1*y_1, x_0**2+y_1**2, f_0*y_1, 0, x_0*y_0, 0, 0, f_0*x_0, 0],
+                            [f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0, 0, 0, 0],
+                            [x_0*y_0, 0, 0, y_0**2+x_1**2, x_1*y_1, f_0*x_1, f_0*y_0, 0, 0],
+                            [0, x_0*y_0, 0, x_1*y_1, y_0**2+y_1**2, f_0*y_1, 0, f_0*y_0, 0],
+                            [0, 0, 0, f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0],
+                            [f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0, 0],
+                            [0, f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+            V0_xi_list.append(V0_xi)
+            L_sum += np.dot(np.dot(W[i]**2, np.dot(xi.T[:, 0], theta_zero)**2), V0_xi)
+
+        M = xi_sum / len(img_pnts_0)
+        L = L_sum / len(img_pnts_0)
+        X = M - L
+        eig_val, eig_vec = np.linalg.eig(X)
+        theta = eig_vec[:, np.argmin(eig_val)]
+
+        if np.dot(theta, theta_zero) < 0:
+            theta = np.dot(-1, theta)
+        diff = np.sum(np.abs(theta_zero - theta))
+        if diff <= 1e-10:
+            break
+
+        for i in range(len(img_pnts_0)):
+            W = np.insert(W, i, 1 / (np.dot(theta, np.dot(V0_xi_list[i], theta))))
+        theta_zero = theta
+
     reshaped = np.reshape(theta, (3, 3))
 
     return normalize_F_matrix(reshaped)
@@ -213,6 +272,10 @@ def main():
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_taubin")
     print(F_by_taubin)
+    F_by_fns = calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("F_by_fns")
+    print(F_by_fns)
 
 
 if __name__ == '__main__':
