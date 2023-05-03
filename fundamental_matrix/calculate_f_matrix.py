@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import cv2
+import scipy
 
 
 def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
@@ -70,14 +71,18 @@ def calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1):
 
     xi_sum = np.zeros((9, 9))
     for i in range(len(img_pnts_0)):
-        xi = np.array([[img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 0],
-                       img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 1],
-                       f_0 * img_pnts_0[i, 0, 0],
-                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 0],
-                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 1],
-                       f_0 * img_pnts_0[i, 0, 1],
-                       f_0 * img_pnts_1[i, 0, 0],
-                       f_0 * img_pnts_1[i, 0, 1],
+        x_0 = img_pnts_0[i, 0, 0]
+        y_0 = img_pnts_0[i, 0, 1]
+        x_1 = img_pnts_1[i, 0, 0]
+        y_1 = img_pnts_1[i, 0, 1]
+        xi = np.array([[x_0 * x_1,
+                       x_0 * y_1,
+                       f_0 * x_0,
+                       y_0 * x_1,
+                       y_0 * y_1,
+                       f_0 * y_0,
+                       f_0 * x_1,
+                       f_0 * y_1,
                        f_0 ** 2]])
         xi_sum += np.dot(xi.T, xi)
 
@@ -105,24 +110,32 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
         y_0 = img_pnts_0[i, 0, 1]
         x_1 = img_pnts_1[i, 0, 0]
         y_1 = img_pnts_1[i, 0, 1]
-        # TODO: Change img_pnts_* to x_* and y_*
-        xi = np.array([[img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 0],
-                       img_pnts_0[i, 0, 0] * img_pnts_1[i, 0, 1],
-                       f_0 * img_pnts_0[i, 0, 0],
-                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 0],
-                       img_pnts_0[i, 0, 1] * img_pnts_1[i, 0, 1],
-                       f_0 * img_pnts_0[i, 0, 1],
-                       f_0 * img_pnts_1[i, 0, 0],
-                       f_0 * img_pnts_1[i, 0, 1],
+        xi = np.array([[x_0 * x_1,
+                       x_0 * y_1,
+                       f_0 * x_0,
+                       y_0 * x_1,
+                       y_0 * y_1,
+                       f_0 * y_0,
+                       f_0 * x_1,
+                       f_0 * y_1,
                        f_0 ** 2]])
         xi_sum += np.dot(xi.T, xi)
 
-        # TODO: Add V0_xi
-        V0_xi = np.array([[]])
+        V0_xi = np.array([[x_0**2+x_1**2, x_1*y_1, f_0*x_1, x_0*y_0, 0, 0, f_0*x_0, 0, 0],
+                        [x_1*y_1, x_0**2+y_1**2, f_0*y_1, 0, x_0*y_0, 0, 0, f_0*x_0, 0],
+                        [f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0, 0, 0, 0],
+                        [x_0*y_0, 0, 0, y_0**2+x_1**2, x_1*y_1, f_0*x_1, f_0*y_0, 0, 0],
+                        [0, x_0*y_0, 0, x_1*y_1, y_0**2+y_1**2, f_0*y_1, 0, f_0*y_0, 0],
+                        [0, 0, 0, f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0],
+                        [f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0, 0],
+                        [0, f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+        V0_xi_sum += V0_xi
 
     M = xi_sum / len(img_pnts_0)
-    w, v = np.linalg.eig(M)
-    theta = v[:, np.argmin(w)]
+    N = V0_xi_sum / len(img_pnts_0)
+    eig_val, eig_vec = scipy.linalg.eig(N, M)
+    theta = eig_vec[:, np.argmax(eig_val)]
     reshaped = np.reshape(theta, (3, 3))
 
     return normalize_F_matrix(reshaped)
@@ -187,7 +200,7 @@ def prepare_test_data(draw_test_data, draw_epipolar):
 
 def main():
     draw_test_data = False
-    draw_epipolar = True
+    draw_epipolar = False
     img_pnts_0, img_pnts_1, F_true = prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
@@ -196,7 +209,10 @@ def main():
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_least_squares")
     print(F_by_least_squares)
-    calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1)
+    F_by_taubin = calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("F_by_taubin")
+    print(F_by_taubin)
 
 
 if __name__ == '__main__':
