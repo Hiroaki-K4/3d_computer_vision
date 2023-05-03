@@ -257,6 +257,14 @@ def prepare_test_data(draw_test_data, draw_epipolar):
     return img_pnts_0, img_pnts_1, F_true_1_to_2
 
 
+def rank_postcorrection_method(F):
+    U, S, Vt = np.linalg.svd(F)
+    S = np.array([S[0]/np.sqrt(S[0]**2+S[1]**2), S[1]/np.sqrt(S[0]**2+S[1]**2), 0])
+    F_ans = np.dot(np.dot(U, np.diag(S)), Vt)
+
+    return F_ans
+
+
 def main():
     draw_test_data = False
     draw_epipolar = False
@@ -276,6 +284,11 @@ def main():
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_fns")
     print(F_by_fns)
+
+    F_by_fns_rank_correction = rank_postcorrection_method(F_by_fns)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("F_by_fns_rank_correction")
+    print(F_by_fns_rank_correction)
 
 
 if __name__ == '__main__':
