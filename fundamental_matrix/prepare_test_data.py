@@ -39,7 +39,7 @@ def normalize_F_matrix(F_matrix):
     for i in range(F_matrix.shape[0]):
         for j in range(F_matrix.shape[1]):
             factor_sum += F_matrix[j, i] ** 2
-            # print("factor_sum: ", factor_sum)
+
     normalize_F_matrix = F_matrix / factor_sum ** 0.5
 
     return normalize_F_matrix
@@ -128,20 +128,31 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
     return normalize_F_matrix(reshaped)
 
 
-def prepare_test_data():
+def draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1):
+    F, mask = cv2.findFundamentalMat(img_pnts_0, img_pnts_1, cv2.FM_LMEDS)
+
+    lines_CAM1 = cv2.computeCorrespondEpilines(img_pnts_1, 2, F)
+    lines_CAM1 = lines_CAM1.reshape(-1,3)
+    width_CAM1 = img_0.shape[1]
+    for lines in lines_CAM1:
+        x0,y0 = map(int, [0,-lines[2]/lines[1]])
+        x1,y1 = map(int, [width_CAM1,-(lines[2]+lines[0]*width_CAM1)/lines[1]])
+        img_0 = cv2.line(img_0, (x0,y0), (x1,y1), (0, 255, 0), 1)
+
+    cv2.imshow("EPI", img_0)
+    cv2.waitKey(0)
+
+
+def prepare_test_data(draw_test_data, draw_epipolar):
     rot_mat_0 = euler_angle_to_rot_mat(0, 0, 0)
-    # print(rot_mat_0)
     T_0_in_camera_coord = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
     rot_mat_1 = euler_angle_to_rot_mat(0, 45, 0)
     T_1_in_camera_coord = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
     points = create_curve_surface_points(5, 5, 0.2)
-    # print(points)
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
     rodri_1, jac = cv2.Rodrigues(rot_mat_1)
-    # print(rodri_0)
-    # print(rodri_1)
 
     f = 160
     width = 640
@@ -156,8 +167,6 @@ def prepare_test_data():
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
-    # print(img_pnts_0)
-    # input()
     for pnt in img_pnts_0:
         cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (0, 0, 0), -1)
     for pnt in img_pnts_1:
@@ -165,39 +174,28 @@ def prepare_test_data():
 
     F_true_1_to_2 = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
 
-    F, mask = cv2.findFundamentalMat(img_pnts_0, img_pnts_1, cv2.FM_LMEDS)
-    print("F: ", F)
+    if draw_epipolar:
+        draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1)
 
-    F_by_least_squares = calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1)
-    lines_CAM1 = cv2.computeCorrespondEpilines(img_pnts_1, 2, F)
-    lines_CAM1 = lines_CAM1.reshape(-1,3) #行列の変形
-
-    width_CAM1 = img_0.shape[1] #画像幅
-
-    # imgCAM1 = cv2.resize(img_0, None, fx = 0.5, fy = 0.5)
-    for lines in lines_CAM1:
-        # print(lines)
-        x0,y0 = map(int, [0,-lines[2]/lines[1]]) #左端
-        x1,y1 = map(int, [width_CAM1,-(lines[2]+lines[0]*width_CAM1)/lines[1]]) #右端
-
-        # print(x0, y0)
-        # print(x1, y1)
-        img_0 = cv2.line(img_0, (x0,y0), (x1,y1), (0, 255, 0), 1) #線の描画
-
-    cv2.imshow("EPI", img_0)
-
-    # cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
-    # cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
-    cv2.waitKey(0)
+    if draw_test_data:
+        cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
+        cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
+        cv2.waitKey(0)
 
     return img_pnts_0, img_pnts_1, F_true_1_to_2
 
 
 def main():
-    img_pnts_0, img_pnts_1, F_true = prepare_test_data()
-    print("F_true: ", F_true)
+    draw_test_data = False
+    draw_epipolar = True
+    img_pnts_0, img_pnts_1, F_true = prepare_test_data(draw_test_data, draw_epipolar)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("F_true")
+    print(F_true)
     F_by_least_squares = calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1)
-    print("F_by_least_squares: ", F_by_least_squares)
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("F_by_least_squares")
+    print(F_by_least_squares)
     calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1)
 
 
