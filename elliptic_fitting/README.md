@@ -327,7 +327,7 @@ $$
 ### **3. For the ellipse $\theta$, record the number of pixels in the input pixel sequence that satisfy the following equation, where $d$ is a threshold for how much deviation from the fitted ellipse is acceptable.**
 
 $$
-\frac{(\xi_\alpha,\theta)^2}{(\theta,V_0[\xi_\alpha]\theta)}<d^2...(29)
+\frac{(\xi_\alpha,\theta)^2}{(\theta,V_0[\xi_\alpha]\theta)} < d^2...(29)
 $$
 
 ### **4. Randomly select another 5 points from the input pixel sequence and perform the same operation. Do this many times and select the one with the largest n among the candidate ellipses.**
