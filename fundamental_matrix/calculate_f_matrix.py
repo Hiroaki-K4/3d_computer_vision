@@ -49,11 +49,7 @@ def normalize_F_matrix(F_matrix):
 def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera_coord_before, T_in_camera_coord_after, camera_matrix):
     rot_1_to_2 = rot_mat_after * rot_mat_before.T
     trans_1_to_2_in_camera_coord = np.matrix(T_in_camera_coord_after).T - rot_1_to_2 * np.matrix(T_in_camera_coord_before).T
-    print(trans_1_to_2_in_camera_coord)
-    print(np.matrix(T_in_camera_coord_after).T)
-    print(rot_1_to_2 * np.matrix(T_in_camera_coord_before).T)
     trans_1_to_2_in_camera_coord_outer = create_outer_product(trans_1_to_2_in_camera_coord)
-    print(trans_1_to_2_in_camera_coord_outer)
     A_inv = np.linalg.inv(camera_matrix)
     F_true_1_to_2 = A_inv.T * trans_1_to_2_in_camera_coord_outer * rot_1_to_2 * A_inv
 
@@ -215,6 +211,13 @@ def draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1):
     cv2.waitKey(0)
 
 
+def add_noise(img_pnts, noise_scale):
+    noise = np.random.normal(0, noise_scale, img_pnts.shape)
+    noised_points = img_pnts + noise
+
+    return noised_points
+
+
 def prepare_test_data(draw_test_data, draw_epipolar):
     rot_mat_0 = euler_angle_to_rot_mat(0, 0, 0)
     T_0_in_camera_coord = (0, 0, 10)
@@ -239,6 +242,11 @@ def prepare_test_data(draw_test_data, draw_epipolar):
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
+
+    noise_scale = 0.2
+    img_pnts_0 = add_noise(img_pnts_0, noise_scale)
+    img_pnts_1 = add_noise(img_pnts_1, noise_scale)
+
     for pnt in img_pnts_0:
         cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (0, 0, 0), -1)
     for pnt in img_pnts_1:
@@ -265,30 +273,45 @@ def rank_postcorrection_method(F):
     return F_ans
 
 
+def calculate_f_matrix_diff(F_true, F_est):
+    f_sum = 0
+    for i in range(F_true.shape[0]):
+        for j in range(F_true.shape[1]):
+            f_sum += (F_true[i, j] - F_est[i, j]) ** 2
+
+    return math.sqrt(f_sum)
+
+
 def main():
     draw_test_data = False
-    draw_epipolar = False
+    draw_epipolar = True
     img_pnts_0, img_pnts_1, F_true = prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
     print(F_true)
-    F_by_least_squares = calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1)
+
+    F_by_least_squares = rank_postcorrection_method(calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_least_squares")
     print(F_by_least_squares)
-    F_by_taubin = calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1)
+
+    F_by_taubin = rank_postcorrection_method(calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_taubin")
     print(F_by_taubin)
-    F_by_fns = calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1)
+
+    F_by_fns = rank_postcorrection_method(calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_fns")
     print(F_by_fns)
 
-    F_by_fns_rank_correction = rank_postcorrection_method(F_by_fns)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("F_by_fns_rank_correction")
-    print(F_by_fns_rank_correction)
+    F_true_vs_F_least_squares = calculate_f_matrix_diff(F_true, F_by_least_squares)
+    print("F_true_vs_F_least_squares: ", F_true_vs_F_least_squares)
+    F_true_vs_F_by_taubin = calculate_f_matrix_diff(F_true, F_by_taubin)
+    print("F_true_vs_F_by_taubin: ", F_true_vs_F_by_taubin)
+    F_true_vs_F_by_fns = calculate_f_matrix_diff(F_true, F_by_fns)
+    print("F_true_vs_F_by_fns: ", F_true_vs_F_by_fns)
 
 
 if __name__ == '__main__':
