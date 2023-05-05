@@ -53,7 +53,7 @@ def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera
     A_inv = np.linalg.inv(camera_matrix)
     F_true_1_to_2 = A_inv.T * trans_1_to_2_in_camera_coord_outer * rot_1_to_2 * A_inv
 
-    return normalize_F_matrix(F_true_1_to_2)
+    return normalize_F_matrix(F_true_1_to_2), rot_1_to_2, trans_1_to_2_in_camera_coord
 
 
 def calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1):
@@ -252,7 +252,7 @@ def prepare_test_data(draw_test_data, draw_epipolar):
     for pnt in img_pnts_1:
         cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
 
-    F_true_1_to_2 = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
+    F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
 
     if draw_epipolar:
         draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1)
@@ -262,7 +262,7 @@ def prepare_test_data(draw_test_data, draw_epipolar):
         cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
         cv2.waitKey(0)
 
-    return img_pnts_0, img_pnts_1, F_true_1_to_2
+    return img_pnts_0, img_pnts_1, F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord
 
 
 def rank_postcorrection_method(F):
@@ -285,7 +285,7 @@ def calculate_f_matrix_diff(F_true, F_est):
 def main():
     draw_test_data = False
     draw_epipolar = True
-    img_pnts_0, img_pnts_1, F_true = prepare_test_data(draw_test_data, draw_epipolar)
+    img_pnts_0, img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
     print(F_true)
