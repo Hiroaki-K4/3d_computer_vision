@@ -47,7 +47,7 @@ def normalize_F_matrix(F_matrix):
 
 
 def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera_coord_before, T_in_camera_coord_after, camera_matrix):
-    rot_1_to_2 = rot_mat_after * rot_mat_before.T
+    rot_1_to_2 = np.dot(rot_mat_after, rot_mat_before.T)
     trans_1_to_2_in_camera_coord = np.matrix(T_in_camera_coord_after).T - rot_1_to_2 * np.matrix(T_in_camera_coord_before).T
     trans_1_to_2_in_camera_coord_outer = create_outer_product(trans_1_to_2_in_camera_coord)
     A_inv = np.linalg.inv(camera_matrix)
@@ -237,8 +237,8 @@ def prepare_test_data(draw_test_data, draw_epipolar):
                             [0, f, pp[1]],
                             [0, 0, 1]], dtype = "double"))
     dist_coeffs = np.zeros((5, 1))
-    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, T_0_in_camera_coord, camera_matrix, dist_coeffs)
-    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, T_1_in_camera_coord, camera_matrix, dist_coeffs)
+    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, trans_vec_0, camera_matrix, dist_coeffs)
+    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, trans_vec_1, camera_matrix, dist_coeffs)
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)

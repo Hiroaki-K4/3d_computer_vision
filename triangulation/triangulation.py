@@ -43,8 +43,8 @@ def main():
     print("P_0: ", P_0)
     print("P_1: ", P_1)
     f_0 = 1280
-    # TODO: Eval pos diff
-    pos = simple_triangulation(P_0, P_1, f_0, img_pnts_0[0][0], img_pnts_1[0][0])
+    # pos = simple_triangulation(P_0, P_1, f_0, img_pnts_0[0][0], img_pnts_1[0][0])
+    pos = simple_triangulation(P_0, P_1, f_0, img_pnts_0[15][0], img_pnts_1[15][0])
     print("result: ", pos)
 
 
