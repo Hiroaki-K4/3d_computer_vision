@@ -244,25 +244,25 @@ def prepare_test_data(draw_test_data, draw_epipolar):
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
 
     noise_scale = 0.2
-    img_pnts_0 = add_noise(img_pnts_0, noise_scale)
-    img_pnts_1 = add_noise(img_pnts_1, noise_scale)
+    noised_img_pnts_0 = add_noise(img_pnts_0, noise_scale)
+    noised_img_pnts_1 = add_noise(img_pnts_1, noise_scale)
 
-    for pnt in img_pnts_0:
+    for pnt in noised_img_pnts_0:
         cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (0, 0, 0), -1)
-    for pnt in img_pnts_1:
+    for pnt in noised_img_pnts_1:
         cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
 
     F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
 
     if draw_epipolar:
-        draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1)
+        draw_epipolar_lines(img_0, noised_img_pnts_0, noised_img_pnts_1)
 
     if draw_test_data:
         cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
         cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
         cv2.waitKey(0)
 
-    return img_pnts_0, img_pnts_1, F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord
+    return img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord
 
 
 def rank_postcorrection_method(F):
@@ -285,22 +285,22 @@ def calculate_f_matrix_diff(F_true, F_est):
 def main():
     draw_test_data = False
     draw_epipolar = True
-    img_pnts_0, img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data(draw_test_data, draw_epipolar)
+    img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
     print(F_true)
 
-    F_by_least_squares = rank_postcorrection_method(calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1))
+    F_by_least_squares = rank_postcorrection_method(calculate_f_matrix_by_least_squares(noised_img_pnts_0, noised_img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_least_squares")
     print(F_by_least_squares)
 
-    F_by_taubin = rank_postcorrection_method(calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1))
+    F_by_taubin = rank_postcorrection_method(calculate_f_matrix_by_taubin(noised_img_pnts_0, noised_img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_taubin")
     print(F_by_taubin)
 
-    F_by_fns = rank_postcorrection_method(calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1))
+    F_by_fns = rank_postcorrection_method(calculate_f_matrix_by_fns(noised_img_pnts_0, noised_img_pnts_1))
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_fns")
     print(F_by_fns)
