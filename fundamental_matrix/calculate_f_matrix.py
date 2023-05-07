@@ -219,10 +219,10 @@ def add_noise(img_pnts, noise_scale):
 
 
 def prepare_test_data(draw_test_data, draw_epipolar):
-    rot_mat_0 = euler_angle_to_rot_mat(0, 0, 0)
+    rot_mat_0 = euler_angle_to_rot_mat(0, -10, 0)
     T_0_in_camera_coord = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
-    rot_mat_1 = euler_angle_to_rot_mat(0, 45, 0)
+    rot_mat_1 = euler_angle_to_rot_mat(0, 30, 0)
     T_1_in_camera_coord = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
     points = create_curve_surface_points(5, 5, 0.2)
@@ -282,9 +282,7 @@ def calculate_f_matrix_diff(F_true, F_est):
     return math.sqrt(f_sum)
 
 
-def main():
-    draw_test_data = False
-    draw_epipolar = True
+def main(draw_test_data, draw_epipolar):
     img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
@@ -315,4 +313,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    draw_test_data = True
+    draw_epipolar = False
+    main(draw_test_data, draw_epipolar)
