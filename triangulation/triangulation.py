@@ -111,7 +111,6 @@ def main():
     for i in range(len(noised_img_pnts_0)):
         print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
         pos = simple_triangulation(P_0, P_1, 640, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0])
-        # TODO: Why y_0 and y_1 is inverse"
         x_0, y_0, x_1, y_1 = optimal_correction(F_true, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0])
         opt_pos = simple_triangulation(P_0, P_1, 640, np.array([x_0, y_0]), np.array([x_1, y_1]))
         print("noised_pos: ", noised_img_pnts_0[i][0][0], noised_img_pnts_0[i][0][1], noised_img_pnts_1[i][0][0], noised_img_pnts_1[i][0][1])
@@ -124,7 +123,8 @@ def main():
 
     cv2.imshow("OPT_CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
     cv2.imshow("OPT_CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
-    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    cv2.waitKey(1)
 
 
 if __name__ == '__main__':
