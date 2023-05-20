@@ -105,7 +105,7 @@ def create_cube_map(bottom_img, top_img, front_img, back_img, left_img, right_im
 
 def main(image_path):
     img = cv2.imread(image_path)
-    output_sqr = 400
+    output_sqr = 800
     normalized_f = 1.0
     input_w = img.shape[1]
     input_h = img.shape[0]
