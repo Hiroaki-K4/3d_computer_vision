@@ -13,15 +13,13 @@ def get_theta(x, y):
     return theta
 
 
-def create_equirectangler_to_bottom_map(input_w, input_h, output_sqr, normalized_f):
+def create_equirectangler_to_bottom_and_top_map(input_w, input_h, output_sqr, z):
     map_x = np.zeros((output_sqr, output_sqr))
     map_y = np.zeros((output_sqr, output_sqr))
     for row in tqdm(range(output_sqr)):
         for col in range(output_sqr):
             x = float(row - output_sqr / 2.0)
             y = float(col - output_sqr / 2.0)
-            # TODO: If you change z -> -z, you can make top image map
-            z = float(output_sqr / (2.0 * normalized_f))
 
             rho = float(np.sqrt(x * x + y * y + z * z))
             norm_theta = float(get_theta(x, y) / (2 * math.pi))
@@ -42,9 +40,23 @@ def create_equirectangler_to_bottom_map(input_w, input_h, output_sqr, normalized
 
 def main(image_path):
     img = cv2.imread(image_path)
-    map_x , map_y = create_equirectangler_to_bottom_map(img.shape[1], img.shape[0], 800, 1.0)
-    bottom_img = cv2.remap(img, map_x.astype('float32'), map_y.astype('float32'), cv2.INTER_CUBIC)
-    cv2.imwrite("bottom_img.png", bottom_img)
+    output_sqr = 400
+    normalized_f = 1.0
+
+    # Create bottom image
+    z = float(output_sqr / (2.0 * normalized_f))
+    bottom_map_x , bottom_map_y = create_equirectangler_to_bottom_and_top_map(img.shape[1], img.shape[0], output_sqr, z)
+    bottom_img = cv2.remap(img, bottom_map_x.astype('float32'), bottom_map_y.astype('float32'), cv2.INTER_CUBIC)
+    cv2.imwrite("bottom.png", bottom_img)
+
+    # Create top image
+    z = -float(output_sqr / (2.0 * normalized_f))
+    top_map_x , top_map_y = create_equirectangler_to_bottom_and_top_map(img.shape[1], img.shape[0], output_sqr, z)
+    top_img = cv2.remap(img, top_map_x.astype('float32'), top_map_y.astype('float32'), cv2.INTER_CUBIC)
+    cv2.imwrite("top.png", top_img)
+
+    # Create left image
+
 
 
 if __name__ == '__main__':
