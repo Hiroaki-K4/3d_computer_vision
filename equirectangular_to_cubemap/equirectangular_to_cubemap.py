@@ -6,9 +6,9 @@ import math
 
 def get_theta(x, y):
     if y < 0:
-        theta = -1 * np.arctan2(y, x)
+        theta = (-1) * np.arctan2(y, x)
     else:
-        theta = math.pi + (math.pi - np.arctan2(y, x))
+        theta = 2 * math.pi - np.arctan2(y, x)
 
     return theta
 
@@ -152,8 +152,6 @@ def main(image_path):
     # Create cube map image
     cube_map_img = create_cube_map(bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr)
     cv2.imwrite("cube_map.png", cube_map_img)
-
-    
 
 
 if __name__ == '__main__':
