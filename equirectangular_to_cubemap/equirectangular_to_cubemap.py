@@ -120,6 +120,7 @@ def main(image_path):
     z = (-1) * (output_sqr / (2.0 * normalized_f))
     top_map_x , top_map_y = create_equirectangler_to_bottom_and_top_map(input_w, input_h, output_sqr, z)
     top_img = cv2.remap(img, top_map_x.astype('float32'), top_map_y.astype('float32'), cv2.INTER_CUBIC)
+    top_img = cv2.flip(top_img, 0)
     cv2.imwrite("top.png", top_img)
 
     # Create front image
@@ -132,6 +133,7 @@ def main(image_path):
     x = output_sqr / (2.0 * normalized_f)
     back_map_x , back_map_y = create_equirectangler_to_front_and_back_map(input_w, input_h, output_sqr, x)
     back_img = cv2.remap(img, back_map_x.astype('float32'), back_map_y.astype('float32'), cv2.INTER_CUBIC)
+    back_img = cv2.flip(back_img, 1)
     cv2.imwrite("back.png", back_img)
 
     # Create left image
@@ -147,8 +149,11 @@ def main(image_path):
     right_img = cv2.remap(img, right_map_x.astype('float32'), right_map_y.astype('float32'), cv2.INTER_CUBIC)
     cv2.imwrite("right.png", right_img)
 
+    # Create cube map image
     cube_map_img = create_cube_map(bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr)
     cv2.imwrite("cube_map.png", cube_map_img)
+
+    
 
 
 if __name__ == '__main__':
