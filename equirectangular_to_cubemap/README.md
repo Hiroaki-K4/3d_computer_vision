@@ -51,11 +51,11 @@ $$
 Find the pixels per radian and multiply them by the latitude and longitude obtained in the previous step.
 
 $$
-outputW[pixel]=\frac{\theta}{2\pi}\times inputW
+output_x[pixel]=\frac{\theta}{2\pi}\times input_{width}
 $$
 
 $$
-outputH[pixel]=\frac{\phi}{\pi}\times inputH
+output_y[pixel]=\frac{\phi}{\pi}\times input_{height}
 $$
 
 <br></br>
