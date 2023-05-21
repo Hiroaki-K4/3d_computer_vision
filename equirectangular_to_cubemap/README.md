@@ -48,7 +48,7 @@ $$
 <br></br>
 
 ### **3. Calculate the position on the equirectangular image using latitude and longitude**
-Find the pixels per radian and multiply them by the latitude and longitude obtained in the previous step.
+The latitude and longitude obtained in the previous step are normalized by the overall angle in the vertical and horizontal directions and then multiplied by the overall pixels in the two directions to obtain the pixel values on the equirectangular image.
 
 $$
 output_x[pixel]=\frac{\theta}{2\pi}\times input_{width}
