@@ -2,6 +2,9 @@ import numpy as np
 import math
 import cv2
 import scipy
+import sys
+sys.path.append('../')
+from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
 
 
 def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
@@ -144,6 +147,8 @@ def calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1):
     theta_zero = np.zeros(9, dtype="float64")
     diff = 10000.0
 
+    print()
+    print("Calculating F-matrix by FNS method ...")
     while diff > 1e-10:
         xi_sum = np.zeros((9, 9))
         L_sum = np.zeros((9, 9))
@@ -283,7 +288,7 @@ def calculate_f_matrix_diff(F_true, F_est):
 
 
 def main(draw_test_data, draw_epipolar):
-    img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data(draw_test_data, draw_epipolar)
+    img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data_for_fundamental_matrix.prepare_test_data(draw_test_data, draw_epipolar)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
     print(F_true)
@@ -313,6 +318,6 @@ def main(draw_test_data, draw_epipolar):
 
 
 if __name__ == '__main__':
-    draw_test_data = True
+    draw_test_data = False
     draw_epipolar = False
     main(draw_test_data, draw_epipolar)
