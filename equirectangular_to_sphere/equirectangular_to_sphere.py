@@ -26,12 +26,13 @@ def plot_base(elev=25, azim=-70):
 
 
 def get_3d_pos(equi_x, equi_y, width, height):
-    width = 5760
-    height = 2880
-    moved_x = equi_x - width / 2
-    moved_y = (-1) * equi_y + height / 2
-    norm_x = moved_x / (width / 2)
-    norm_y = moved_y / (height / 2)
+    # Move the center of image
+    moved_x = equi_x - width / 2 + 0.5
+    moved_y = (-1) * equi_y + height / 2 + 0.5
+    # Normalize coordinates
+    norm_x = moved_x / (width / 2 - 0.5)
+    norm_y = moved_y / (height / 2 - 0.5)
+    # Calculate longitude and latitude
     longitude = norm_x * math.pi
     latitude = norm_y * math.pi / 2
 
