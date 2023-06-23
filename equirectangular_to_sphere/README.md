@@ -20,13 +20,12 @@ If the origin is at the upper left, the following transformation is performed.
 <img src='images/norm.png' width='300'>
 
 $$
-center_x=equi_x-width/2 + 0.5 \\
-center_y=(-1)*equi_y+height/2+0.5
-$$
-
-$$
-norm_x=center_x/(width/2-0.5) \\
-norm_y=center_y/(height/2-0.5)
+\begin{align}
+    center_x &= equi_x-width/2 + 0.5 \\
+    center_y &= (-1)\times equi_y+height/2+0.5 \\
+    norm_x &= center_x/(width/2-0.5) \\
+    norm_y &= center_y/(height/2-0.5)
+\end{align}
 $$
 
 <br></br>
@@ -37,17 +36,21 @@ Since the normalized x, y values take -1~1, we can multiply $\pi$ for longitude 
 <img src='images/spherical.png' width='300'>
 
 $$
-longitude=norm_x*\pi \\
-latitude=norm_y*\frac{\pi}{2}
+\begin{align}
+    longitude &= norm_x\times\pi \\
+    latitude &= norm_y\times\frac{\pi}{2}
+\end{align}
 $$
 
 ### **3. Calculate 3D vector**
 Using longitude and latitude, we can calculate spherical coordinates of radius 1.
 
 $$
-x=cos(latitude)*sin(longitude) \\
-y=cos(latitude)*cos(longitude) \\
-z=sin(latitude)
+\begin{align}
+    x &= cos(latitude)\times sin(longitude) \\
+    y &= cos(latitude)\times cos(longitude) \\
+    z &= sin(latitude)
+\end{align}
 $$
 
 <br></br>
