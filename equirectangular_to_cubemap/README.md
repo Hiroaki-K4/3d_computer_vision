@@ -1,4 +1,4 @@
-# equirectangular_to_cubemap
+# Equirectangular to cubemap
 The equirectangular format is often used as a format for viewing 360-degree videos.
 
 <img src='original_equirectangular.png' width='500'>

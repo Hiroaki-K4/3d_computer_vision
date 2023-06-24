@@ -149,7 +149,7 @@ def calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1):
 
     print()
     print("Calculating F-matrix by FNS method ...")
-    while diff > 1e-10:
+    while diff > 1e-7:
         xi_sum = np.zeros((9, 9))
         L_sum = np.zeros((9, 9))
         V0_xi_list = []

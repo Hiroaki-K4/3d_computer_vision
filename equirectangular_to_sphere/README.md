@@ -1,4 +1,4 @@
-# equirectangular_to_sphere
+# Equirectangular to sphere
 Converting the coordinates on the equirectangular image to 3D coordinates on a sphere is very important to know the positional relationship between the camera and the target object.
 Here is a summary of how it is done.
 
