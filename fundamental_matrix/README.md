@@ -1,4 +1,7 @@
 # Fundamental matrix
+
+<img src='images/pair1.png' width='300'> <img src='images/pair2.png' width='300'>
+
 Suppose two cameras capture the same scene, and a certain point in the scene is captured at point (x, y) in the image captured by the first camera and at point (x', y') in the image captured by the second camera. The following relation holds between them.
 
 $$
