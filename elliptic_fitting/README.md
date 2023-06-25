@@ -91,7 +91,7 @@ $$
 M\theta=\lambda\theta...(7)
 $$
 
-Minimize the following sum of squares under condition $||\theta||=1$.
+This minimizes the following sum of squares under the condition $||\theta||=1$.
 
 $$
 J=\frac{1}{N}\sum_{\alpha=1}^N(\xi_\alpha,\theta)^2=\frac{1}{N}\sum_{\alpha=1}^N\theta^\intercal\xi_\alpha\xi_\alpha^\intercal\theta=(\theta,M\theta)...(8)
