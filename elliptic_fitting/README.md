@@ -352,4 +352,5 @@ The following is a description of each of the points in the image below.
 
 ## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
+- [For Three-Dimensional Understanding of Images Optimization Calculation [II]](http://iim.cs.tut.ac.jp/member/kanatani/papers/ieicefit2.pdf)
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)
