@@ -12,7 +12,7 @@ x/f_0 \\
 y/f_0 \\
 1 \\
 \end{pmatrix},
-\begin{pmatrix}
+F\begin{pmatrix}
 x\prime/f_0 \\
 y\prime/f_0 \\
 1 \\
@@ -72,6 +72,7 @@ Thus, in form, Eq(4) is equivalent to elliptic fitting.
 <br></br>
 
 ## Covariance matrix and algebraic methods
+The computation of the basis matrix F from the corresponding points in the two images is the basis for various computer vision applications.
 Calculating the fundamental matrix $F$ satisfying Eq(1) from the corresponding points $(x_\alpha,y_\alpha), (x_\alpha\prime,y_\alpha\prime), (\alpha=1,...,N)$ with errors is mathematically to compute a unit vector $\theta$ such that
 
 $$
