@@ -76,6 +76,71 @@ Z \\
 \end{pmatrix}=-T^\intercal p \tag{4}
 $$
 
+If we organize by paying the denominator in Eq(1) and do the same for the second camera, we obtain the following simultaneous linear equations for X, Y, and Z.
+
+$$
+\begin{align*}
+(f_0P_{11}-xP_{31})X + (f_0P_{12}-xP_{32})Y + (f_0P_{13}-xP_{33})Z + f_0P_{14} - xP_{34} = 0 \\
+(f_0P_{21}-yP_{31})X + (f_0P_{22}-yP_{32})Y + (f_0P_{23}-yP_{33})Z + f_0P_{24} - yP_{34} = 0 \\
+(f_0P\prime_{11}-x\prime P\prime_{31})X + (f_0P\prime_{12}-x\prime P\prime_{32})Y + (f_0P\prime_{13}-x\prime P\prime_{33})Z + f_0P\prime_{14} - x\prime_P\prime_{34} = 0 \\
+(f_0P\prime_{21}-y\prime P\prime_{31})X + (f_0P\prime_{22}-y\prime P\prime_{32})Y + (f_0P\prime_{23}-y\prime P\prime_{33})Z + f_0P\prime_{24} - y\prime P\prime_{34} = 0 \tag{5}
+\end{align*}
+$$
+
+This is four equations for three unknowns X, Y, and Z, which are linearly dependent on each other, with three independent ones. Therefore, if any three of these four are extracted and the solution is calculated, the remaining equations are automatically satisfied. However, the same solution can be obtained by solving these simultaneously. Specifically, using the matrix T and vector p in Eq(3), write Eq(5) as follows,
+
+$$
+T\begin{pmatrix}
+X \\
+Y \\
+Z \\
+\end{pmatrix}=p \tag{6}
+$$
+
+we can solve Eq(4) by multiplying both sides by $T^\intercal$.
+This is nothing more than applying the least-squares method to Eq(6).
+
+$$
+\begin{align*}
+\lVert Ax-b \rVert^2&=(Ax-b,Ax-b) \\
+&=(Ax,Ax)-2(Ax-b)+(b,b) \\
+&=(x,A^\intercal Ax)-2(x,A^\intercal b)+\lVert b \rVert^2
+\end{align*}
+$$
+
+Differentiating by x, we obtain the following equation.
+
+$$
+A^\intercal Ax=A^\intercal b
+$$
+
+## Triangulation from corresponding points with errors
+If there is an error in the observation points (x,y), (x',y'), the lines of sight defined by the two cameras do not necessarily intersect at a single point. For this case, there is a method to compensate.  
+A reasonable method is to compute the 3D position (X,Y,Z) by shortest correction on the image to the position where the observed corresponding points (x,y), (x',y') intersect the line of sight. The necessary and sufficient condition for the line of sight to intersect is the epipolar equation, and the basis matrix $F$ is obtained from the camera matrices $P$, $P\prime$.
+
+$$
+\begin{pmatrix}
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix},
+F\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}
+\end{pmatrix}=0 \tag{7}
+$$
+
+Consider the shortest possible correction of the observed corresponding point $(x,y), (x\prime,y\prime)$ to the position $(\bar{x}\prime,\bar{y}\prime), (x,y)$ that satisfies equation (7). Minimize the sum of squares of the following travel distances.
+
+$$
+S=(x-\bar{x})^2+(y-\bar{y})^2+(x\prime-\bar{x}\prime)^2+(y\prime-\bar{y}\prime)^2 \tag{8}
+$$
+
+This S is called the reprojection error.
+
 <br></br>
 
 ## Reference
