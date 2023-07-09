@@ -124,8 +124,7 @@ def main():
 
     cv2.imshow("OPT_CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
     cv2.imshow("OPT_CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
-    cv2.destroyAllWindows()
-    cv2.waitKey(1)
+    cv2.waitKey(0)
 
 
 if __name__ == '__main__':

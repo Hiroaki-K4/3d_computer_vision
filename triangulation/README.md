@@ -139,7 +139,17 @@ $$
 S=(x-\bar{x})^2+(y-\bar{y})^2+(x\prime-\bar{x}\prime)^2+(y\prime-\bar{y}\prime)^2 \tag{8}
 $$
 
-This S is called the reprojection error.
+This $S$ is called the reprojection error.  
+
+You can try the triangulation by running below command.
+
+```bash
+python triangulation.py
+```
+
+The following two viewpoint camera images were used for the test data.
+
+<img src='images/img_0.png' width='300'> <img src='images/img_1.png' width='300'>
 
 <br></br>
 
