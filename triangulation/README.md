@@ -76,7 +76,7 @@ Z \\
 \end{pmatrix}=-T^\intercal p \tag{4}
 $$
 
-If we organize by paying the denominator in Eq(1) and do the same for the second camera, we obtain the following simultaneous linear equations for X, Y, and Z.
+By rearranging the denominator in Eq(1) and doing the same for the second camera, the following simultaneous linear equations are obtained for X, Y, and Z.
 
 $$
 \begin{align*}
@@ -133,7 +133,7 @@ y\prime/f_0 \\
 \end{pmatrix}=0 \tag{7}
 $$
 
-Consider the shortest possible correction of the observed corresponding point $(x,y), (x\prime,y\prime)$ to the position $(\bar{x}\prime,\bar{y}\prime), (x,y)$ that satisfies equation (7). Minimize the sum of squares of the following travel distances.
+Consider the shortest possible correction of the observed corresponding point $(x,y), (x\prime,y\prime)$ to the position $(\bar{x},\bar{y}), (\bar{x}\prime,\bar{y}\prime)$ that satisfies equation (7). Minimize the sum of squares of the following travel distances.
 
 $$
 S=(x-\bar{x})^2+(y-\bar{y})^2+(x\prime-\bar{x}\prime)^2+(y\prime-\bar{y}\prime)^2 \tag{8}
