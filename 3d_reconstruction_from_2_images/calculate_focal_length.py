@@ -5,9 +5,28 @@ sys.path.append('../')
 from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
 
 
-def calculate_focal_length(F_matrix):
-    # F_Ft = np.dot()
-    # Ft_F
+def calculate_focal_length(F):
+    F_Ft = np.dot(F, F.T)
+    Ft_F = np.dot(F.T, F)
+    print("F_Ft: ", F_Ft)
+    print("Ft_F: ", Ft_F)
+    w, v = np.linalg.eig(F_Ft)
+    e_1 = v[:, np.argmin(w)]
+    w, v = np.linalg.eig(Ft_F)
+    e_2 = v[:, np.argmin(w)]
+    print("e_1: ", e_1)
+    print("e_2: ", e_2)
+
+    k = np.array([[0, 0, 1]]).T
+    # print(k.shape)
+    # input()
+    # a = np.linalg.norm(np.dot(F, k)) ** 2 - np.dot(k, np.dot(np.dot(F_Ft, F), k)) * np.linalg.norm(np.cross(e_2, k)) ** 2 / np.dot(k, np.dot(F, k))
+    print(k)
+    print(np.dot(np.dot(F_Ft, F), k))
+    # TODO: Fix error
+    print(np.dot(k, np.dot(np.dot(F_Ft, F), k)))
+    # print(k * np.dot(np.dot(F_Ft, F), k))
+    # print(np.dot(np.dot(F_Ft, F), k).shape)
 
 
 def main(draw_test_data, draw_epipolar):
