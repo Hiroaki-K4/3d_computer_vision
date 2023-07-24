@@ -31,7 +31,3 @@ Let's enjoy 3D computer vision.
 ## [Triangulation](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/triangulation)
 
 <img src='triangulation/images/img_0.png' width='500'>
-
-<br></br>
-
-## [3D reconstruction from 2 images](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/3d_reconstruction_from_2_images)
