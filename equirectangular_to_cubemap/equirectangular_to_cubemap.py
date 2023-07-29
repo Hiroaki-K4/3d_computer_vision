@@ -88,17 +88,21 @@ def create_equirectangler_to_left_and_right_map(input_w, input_h, output_sqr, y)
     return map_x, map_y
 
 
-def create_cube_map(bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr):
+def create_cube_map(
+    bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr
+):
     output_w = output_sqr * 4
     output_h = output_sqr * 3
-    cube_map_img = np.zeros((output_h, output_w, 3), dtype = np.uint8)
+    cube_map_img = np.zeros((output_h, output_w, 3), dtype=np.uint8)
 
-    cube_map_img[output_sqr*2:output_h, output_sqr:output_sqr*2] = bottom_img
-    cube_map_img[0:output_sqr, output_sqr:output_sqr*2] = top_img
-    cube_map_img[output_sqr:output_sqr*2, output_sqr:output_sqr*2] = front_img
-    cube_map_img[output_sqr:output_sqr*2, output_sqr*3:output_w] = back_img
-    cube_map_img[output_sqr:output_sqr*2, 0:output_sqr] = left_img
-    cube_map_img[output_sqr:output_sqr*2, output_sqr*2:output_sqr*3] = right_img
+    cube_map_img[output_sqr * 2 : output_h, output_sqr : output_sqr * 2] = bottom_img
+    cube_map_img[0:output_sqr, output_sqr : output_sqr * 2] = top_img
+    cube_map_img[output_sqr : output_sqr * 2, output_sqr : output_sqr * 2] = front_img
+    cube_map_img[output_sqr : output_sqr * 2, output_sqr * 3 : output_w] = back_img
+    cube_map_img[output_sqr : output_sqr * 2, 0:output_sqr] = left_img
+    cube_map_img[
+        output_sqr : output_sqr * 2, output_sqr * 2 : output_sqr * 3
+    ] = right_img
 
     return cube_map_img
 
@@ -112,48 +116,83 @@ def main(image_path):
 
     # Create bottom image
     z = output_sqr / (2.0 * normalized_f)
-    bottom_map_x , bottom_map_y = create_equirectangler_to_bottom_and_top_map(input_w, input_h, output_sqr, z)
-    bottom_img = cv2.remap(img, bottom_map_x.astype('float32'), bottom_map_y.astype('float32'), cv2.INTER_CUBIC)
+    bottom_map_x, bottom_map_y = create_equirectangler_to_bottom_and_top_map(
+        input_w, input_h, output_sqr, z
+    )
+    bottom_img = cv2.remap(
+        img,
+        bottom_map_x.astype("float32"),
+        bottom_map_y.astype("float32"),
+        cv2.INTER_CUBIC,
+    )
     cv2.imwrite("bottom.png", bottom_img)
 
     # Create top image
     z = (-1) * (output_sqr / (2.0 * normalized_f))
-    top_map_x , top_map_y = create_equirectangler_to_bottom_and_top_map(input_w, input_h, output_sqr, z)
-    top_img = cv2.remap(img, top_map_x.astype('float32'), top_map_y.astype('float32'), cv2.INTER_CUBIC)
+    top_map_x, top_map_y = create_equirectangler_to_bottom_and_top_map(
+        input_w, input_h, output_sqr, z
+    )
+    top_img = cv2.remap(
+        img, top_map_x.astype("float32"), top_map_y.astype("float32"), cv2.INTER_CUBIC
+    )
     top_img = cv2.flip(top_img, 0)
     cv2.imwrite("top.png", top_img)
 
     # Create front image
     x = (-1) * (output_sqr / (2.0 * normalized_f))
-    front_map_x , front_map_y = create_equirectangler_to_front_and_back_map(input_w, input_h, output_sqr, x)
-    front_img = cv2.remap(img, front_map_x.astype('float32'), front_map_y.astype('float32'), cv2.INTER_CUBIC)
+    front_map_x, front_map_y = create_equirectangler_to_front_and_back_map(
+        input_w, input_h, output_sqr, x
+    )
+    front_img = cv2.remap(
+        img,
+        front_map_x.astype("float32"),
+        front_map_y.astype("float32"),
+        cv2.INTER_CUBIC,
+    )
     cv2.imwrite("front.png", front_img)
 
     # Create back image
     x = output_sqr / (2.0 * normalized_f)
-    back_map_x , back_map_y = create_equirectangler_to_front_and_back_map(input_w, input_h, output_sqr, x)
-    back_img = cv2.remap(img, back_map_x.astype('float32'), back_map_y.astype('float32'), cv2.INTER_CUBIC)
+    back_map_x, back_map_y = create_equirectangler_to_front_and_back_map(
+        input_w, input_h, output_sqr, x
+    )
+    back_img = cv2.remap(
+        img, back_map_x.astype("float32"), back_map_y.astype("float32"), cv2.INTER_CUBIC
+    )
     back_img = cv2.flip(back_img, 1)
     cv2.imwrite("back.png", back_img)
 
     # Create left image
     y = (-1) * (output_sqr / (2.0 * normalized_f))
-    left_map_x , left_map_y = create_equirectangler_to_left_and_right_map(input_w, input_h, output_sqr, y)
-    left_img = cv2.remap(img, left_map_x.astype('float32'), left_map_y.astype('float32'), cv2.INTER_CUBIC)
+    left_map_x, left_map_y = create_equirectangler_to_left_and_right_map(
+        input_w, input_h, output_sqr, y
+    )
+    left_img = cv2.remap(
+        img, left_map_x.astype("float32"), left_map_y.astype("float32"), cv2.INTER_CUBIC
+    )
     left_img = cv2.flip(left_img, 1)
     cv2.imwrite("left.png", left_img)
 
     # Create right image
     y = output_sqr / (2.0 * normalized_f)
-    right_map_x , right_map_y = create_equirectangler_to_left_and_right_map(input_w, input_h, output_sqr, y)
-    right_img = cv2.remap(img, right_map_x.astype('float32'), right_map_y.astype('float32'), cv2.INTER_CUBIC)
+    right_map_x, right_map_y = create_equirectangler_to_left_and_right_map(
+        input_w, input_h, output_sqr, y
+    )
+    right_img = cv2.remap(
+        img,
+        right_map_x.astype("float32"),
+        right_map_y.astype("float32"),
+        cv2.INTER_CUBIC,
+    )
     cv2.imwrite("right.png", right_img)
 
     # Create cube map image
-    cube_map_img = create_cube_map(bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr)
+    cube_map_img = create_cube_map(
+        bottom_img, top_img, front_img, back_img, left_img, right_img, output_sqr
+    )
     cv2.imwrite("cube_map.png", cube_map_img)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     image_path = "original_equirectangular.png"
     main(image_path)

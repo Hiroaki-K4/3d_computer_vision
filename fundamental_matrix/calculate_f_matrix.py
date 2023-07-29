@@ -3,7 +3,8 @@ import math
 import cv2
 import scipy
 import sys
-sys.path.append('../')
+
+sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
 
 
@@ -20,20 +21,24 @@ def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
 
 def create_curve_surface_points(row, col, z_scale):
     points = np.zeros((0, 3))
-    for i in range(row+1):
-        for j in range(col+1):
+    for i in range(row + 1):
+        for j in range(col + 1):
             x = i - row / 2
             y = j - col / 2
-            z = x ** 2 * z_scale
+            z = x**2 * z_scale
             points = np.append(points, [[x, y, z]], axis=0)
 
     return points
 
 
 def create_outer_product(trans_in_camera_coord):
-    res = np.array([[0, -trans_in_camera_coord[2, 0], trans_in_camera_coord[1, 0]],
-                    [trans_in_camera_coord[2, 0], 0, -trans_in_camera_coord[0, 0]],
-                    [-trans_in_camera_coord[1, 0], trans_in_camera_coord[0, 0], 0]])
+    res = np.array(
+        [
+            [0, -trans_in_camera_coord[2, 0], trans_in_camera_coord[1, 0]],
+            [trans_in_camera_coord[2, 0], 0, -trans_in_camera_coord[0, 0]],
+            [-trans_in_camera_coord[1, 0], trans_in_camera_coord[0, 0], 0],
+        ]
+    )
 
     return res
 
@@ -44,15 +49,26 @@ def normalize_F_matrix(F_matrix):
         for j in range(F_matrix.shape[1]):
             factor_sum += F_matrix[j, i] ** 2
 
-    normalize_F_matrix = F_matrix / factor_sum ** 0.5
+    normalize_F_matrix = F_matrix / factor_sum**0.5
 
     return normalize_F_matrix
 
 
-def calculate_true_fundamental_matrix(rot_mat_before, rot_mat_after, T_in_camera_coord_before, T_in_camera_coord_after, camera_matrix):
+def calculate_true_fundamental_matrix(
+    rot_mat_before,
+    rot_mat_after,
+    T_in_camera_coord_before,
+    T_in_camera_coord_after,
+    camera_matrix,
+):
     rot_1_to_2 = np.dot(rot_mat_after, rot_mat_before.T)
-    trans_1_to_2_in_camera_coord = np.matrix(T_in_camera_coord_after).T - rot_1_to_2 * np.matrix(T_in_camera_coord_before).T
-    trans_1_to_2_in_camera_coord_outer = create_outer_product(trans_1_to_2_in_camera_coord)
+    trans_1_to_2_in_camera_coord = (
+        np.matrix(T_in_camera_coord_after).T
+        - rot_1_to_2 * np.matrix(T_in_camera_coord_before).T
+    )
+    trans_1_to_2_in_camera_coord_outer = create_outer_product(
+        trans_1_to_2_in_camera_coord
+    )
     A_inv = np.linalg.inv(camera_matrix)
     F_true_1_to_2 = A_inv.T * trans_1_to_2_in_camera_coord_outer * rot_1_to_2 * A_inv
 
@@ -73,15 +89,21 @@ def calculate_f_matrix_by_least_squares(img_pnts_0, img_pnts_1):
         y_0 = img_pnts_0[i, 0, 1]
         x_1 = img_pnts_1[i, 0, 0]
         y_1 = img_pnts_1[i, 0, 1]
-        xi = np.array([[x_0 * x_1,
-                       x_0 * y_1,
-                       f_0 * x_0,
-                       y_0 * x_1,
-                       y_0 * y_1,
-                       f_0 * y_0,
-                       f_0 * x_1,
-                       f_0 * y_1,
-                       f_0 ** 2]])
+        xi = np.array(
+            [
+                [
+                    x_0 * x_1,
+                    x_0 * y_1,
+                    f_0 * x_0,
+                    y_0 * x_1,
+                    y_0 * y_1,
+                    f_0 * y_0,
+                    f_0 * x_1,
+                    f_0 * y_1,
+                    f_0**2,
+                ]
+            ]
+        )
         xi_sum += np.dot(xi.T, xi)
 
     M = xi_sum / len(img_pnts_0)
@@ -107,26 +129,76 @@ def calculate_f_matrix_by_taubin(img_pnts_0, img_pnts_1):
         y_0 = img_pnts_0[i, 0, 1]
         x_1 = img_pnts_1[i, 0, 0]
         y_1 = img_pnts_1[i, 0, 1]
-        xi = np.array([[x_0 * x_1,
-                       x_0 * y_1,
-                       f_0 * x_0,
-                       y_0 * x_1,
-                       y_0 * y_1,
-                       f_0 * y_0,
-                       f_0 * x_1,
-                       f_0 * y_1,
-                       f_0 ** 2]])
+        xi = np.array(
+            [
+                [
+                    x_0 * x_1,
+                    x_0 * y_1,
+                    f_0 * x_0,
+                    y_0 * x_1,
+                    y_0 * y_1,
+                    f_0 * y_0,
+                    f_0 * x_1,
+                    f_0 * y_1,
+                    f_0**2,
+                ]
+            ]
+        )
         xi_sum += np.dot(xi.T, xi)
 
-        V0_xi = np.array([[x_0**2+x_1**2, x_1*y_1, f_0*x_1, x_0*y_0, 0, 0, f_0*x_0, 0, 0],
-                        [x_1*y_1, x_0**2+y_1**2, f_0*y_1, 0, x_0*y_0, 0, 0, f_0*x_0, 0],
-                        [f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0, 0, 0, 0],
-                        [x_0*y_0, 0, 0, y_0**2+x_1**2, x_1*y_1, f_0*x_1, f_0*y_0, 0, 0],
-                        [0, x_0*y_0, 0, x_1*y_1, y_0**2+y_1**2, f_0*y_1, 0, f_0*y_0, 0],
-                        [0, 0, 0, f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0],
-                        [f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0, 0],
-                        [0, f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+        V0_xi = np.array(
+            [
+                [
+                    x_0**2 + x_1**2,
+                    x_1 * y_1,
+                    f_0 * x_1,
+                    x_0 * y_0,
+                    0,
+                    0,
+                    f_0 * x_0,
+                    0,
+                    0,
+                ],
+                [
+                    x_1 * y_1,
+                    x_0**2 + y_1**2,
+                    f_0 * y_1,
+                    0,
+                    x_0 * y_0,
+                    0,
+                    0,
+                    f_0 * x_0,
+                    0,
+                ],
+                [f_0 * x_1, f_0 * y_1, f_0**2, 0, 0, 0, 0, 0, 0],
+                [
+                    x_0 * y_0,
+                    0,
+                    0,
+                    y_0**2 + x_1**2,
+                    x_1 * y_1,
+                    f_0 * x_1,
+                    f_0 * y_0,
+                    0,
+                    0,
+                ],
+                [
+                    0,
+                    x_0 * y_0,
+                    0,
+                    x_1 * y_1,
+                    y_0**2 + y_1**2,
+                    f_0 * y_1,
+                    0,
+                    f_0 * y_0,
+                    0,
+                ],
+                [0, 0, 0, f_0 * x_1, f_0 * y_1, f_0**2, 0, 0, 0],
+                [f_0 * x_0, 0, 0, f_0 * y_0, 0, 0, f_0**2, 0, 0],
+                [0, f_0 * x_0, 0, 0, f_0 * y_0, 0, 0, f_0**2, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ]
+        )
         V0_xi_sum += V0_xi
 
     M = xi_sum / len(img_pnts_0)
@@ -158,7 +230,10 @@ def calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1):
             y_0 = img_pnts_0[i, 0, 1]
             x_1 = img_pnts_1[i, 0, 0]
             y_1 = img_pnts_1[i, 0, 1]
-            xi = np.array([[x_0 * x_1,
+            xi = np.array(
+                [
+                    [
+                        x_0 * x_1,
                         x_0 * y_1,
                         f_0 * x_0,
                         y_0 * x_1,
@@ -166,19 +241,68 @@ def calculate_f_matrix_by_fns(img_pnts_0, img_pnts_1):
                         f_0 * y_0,
                         f_0 * x_1,
                         f_0 * y_1,
-                        f_0 ** 2]])
+                        f_0**2,
+                    ]
+                ]
+            )
             xi_sum += np.dot(W[i], np.dot(xi.T, xi))
-            V0_xi = np.array([[x_0**2+x_1**2, x_1*y_1, f_0*x_1, x_0*y_0, 0, 0, f_0*x_0, 0, 0],
-                            [x_1*y_1, x_0**2+y_1**2, f_0*y_1, 0, x_0*y_0, 0, 0, f_0*x_0, 0],
-                            [f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0, 0, 0, 0],
-                            [x_0*y_0, 0, 0, y_0**2+x_1**2, x_1*y_1, f_0*x_1, f_0*y_0, 0, 0],
-                            [0, x_0*y_0, 0, x_1*y_1, y_0**2+y_1**2, f_0*y_1, 0, f_0*y_0, 0],
-                            [0, 0, 0, f_0*x_1, f_0*y_1, f_0**2, 0, 0, 0],
-                            [f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0, 0],
-                            [0, f_0*x_0, 0, 0, f_0*y_0, 0, 0, f_0**2, 0],
-                            [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+            V0_xi = np.array(
+                [
+                    [
+                        x_0**2 + x_1**2,
+                        x_1 * y_1,
+                        f_0 * x_1,
+                        x_0 * y_0,
+                        0,
+                        0,
+                        f_0 * x_0,
+                        0,
+                        0,
+                    ],
+                    [
+                        x_1 * y_1,
+                        x_0**2 + y_1**2,
+                        f_0 * y_1,
+                        0,
+                        x_0 * y_0,
+                        0,
+                        0,
+                        f_0 * x_0,
+                        0,
+                    ],
+                    [f_0 * x_1, f_0 * y_1, f_0**2, 0, 0, 0, 0, 0, 0],
+                    [
+                        x_0 * y_0,
+                        0,
+                        0,
+                        y_0**2 + x_1**2,
+                        x_1 * y_1,
+                        f_0 * x_1,
+                        f_0 * y_0,
+                        0,
+                        0,
+                    ],
+                    [
+                        0,
+                        x_0 * y_0,
+                        0,
+                        x_1 * y_1,
+                        y_0**2 + y_1**2,
+                        f_0 * y_1,
+                        0,
+                        f_0 * y_0,
+                        0,
+                    ],
+                    [0, 0, 0, f_0 * x_1, f_0 * y_1, f_0**2, 0, 0, 0],
+                    [f_0 * x_0, 0, 0, f_0 * y_0, 0, 0, f_0**2, 0, 0],
+                    [0, f_0 * x_0, 0, 0, f_0 * y_0, 0, 0, f_0**2, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                ]
+            )
             V0_xi_list.append(V0_xi)
-            L_sum += np.dot(np.dot(W[i]**2, np.dot(xi.T[:, 0], theta_zero)**2), V0_xi)
+            L_sum += np.dot(
+                np.dot(W[i] ** 2, np.dot(xi.T[:, 0], theta_zero) ** 2), V0_xi
+            )
 
         M = xi_sum / len(img_pnts_0)
         L = L_sum / len(img_pnts_0)
@@ -205,12 +329,12 @@ def draw_epipolar_lines(img_0, img_pnts_0, img_pnts_1):
     F, mask = cv2.findFundamentalMat(img_pnts_0, img_pnts_1, cv2.FM_LMEDS)
 
     lines_CAM1 = cv2.computeCorrespondEpilines(img_pnts_1, 2, F)
-    lines_CAM1 = lines_CAM1.reshape(-1,3)
+    lines_CAM1 = lines_CAM1.reshape(-1, 3)
     width_CAM1 = img_0.shape[1]
     for lines in lines_CAM1:
-        x0,y0 = map(int, [0,-lines[2]/lines[1]])
-        x1,y1 = map(int, [width_CAM1,-(lines[2]+lines[0]*width_CAM1)/lines[1]])
-        img_0 = cv2.line(img_0, (x0,y0), (x1,y1), (0, 255, 0), 1)
+        x0, y0 = map(int, [0, -lines[2] / lines[1]])
+        x1, y1 = map(int, [width_CAM1, -(lines[2] + lines[0] * width_CAM1) / lines[1]])
+        img_0 = cv2.line(img_0, (x0, y0), (x1, y1), (0, 255, 0), 1)
 
     cv2.imshow("EPI", img_0)
     cv2.waitKey(0)
@@ -238,12 +362,16 @@ def prepare_test_data(draw_test_data, draw_epipolar):
     width = 640
     height = 480
     pp = (width / 2, height / 2)
-    camera_matrix = np.matrix(np.array([[f, 0, pp[0]],
-                            [0, f, pp[1]],
-                            [0, 0, 1]], dtype = "double"))
+    camera_matrix = np.matrix(
+        np.array([[f, 0, pp[0]], [0, f, pp[1]], [0, 0, 1]], dtype="double")
+    )
     dist_coeffs = np.zeros((5, 1))
-    img_pnts_0, jac = cv2.projectPoints(points, rodri_0, trans_vec_0, camera_matrix, dist_coeffs)
-    img_pnts_1, jac = cv2.projectPoints(points, rodri_1, trans_vec_1, camera_matrix, dist_coeffs)
+    img_pnts_0, jac = cv2.projectPoints(
+        points, rodri_0, trans_vec_0, camera_matrix, dist_coeffs
+    )
+    img_pnts_1, jac = cv2.projectPoints(
+        points, rodri_1, trans_vec_1, camera_matrix, dist_coeffs
+    )
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
@@ -257,22 +385,42 @@ def prepare_test_data(draw_test_data, draw_epipolar):
     for pnt in noised_img_pnts_1:
         cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
 
-    F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord = calculate_true_fundamental_matrix(rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix)
+    (
+        F_true_1_to_2,
+        rot_1_to_2,
+        trans_1_to_2_in_camera_coord,
+    ) = calculate_true_fundamental_matrix(
+        rot_mat_0, rot_mat_1, T_0_in_camera_coord, T_1_in_camera_coord, camera_matrix
+    )
 
     if draw_epipolar:
         draw_epipolar_lines(img_0, noised_img_pnts_0, noised_img_pnts_1)
 
     if draw_test_data:
-        cv2.imshow("CAM0", cv2.resize(img_0, None, fx = 0.5, fy = 0.5))
-        cv2.imshow("CAM1", cv2.resize(img_1, None, fx = 0.5, fy = 0.5))
+        cv2.imshow("CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
+        cv2.imshow("CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
         cv2.waitKey(0)
 
-    return img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true_1_to_2, rot_1_to_2, trans_1_to_2_in_camera_coord
+    return (
+        img_pnts_0,
+        img_pnts_1,
+        noised_img_pnts_0,
+        noised_img_pnts_1,
+        F_true_1_to_2,
+        rot_1_to_2,
+        trans_1_to_2_in_camera_coord,
+    )
 
 
 def rank_postcorrection_method(F):
     U, S, Vt = np.linalg.svd(F)
-    S = np.array([S[0]/np.sqrt(S[0]**2+S[1]**2), S[1]/np.sqrt(S[0]**2+S[1]**2), 0])
+    S = np.array(
+        [
+            S[0] / np.sqrt(S[0] ** 2 + S[1] ** 2),
+            S[1] / np.sqrt(S[0] ** 2 + S[1] ** 2),
+            0,
+        ]
+    )
     F_ans = np.dot(np.dot(U, np.diag(S)), Vt)
 
     return F_ans
@@ -288,22 +436,38 @@ def calculate_f_matrix_diff(F_true, F_est):
 
 
 def main(draw_test_data, draw_epipolar):
-    img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_true, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data_for_fundamental_matrix.prepare_test_data(draw_test_data, draw_epipolar)
+    (
+        img_pnts_0,
+        img_pnts_1,
+        noised_img_pnts_0,
+        noised_img_pnts_1,
+        F_true,
+        rot_1_to_2,
+        trans_1_to_2_in_camera_coord,
+    ) = prepare_test_data_for_fundamental_matrix.prepare_test_data(
+        draw_test_data, draw_epipolar
+    )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_true")
     print(F_true)
 
-    F_by_least_squares = rank_postcorrection_method(calculate_f_matrix_by_least_squares(noised_img_pnts_0, noised_img_pnts_1))
+    F_by_least_squares = rank_postcorrection_method(
+        calculate_f_matrix_by_least_squares(noised_img_pnts_0, noised_img_pnts_1)
+    )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_least_squares")
     print(F_by_least_squares)
 
-    F_by_taubin = rank_postcorrection_method(calculate_f_matrix_by_taubin(noised_img_pnts_0, noised_img_pnts_1))
+    F_by_taubin = rank_postcorrection_method(
+        calculate_f_matrix_by_taubin(noised_img_pnts_0, noised_img_pnts_1)
+    )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_taubin")
     print(F_by_taubin)
 
-    F_by_fns = rank_postcorrection_method(calculate_f_matrix_by_fns(noised_img_pnts_0, noised_img_pnts_1))
+    F_by_fns = rank_postcorrection_method(
+        calculate_f_matrix_by_fns(noised_img_pnts_0, noised_img_pnts_1)
+    )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_by_fns")
     print(F_by_fns)
@@ -317,7 +481,7 @@ def main(draw_test_data, draw_epipolar):
     print("F_true_vs_F_by_fns: ", F_true_vs_F_by_fns)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     draw_test_data = False
     draw_epipolar = False
     main(draw_test_data, draw_epipolar)

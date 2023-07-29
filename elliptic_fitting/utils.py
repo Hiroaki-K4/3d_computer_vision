@@ -13,12 +13,18 @@ def plot_base():
 
 
 def solve_fitting(theta, corr_x, f_0):
-    y = sympy.Symbol('y')
+    y = sympy.Symbol("y")
     fit_x = []
     fit_y = []
     for x in tqdm(corr_x):
-        f = theta[0]*x**2 + 2*theta[1]*x*y + theta[2]*y**2 + 2*f_0*(theta[3]*x+theta[4]*y)+f_0**2*theta[5]
-        solutions=sympy.solve(f, y)
+        f = (
+            theta[0] * x**2
+            + 2 * theta[1] * x * y
+            + theta[2] * y**2
+            + 2 * f_0 * (theta[3] * x + theta[4] * y)
+            + f_0**2 * theta[5]
+        )
+        solutions = sympy.solve(f, y)
         for y_ans in solutions:
             if type(y_ans) == sympy.core.add.Add:
                 continue
@@ -38,15 +44,23 @@ def eval_pos_diff(corr_x, corr_y, est_x, est_y):
 
     return diff_sum, diff_avg
 
+
 def get_elliptic_points_with_tilt():
     x = []
     y = []
     n_x = []
     n_y = []
     tilt = 45
-    R = np.array([[np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))], [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))]])
+    R = np.array(
+        [
+            [np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))],
+            [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))],
+        ]
+    )
     for theta in range(360):
-        point = np.array([7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))])
+        point = np.array(
+            [7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))]
+        )
         noise = np.random.normal(0, 0.2, point.shape)
         rotated_point = np.dot(R, point.T)
         x.append(rotated_point[0])

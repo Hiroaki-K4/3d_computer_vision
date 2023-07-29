@@ -10,9 +10,16 @@ def get_elliptic_points_with_outlier():
     n_x = []
     n_y = []
     tilt = 45
-    R = np.array([[np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))], [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))]])
+    R = np.array(
+        [
+            [np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))],
+            [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))],
+        ]
+    )
     for theta in range(360):
-        point = np.array([7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))])
+        point = np.array(
+            [7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))]
+        )
         rotated_point = np.dot(R, point.T)
         x.append(rotated_point[0])
         y.append(rotated_point[1])
@@ -41,16 +48,22 @@ def elliptic_fitting_by_fns(noise_x, noise_y, f):
         for i in range(len(noise_x)):
             x = noise_x[i]
             y = noise_y[i]
-            xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
+            xi = np.array([[x**2, 2 * x * y, y**2, 2 * f * x, 2 * f * y, f * f]])
             xi_sum += np.dot(W[i], np.dot(xi.T, xi))
-            V0_xi = 4 * np.array([[x**2, x*y, 0, f*x, 0, 0],
-                            [x*y, x**2+y**2, x*y, f*y, f*x, 0],
-                            [0, x*y, y**2, 0, f*y, 0],
-                            [f*x, f*y, 0, f**2, 0, 0],
-                            [0, f*x, f*y, 0, f**2, 0],
-                            [0, 0, 0, 0, 0, 0]])
+            V0_xi = 4 * np.array(
+                [
+                    [x**2, x * y, 0, f * x, 0, 0],
+                    [x * y, x**2 + y**2, x * y, f * y, f * x, 0],
+                    [0, x * y, y**2, 0, f * y, 0],
+                    [f * x, f * y, 0, f**2, 0, 0],
+                    [0, f * x, f * y, 0, f**2, 0],
+                    [0, 0, 0, 0, 0, 0],
+                ]
+            )
             V0_xi_list.append(V0_xi)
-            L_sum += np.dot(np.dot(W[i]**2, np.dot(xi.T[:, 0], theta_zero)**2), V0_xi)
+            L_sum += np.dot(
+                np.dot(W[i] ** 2, np.dot(xi.T[:, 0], theta_zero) ** 2), V0_xi
+            )
 
         M = xi_sum / len(noise_x)
         L = L_sum / len(noise_x)
@@ -80,14 +93,18 @@ def removed_outlier(noise_x, noise_y, theta, f, threshold):
     for i in range(len(noise_x)):
         x = noise_x[i]
         y = noise_y[i]
-        xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
-        V0_xi = 4 * np.array([[x**2, x*y, 0, f*x, 0, 0],
-                            [x*y, x**2+y**2, x*y, f*y, f*x, 0],
-                            [0, x*y, y**2, 0, f*y, 0],
-                            [f*x, f*y, 0, f**2, 0, 0],
-                            [0, f*x, f*y, 0, f**2, 0],
-                            [0, 0, 0, 0, 0, 0]])
-        d = (np.dot(xi, theta))**2 / (np.dot(theta, np.dot(V0_xi, theta)))
+        xi = np.array([[x**2, 2 * x * y, y**2, 2 * f * x, 2 * f * y, f * f]])
+        V0_xi = 4 * np.array(
+            [
+                [x**2, x * y, 0, f * x, 0, 0],
+                [x * y, x**2 + y**2, x * y, f * y, f * x, 0],
+                [0, x * y, y**2, 0, f * y, 0],
+                [f * x, f * y, 0, f**2, 0, 0],
+                [0, f * x, f * y, 0, f**2, 0],
+                [0, 0, 0, 0, 0, 0],
+            ]
+        )
+        d = (np.dot(xi, theta)) ** 2 / (np.dot(theta, np.dot(V0_xi, theta)))
         if d[0] < threshold:
             removed_x.append(x)
             removed_y.append(y)
@@ -106,7 +123,7 @@ def remove_outlier_by_ransac(noise_x, noise_y, f):
         for idx in random_list:
             x = noise_x[idx]
             y = noise_y[idx]
-            xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
+            xi = np.array([[x**2, 2 * x * y, y**2, 2 * f * x, 2 * f * y, f * f]])
             M += np.dot(xi.T, xi)
 
         eig_val, eig_vec = np.linalg.eig(M)
@@ -118,14 +135,18 @@ def remove_outlier_by_ransac(noise_x, noise_y, f):
         for i in range(len(noise_x)):
             x = noise_x[i]
             y = noise_y[i]
-            xi = np.array([[x**2, 2*x*y, y**2, 2*f*x, 2*f*y, f*f]])
-            V0_xi = 4 * np.array([[x**2, x*y, 0, f*x, 0, 0],
-                                [x*y, x**2+y**2, x*y, f*y, f*x, 0],
-                                [0, x*y, y**2, 0, f*y, 0],
-                                [f*x, f*y, 0, f**2, 0, 0],
-                                [0, f*x, f*y, 0, f**2, 0],
-                                [0, 0, 0, 0, 0, 0]])
-            d = (np.dot(xi, theta))**2 / (np.dot(theta, np.dot(V0_xi, theta)))
+            xi = np.array([[x**2, 2 * x * y, y**2, 2 * f * x, 2 * f * y, f * f]])
+            V0_xi = 4 * np.array(
+                [
+                    [x**2, x * y, 0, f * x, 0, 0],
+                    [x * y, x**2 + y**2, x * y, f * y, f * x, 0],
+                    [0, x * y, y**2, 0, f * y, 0],
+                    [f * x, f * y, 0, f**2, 0, 0],
+                    [0, f * x, f * y, 0, f**2, 0],
+                    [0, 0, 0, 0, 0, 0],
+                ]
+            )
+            d = (np.dot(xi, theta)) ** 2 / (np.dot(theta, np.dot(V0_xi, theta)))
             if d[0] < threshold:
                 inlier_count += 1
 
@@ -136,7 +157,9 @@ def remove_outlier_by_ransac(noise_x, noise_y, f):
         else:
             no_update_count += 1
 
-    removed_x, removed_y = removed_outlier(noise_x, noise_y, desired_theta, f, threshold)
+    removed_x, removed_y = removed_outlier(
+        noise_x, noise_y, desired_theta, f, threshold
+    )
 
     return removed_x, removed_y
 
@@ -156,12 +179,12 @@ def main():
     fns_diff, fns_diff_avg = utils.eval_pos_diff(corr_x, corr_y, f_fit_x, f_fit_y)
     print("fns_diff_avg: ", fns_diff_avg)
 
-    plt.scatter(corr_x, corr_y, marker='o', c="black", s=20)
-    plt.scatter(noise_x, noise_y, marker='o', c="blue", s=20)
-    plt.scatter(removed_x, removed_y, marker='o', c="red", s=20)
-    plt.scatter(f_fit_x, f_fit_y, marker='o', c="green", s=20)
+    plt.scatter(corr_x, corr_y, marker="o", c="black", s=20)
+    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20)
+    plt.scatter(removed_x, removed_y, marker="o", c="red", s=20)
+    plt.scatter(f_fit_x, f_fit_y, marker="o", c="green", s=20)
     plt.show()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
