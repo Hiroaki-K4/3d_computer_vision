@@ -92,14 +92,19 @@ def add_noise(img_pnts, noise_scale):
     return noised_points
 
 
-def prepare_test_data(draw_test_data, draw_epipolar):
+def prepare_test_data(draw_test_data, draw_epipolar, surface_type="CURVE"):
     rot_mat_0 = euler_angle_to_rot_mat(0, -10, 0)
     T_0_in_camera_coord = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
     rot_mat_1 = euler_angle_to_rot_mat(0, 30, 0)
     T_1_in_camera_coord = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
-    points = create_curve_surface_points(5, 5, 0.2)
+    if surface_type == "CURVE":
+        points = create_curve_surface_points(5, 5, 0.2)
+    elif surface_type == "PLANE":
+        points = create_curve_surface_points(5, 5, 0)
+    else:
+        raise RuntimeError("Surface type is wrong")
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
     rodri_1, jac = cv2.Rodrigues(rot_mat_1)
 
