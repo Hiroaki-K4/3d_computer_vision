@@ -164,6 +164,20 @@ def calculate_projective_trans_by_weighted_repetition(img_pnts_0, img_pnts_1):
     return H
 
 
+def evaluate(noised_img_pnts_0, noised_img_pnts_1, H):
+    error = 0
+    for i in range(len(noised_img_pnts_0)):
+        pnt_0 = noised_img_pnts_0[i]
+        pnt_1 = noised_img_pnts_1[i]
+        from_pnt = np.array([pnt_0[0][0], pnt_0[0][1], 1])
+        to_pnt = np.dot(H, from_pnt)
+        to_1 = 1 / to_pnt[2]
+        to_pnt = to_pnt * to_1
+        error += abs(pnt_1[0][0] - to_pnt[0]) + abs(pnt_1[0][1] - to_pnt[1])
+
+    return error / len(noised_img_pnts_0)
+
+
 def main():
     (
         img_pnts_0,
@@ -180,15 +194,21 @@ def main():
     H = calculate_projective_trans_by_weighted_repetition(
         noised_img_pnts_0, noised_img_pnts_1
     )
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("Weighted repetition H: ")
-    print(H)
     H_cv, _ = cv2.findHomography(
         np.float32(noised_img_pnts_0), np.float32(noised_img_pnts_1)
     )
+
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("Weighted repetition H: ")
+    print(H)
+    error_avg = evaluate(noised_img_pnts_0, noised_img_pnts_1, H)
+    print("Error avg: ", error_avg)
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("Opencv H: ")
     print(H_cv)
+    error_avg_cv = evaluate(noised_img_pnts_0, noised_img_pnts_1, H_cv)
+    print("Error avg: ", error_avg_cv)
+    input()
 
     width = 640
     height = 480
