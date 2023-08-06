@@ -80,7 +80,7 @@ def calculate_projective_trans_by_weighted_repetition(img_pnts_0, img_pnts_1):
         W = np.append(W, np.array([[[1, 0, 0], [0, 1, 0], [0, 0, 1]]]), axis=0)
 
     count = 0
-    count_thr = 100
+    count_thr = 1000
     while True:
         for i in range(len(img_pnts_0)):
             p_0 = img_pnts_0[i][0]
@@ -140,9 +140,12 @@ def calculate_projective_trans_by_weighted_repetition(img_pnts_0, img_pnts_1):
         M = M_sum / len(img_pnts_0)
         w, v = np.linalg.eig(M)
         theta = v[:, np.argmin(w)]
-        theta_diff = np.linalg.norm(theta - pre_theta)
+        if np.dot(theta, pre_theta) < 0:
+            theta_diff = np.linalg.norm((-1) * theta - pre_theta)
+        else:
+            theta_diff = np.linalg.norm(theta - pre_theta)
         print("Theta diff: ", theta_diff)
-        if theta_diff < 1e-7 or count > count_thr:
+        if theta_diff < 1e-8 or count > count_thr:
             break
         else:
             pre_theta = theta
