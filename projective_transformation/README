@@ -1,4 +1,125 @@
 # Projective transformation
+Suppose a plane is captured by two cameras and a point $(x, y)$ in one image corresponds to a point $(x\prime, y\prime)$ in the other image. At this time, it is known that the following relationship holds.
+
+$$
+x\prime=f_0\frac{H_{11}x+H_{12}y+H_{13}f_0}{H_{31}x+H_{32}y+H_{33}f_0},y\prime=\frac{H_{21}x+H_{22}y+H_{23}f_0}{H_{31}x+H_{32}y+H_{33}f_0} \tag{1}
+$$
+
+As with elliptic fitting and the computation of the basis matrix, $f_0$ is a constant that adjusts the scale.
+Eq(1) can be rewritten as where $\simeq$ denotes that the left-hand side is a non-zero constant multiple of the right-hand side.
+
+$$
+\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+\begin{pmatrix}
+H_{11} & H_{12} & H_{13} \\
+H_{21} & H_{22} & H_{23} \\
+H_{31} & H_{32} & H_{33} \\
+\end{pmatrix}
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix} \tag{2}
+$$
+
+Such a mapping from $(x,y)$ to $(x\prime,y\prime)$ is called a projective transformation when $H$ is a regular matrix. Eq(2) can be rewritten as follows, since the left and right sides are parallel vectors.
+
+$$
+\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}\times
+\begin{pmatrix}
+H_{11} & H_{12} & H_{13} \\
+H_{21} & H_{22} & H_{23} \\
+H_{31} & H_{32} & H_{33} \\
+\end{pmatrix}
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix}
+=\begin{pmatrix}
+0 \\
+0 \\
+0 \\
+\end{pmatrix} \tag{3}
+$$
+
+$\times$ represents the outer product.
+
+The regular matrix $H$ is determined from the relative positions of the two cameras and their parameters as well as the position and orientation of the planar scene and is called the projective transformation matrix. It represents the same projective transformation no matter how many times the whole matrix is multiplied, so it is multiplied by a constant and normalized as follows.
+
+$$
+\|H\|\left(\equiv \sqrt{\sum_{i,j=1}^3H_{ij}^2}\right)=1 \tag{4}
+$$
+
+The 9-dimensional vector is defined as follows.
+
+$$
+\theta=\begin{pmatrix}
+H_{11} \\
+H_{12} \\
+H_{13} \\
+H_{21} \\
+H_{22} \\
+H_{23} \\
+H_{31} \\
+H_{32} \\
+H_{33} \\
+\end{pmatrix},
+\xi^{(1)}=\begin{pmatrix}
+0 \\
+0 \\
+0 \\
+-f_0x \\
+-f_0y \\
+-f_0^2 \\
+xy\prime \\
+yy\prime \\
+f_0y\prime \\
+\end{pmatrix},
+\xi^{(2)}=\begin{pmatrix}
+f_0x \\
+f_0y \\
+f_0^2 \\
+0 \\
+0 \\
+0 \\
+-xx\prime \\
+-yx\prime \\
+-f_0x\prime \\
+\end{pmatrix},
+\xi^{(3)}=\begin{pmatrix}
+-xy\prime \\
+-yy\prime \\
+-f_0y\prime \\
+xx\prime \\
+yx\prime \\
+f_0x\prime \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix} \tag{5}
+$$
+
+The three components of equation (3) can be written as
+
+$$
+(\xi^{(1)},\theta)=0, (\xi^{(2)},\theta)=0, (\xi^{(3)},\theta)=0 \tag{6}
+$$
+
+<br></br>
+
+## Error and covariance matrix
+
+
+<br></br>
 
 ## Reference
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
