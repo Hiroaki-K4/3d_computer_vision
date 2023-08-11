@@ -111,13 +111,107 @@ $$
 The three components of equation (3) can be written as
 
 $$
-(\xi^{(1)},\theta)=0, (\xi^{(2)},\theta)=0, (\xi^{(3)},\theta)=0 \tag{6}
+(\xi^{(1)},\theta)=0, \qquad (\xi^{(2)},\theta)=0, \qquad (\xi^{(3)},\theta)=0 \tag{6}
 $$
 
 <br></br>
 
 ## Error and covariance matrix
+Corresponding point with error $(x_\alpha,y_\alpha)(x\prime_\alpha,y\prime_\alpha)(\alpha=1,...,N)$ from which a projective transformation matrix $H$ satisfying Eq(1) is computed is mathematically to compute a unit vector a such that
 
+$$
+(\xi^{(1)},\theta)\approx 0, \qquad (\xi^{(2)},\theta)\approx 0, \qquad (\xi^{(3)},\theta)\approx 0, \qquad \alpha=1,...,N \tag{7}
+$$
+
+$\xi_\alpha^{(k)}$ is the value of $\xi^{(k)}$ for $x=x_\alpha, y=y_\alpha, x\prime=x\prime_\alpha, y\prime=y\prime_\alpha$. The data $x_\alpha, y_\alpha, x\prime_\alpha, y\prime_\alpha$ is written as its true value $\bar{x_\alpha}, \bar{y_\alpha}, \bar{x_\alpha}\prime, \bar{y_\alpha}\prime$ plus the error $\triangle x_\alpha, \triangle y_\alpha, \triangle x_\alpha\prime, \triangle y_\alpha\prime$ as follows.
+
+$$
+x_\alpha=\bar{x_\alpha}+\triangle x_\alpha, \quad y_\alpha=\bar{y_\alpha}+\triangle y_\alpha, \quad x_\alpha\prime=\bar{x_\alpha}\prime+\triangle x_\alpha\prime, \quad y_\alpha\prime=\bar{y_\alpha}\prime+\triangle y_\alpha\prime \tag{8}
+$$
+
+Substituting these into $\xi_\alpha^{(k)}$, we obtain
+
+$$
+\xi_\alpha^{(k)}=\bar{\xi_\alpha^{(k)}}+\triangle_1 \xi_\alpha^{(k)} + \triangle_2 \xi_\alpha^{(k)} \tag{9}
+$$
+
+$\bar{\xi_\alpha^{(k)}}$ is the value of $\xi_\alpha^{(k)}$ with respect to $x_\alpha=\bar{x_\alpha}, y_\alpha=\bar{y_\alpha}, x_\alpha\prime=\bar{x_\alpha\prime}, y_\alpha\prime=\bar{y_\alpha\prime}$, and $\triangle_1 \xi_\alpha^{(k)}$ and $\triangle_2 \xi_\alpha^{(k)}$ are the first-order and second-order error terms, respectively. the first-order error term can be written as
+
+$$
+\triangle_1 \xi_\alpha^{(k)}=T_\alpha^{(k)}
+\begin{pmatrix}
+\triangle x_\alpha \\
+\triangle y_\alpha \\
+\triangle x_\alpha\prime \\
+\triangle y_\alpha\prime \\
+\end{pmatrix} \tag{10}
+$$
+
+The matrix $T_\alpha^{(k)}$ is a sequence of $\xi_\alpha^{(k)}$ differentiated by $x_\alpha$, $y_\alpha$, $x_\alpha\prime$ and $y_\alpha\prime$ respectively, and arranged as a column, as follows.
+
+$$
+T_\alpha^{(1)}=\begin{pmatrix}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+-f_0 & 0 & 0 & 0 \\
+0 & -f_0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+\bar{y_\alpha}\prime & 0 & 0 & \bar{x_\alpha} \\
+0 & \bar{y_\alpha}\prime & 0 & \bar{y_\alpha} \\
+0 & 0 & 0 & f_0 \\
+\end{pmatrix},
+T_\alpha^{(2)}=\begin{pmatrix}
+f_0 & 0 & 0 & 0 \\
+0 & f_0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+-\bar{x_\alpha\prime} & 0 & -\bar{x_\alpha} & 0 \\
+0 & -\bar{x_\alpha\prime} & -\bar{y_\alpha} & 0 \\
+0 & 0 & -f_0 & 0 \\
+\end{pmatrix},
+T_\alpha^{(3)}=\begin{pmatrix}
+-\bar{y_\alpha\prime} & 0 & 0 & -\bar{x_\alpha} \\
+0 & -\bar{y_\alpha\prime} & 0 & -\bar{y_\alpha} \\
+0 & 0 & 0 & -f_0 \\
+\bar{x_\alpha\prime} & 0 & \bar{x_\alpha} & 0 \\
+0 & \bar{x_\alpha\prime} & \bar{y_\alpha} & 0 \\
+0 & 0 & f_0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix} \tag{11}
+$$
+
+Considering the error $\triangle x_\alpha, \triangle y_\alpha, \triangle x_\alpha\prime, \triangle y_\alpha\prime$ as a random variable, we define the covariance matrix of $\xi_\alpha^{(k)}$ and $\xi_\alpha^{(l)}$ as follows.
+
+$$
+V^{(kl)}[\xi_\alpha]=E[\triangle_1 \xi_\alpha^{(k)} \triangle_1 \xi_\alpha^{(l)\intercal}] \tag{12}
+$$
+
+$E[・]$ denotes the expected value for that distribution. If $\triangle x_\alpha, \triangle y_\alpha, \triangle x_\alpha\prime, \triangle y_\alpha\prime$ follow a normal distribution with expectation $0$ and standard deviation $\sigma$, independent of each other, then
+
+$$
+\begin{align*}
+E[\triangle x_\alpha]&=E[\triangle y_\alpha]=E[\triangle x_\alpha\prime]=E[\triangle y_\alpha\prime]=0, \\
+E[\triangle x_\alpha^2]&=E[\triangle y_\alpha^2]=E[\triangle x_\alpha\prime^2]=E[\triangle y_\alpha\prime^2]=\sigma^2, \\
+E[\triangle x_\alpha\triangle y_\alpha]&=E[\triangle x_\alpha\prime\triangle y_\alpha\prime]=E[\triangle x_\alpha\triangle y_\alpha\prime]=E[\triangle x_\alpha\prime\triangle y_\alpha]=0
+\end{align*} \tag{13}
+$$
+
+The covariance matrix of Eq(12), using Eq(10), can be written as
+
+$$
+V^{(kl)}[\xi_\alpha]=\sigma^2V_0^{(kl)}[\xi_\alpha], \quad V_0^{(kl)}[\xi_\alpha]=T_\alpha^{(k)}T_\alpha^{(l)\intercal} \tag{14}
+$$
+
+As with elliptic fitting, there is no need to consider $\triangle_2\xi_\alpha$. Also, $\bar{x_\alpha},\bar{y_\alpha},\bar{x_\alpha\prime},\bar{y_\alpha\prime}$ in Eq(11) is replaced by $x_\alpha,y_\alpha,x_\alpha\prime,y_\alpha\prime$ in the actual calculation.
+
+<br></br>
+
+## Algebraic method
 
 <br></br>
 
