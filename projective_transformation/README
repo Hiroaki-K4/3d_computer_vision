@@ -212,6 +212,73 @@ As with elliptic fitting, there is no need to consider $\triangle_2\xi_\alpha$. 
 <br></br>
 
 ## Algebraic method
+To compute the projective transformation matrix $H$ from the corresponding points with errors is to compute the unit vector a satisfying Eq.(7), taking into account the nature of the errors represented by the covariance matrix $V^{(kl)}[\xi_\alpha]$.
+
+### Weighted repetition method
+#### **1. Let $\theta=0$ and $W_\alpha^{(kl)}=\delta_{kl}$. $\delta_{kl}$ is the Kronecker delta ($1$ when $k=l$, $0$ otherwise).**
+
+#### **2. Calculate 9*9 matrix M**
+
+$$
+M = \frac{1}{N}\sum_{\alpha=1}^N\sum_{k,l=1}^3 W_\alpha^{(kl)}\xi_\alpha^{(k)}\xi_\alpha^{(l)\intercal} \tag{15}
+$$
+
+#### **3. Solve the following eigenvalue problem to compute the unit eigenvector $\theta$ for the smallest eigenvalue $\lambda$**
+
+$$
+M\theta=\lambda\theta \tag{16}
+$$
+
+#### **4. If $\theta\approx\theta_0$, except for the sign, return $\theta$ and exit. Otherwise, update as follows and return to step 2.**
+
+$$
+W_\alpha^{(kl)} \leftarrow \left( (\theta, V_0^{(kl)}[\xi_\alpha]\theta) \right)_2^-, \quad \theta_0 \leftarrow \theta \tag{17}
+$$
+
+$\left( (\theta, V_0^{(kl)}[\xi_\alpha]\theta) \right)_2^-$ in Eq.(17) is the $(k,l)$ element of the rank 2 general inverse of the matrix with $(\theta, V_0^{(kl)}[\xi_\alpha]\theta)$ as the $(k,l)$ element. In other words, it is an abbreviation for the following matrix.
+
+$$
+\begin{pmatrix}
+(\theta, V_0^{(11)}[\xi_\alpha]\theta) & (\theta, V_0^{(12)}[\xi_\alpha]\theta) & (\theta, V_0^{(13)}[\xi_\alpha]\theta) \\
+(\theta, V_0^{(21)}[\xi_\alpha]\theta) & (\theta, V_0^{(22)}[\xi_\alpha]\theta) & (\theta, V_0^{(23)}[\xi_\alpha]\theta) \\
+(\theta, V_0^{(31)}[\xi_\alpha]\theta) & (\theta, V_0^{(32)}[\xi_\alpha]\theta) & (\theta, V_0^{(33)}[\xi_\alpha]\theta) \\
+\end{pmatrix}_2^- \tag{18}
+$$
+
+The general inverse matrix $A_r^-$ of rank $r$ of a symmetric matrix $A$ is the orthonormal system of eigenvalues of $A$ with $\lambda_1 \geq \lambda2 \geq ...$ and corresponding unit eigenvectors $u1,u2,...$ Then $A_r^-=u_1u_1^\intercal/\lambda_1+...+u_2u_2^\intercal/\lambda_2$. Similar to elliptic fitting, the computation of the unit eigenvector for the smallest eigenvalue of a symmetric matrix $M$ is also the computation of the unit vector $\theta$ that minimizes the quadratic form $(\theta, M\theta)$.
+
+$$
+\begin{align*}
+(\theta,M\theta)&=\left( \theta, \left( \frac{1}{N}\sum_{k,l=1}^3 W_\alpha^{(kl)}\xi_\alpha^{(k)}\xi_\alpha^{(l)\intercal} \right) \theta \right) \\
+&=\frac{1}{N}\sum_{k,l=1}^3 W_\alpha^{(kl)}(\theta, \xi_\alpha^{(k)}\xi_\alpha^{(l)\intercal}\theta) \\
+&=\frac{1}{N}\sum_{k,l=1}^3 W_\alpha^{(kl)}(\theta, \xi_\alpha^{(k)})(\theta, \xi_\alpha^{(l)})
+\end{align*} \tag{19}
+$$
+
+This is called the weighted least squares method. According to statistics, it is known that the weight $W_\alpha^{(kl)}$ is best taken to be proportional to the elements of the inverse of the covariance matrix for that term (thus, the term with the smallest error is larger and the term with the largest error is smaller).
+
+Since $(\xi_\alpha^{(k)}, \theta)=(\bar{\xi_\alpha^{(k)}}, \theta)+(\triangle_1 \xi_\alpha^{(k)}, \theta) + (\triangle_2 \xi_\alpha^{(k)}, \theta)$ and $(\bar{\xi_\alpha^{(k)}}, \theta)=0$, the covariance matrix follows from Eq(12) and Eq(14).
+
+$$
+E[(\triangle_1 \xi_\alpha^{(k)}, \theta)(\triangle_1 \xi_\alpha^{(k)}, \theta)]=(\theta, E[\triangle_1 \xi_\alpha^{(k)} \triangle_1 \xi_\alpha^{(l)^\intercal}]\theta)=\sigma^2(\theta,V_0^{(kl)}[\xi_\alpha]\theta) \tag{20}
+$$
+
+Therefore, we can take the $(k,l)$ elements of the inverse matrix $(\theta,V_0^{(kl)}[\xi_\alpha]\theta)$ as weights $W_\alpha^{(kl)}$. However, when there is no error in the data, $(\theta,V_0^{(kl)}[\xi_\alpha]\theta)$ has determinant zero and there is no inverse matrix. This is because the three equations in Eq(6) are linearly dependent.
+In fact, from Eq(5), $x\prime\xi^{(1)}-y\prime\xi^{(2)}=\xi^{(3)}$. Therefore, the three equations in Eq(6) are essentially useless, e.g., if equations 1 and 2 are available, then equation 3 is automatically satisfied. Therefore, only two equations should be used, but which two are specified is not unique. To get away without specifying, we can use a rank 2 general inverse matrix instead of an inverse matrix.
+
+The reason why step 4 says except for the sign is because the general eigenvector has an indefinite sign. For this reason, if $(\theta, \theta_0)<0$, the comparison is done by changing the sign from $\theta$ to $-\theta$.
+
+You can try weighted repetition by running below command.
+
+```bash
+python3 calculate_projective_trans_by_weighted_repetition.py
+```
+
+<img src='images/img_0.png' width='350'><img src='images/img_1.png' width='350'>
+
+<br></br>
+
+### Renormalization
 
 <br></br>
 

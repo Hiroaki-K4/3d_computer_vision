@@ -208,7 +208,6 @@ def main():
     print(H_cv)
     error_avg_cv = evaluate(noised_img_pnts_0, noised_img_pnts_1, H_cv)
     print("Error avg: ", error_avg_cv)
-    input()
 
     width = 640
     height = 480
