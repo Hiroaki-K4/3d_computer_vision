@@ -23,9 +23,11 @@ def planner_triangulation(P_0, P_1, f_0, points_0, points_1, homography):
             9,
         ],
     )
+
     p_ori = np.array([points_0[0], points_0[1], points_1[0], points_1[1]])
     p_est = np.copy(p_ori)
     p_move = np.zeros(4)
+    prev_move_sum = sys.float_info.max
     while True:
         T_1 = np.array(
             [
@@ -92,7 +94,7 @@ def planner_triangulation(P_0, P_1, f_0, points_0, points_1, homography):
                 0,
                 -f_0 * p_est[0],
                 -f_0 * p_est[1],
-                -f_0**2,
+                -(f_0**2),
                 p_est[0] * p_est[3],
                 p_est[1] * p_est[3],
                 f_0 * p_est[3],
@@ -126,13 +128,26 @@ def planner_triangulation(P_0, P_1, f_0, points_0, points_1, homography):
         ) + np.dot(T_3, p_move)
         xi_list = [xi_1, xi_2, xi_3]
 
-        print(xi_list)
-        input()
+        p_move_tmp = np.zeros(4)
+        for i in range(3):
+            for j in range(3):
+                W = W_inv_rank_2[i, j]
+                p_move_tmp += np.dot(
+                    np.dot(np.dot(W, np.dot(xi_list[i], theta)), T_list[j].T), theta
+                )
+
+        p_move = p_move_tmp
+        p_est = p_ori - p_move
+        move_sum = p_move[0] ** 2 + p_move[1] ** 2 + p_move[2] ** 2 + p_move[3] ** 2
+        if abs(prev_move_sum - move_sum) < 1e-5:
+            break
+        else:
+            prev_move_sum = move_sum
+
+    return np.array([p_est[0], p_est[1]]), np.array([p_est[2], p_est[3]])
 
 
 def main():
-    draw_test_data = False
-    draw_epipolar = False
     (
         img_pnts_0,
         img_pnts_1,
@@ -145,15 +160,9 @@ def main():
         False, False, "PLANE"
     )
     f = 160
-    width = 640
-    height = 480
-    img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
-    img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     P_0, P_1 = calculate_camera_matrix_from_RT(
         rot_1_to_2, trans_1_to_2_in_camera_coord, f
     )
-    print("P_0: ", P_0)
-    print("P_1: ", P_1)
     H = proj_trans.calculate_projective_trans_by_weighted_repetition(
         noised_img_pnts_0, noised_img_pnts_1
     )
@@ -165,41 +174,28 @@ def main():
         pos = simple_triangulation(
             P_0, P_1, 640, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
         )
-        # x_0, y_0, x_1, y_1 = optimal_correction(
-        #     F_true, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
-        # )
-        # opt_pos = simple_triangulation(
-        #     P_0, P_1, 640, np.array([x_0, y_0]), np.array([x_1, y_1])
-        # )
-
-        planner_pos = planner_triangulation(
-            P_0, P_1, 640, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0], H
+        planner_point_0, planner_point_1 = planner_triangulation(
+            P_0, P_1, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0], H
         )
-
+        planar_pos = simple_triangulation(
+            P_0, P_1, 640, planner_point_0, planner_point_1
+        )
         print("point: ", i)
         print(
-            "noised_pos: ",
-            noised_img_pnts_0[i][0][0],
-            noised_img_pnts_0[i][0][1],
-            noised_img_pnts_1[i][0][0],
-            noised_img_pnts_1[i][0][1],
+            "2D points movement after planar triangulation: {0} -> {1}".format(
+                noised_img_pnts_0[i][0], planner_point_0
+            )
         )
-        # print("opt_pos: ", x_0, y_0, x_1, y_1)
         print(
-            "ori_pos: ",
-            img_pnts_0[i][0][0],
-            img_pnts_0[i][0][1],
-            img_pnts_1[i][0][0],
-            img_pnts_1[i][0][1],
+            "2D points movement after planar triangulation: {0} -> {1}".format(
+                noised_img_pnts_1[i][0], planner_point_1
+            )
         )
-        print("simple_triangulation: ", pos)
-        # print("simple_triangulation_opt: ", opt_pos)
-        # cv2.circle(img_0, (int(x_0), int(y_0)), 3, (0, 0, 0), -1)
-        # cv2.circle(img_1, (int(x_1), int(y_1)), 3, (255, 0, 0), -1)
-
-    # cv2.imshow("OPT_CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
-    # cv2.imshow("OPT_CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
-    cv2.waitKey(0)
+        print(
+            "3D points movement after planar triangulation: {0} -> {1}".format(
+                pos, planar_pos
+            )
+        )
 
 
 if __name__ == "__main__":
