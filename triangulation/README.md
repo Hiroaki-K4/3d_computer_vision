@@ -258,7 +258,148 @@ H \equiv
 \bar{P\prime}\bar{P}^{-1} \tag{4}
 $$
 
+<img src='images/perspective.png' width='500'>
+
+## Planar triangulation
+The projective transformation matrix $H$ is assumed to be known. Once the corresponding points $(x, y), (x\prime, y\prime)$ are observed, if the camera matrices $P$ and $P\prime$ are known, the 3D position can be recovered by triangulation. However, if there is an error in the corresponding point $(x, y), (x\prime, y\prime)$, the restored point $(X, Y, Z)$ may not be on the specified plane. The restoration on the specified plane is called planar triangulation.
+
+When the plane is known, it is reasonable to correct $(x, y),(x\prime, y\prime)$ to the shortest $(\bar{x},\bar{y}),(\bar{x\prime},\bar{y\prime})$ so that their lines of sight intersect and their intersection points are on that plane. Mathematically, this is to minimize the reprojection error for the correction under the constraint that $(x,y),(x\prime,y\prime)$ satisfies the projective transformation in Eq.(4).
+
+$$
+S=(x-\bar{x})^2+(y-\bar{y})^2+(x\prime-\bar{x\prime})^2+(y\prime-\bar{y\prime})^2 \tag{5}
+$$
+
+### Algorithm
+Denote $H$ by the 9-dimensional vector $\theta$, as in the [projective transformation](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/projective_transformation).
+
+#### **1. Let $S$ be a sufficiently large number and $\hat{x}=x,\hat{y}=y,\hat{x}\prime=x\prime,\hat{y}\prime=y\prime$. Then define the following 4-dimensional vector**
+
+$$
+p=\begin{pmatrix}
+x \\
+y \\
+x\prime \\
+y\prime \\
+\end{pmatrix}, \quad
+\hat{p}=\begin{pmatrix}
+\hat{x} \\
+\hat{y} \\
+\hat{x}\prime \\
+\hat{y}\prime \\
+\end{pmatrix}, \quad
+\tilde{p}=\begin{pmatrix}
+\tilde{x} \\
+\tilde{y} \\
+\tilde{x}\prime \\
+\tilde{y}\prime \\
+\end{pmatrix} \tag{6}
+$$
+
+#### **2. Define matrix $T^{(k)}$**
+
+$$
+T^{(1)}=\begin{pmatrix}
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+-f_0 & 0 & 0 & 0 \\
+0 & -f_0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+\hat{y}\prime & 0 & 0 & \hat{x} \\
+0 & \hat{y}\prime & 0 & \hat{y} \\
+0 & 0 & 0 & f_0 \\
+\end{pmatrix},
+T^{(2)}=\begin{pmatrix}
+f_0 & 0 & 0 & 0 \\
+0 & f_0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+-\hat{x\prime} & 0 & -\hat{x} & 0 \\
+0 & -\hat{x\prime} & -\hat{y} & 0 \\
+0 & 0 & -f_0 & 0 \\
+\end{pmatrix},
+T^{(3)}=\begin{pmatrix}
+-\hat{y\prime} & 0 & 0 & -\hat{x} \\
+0 & -\hat{y\prime} & 0 & -\hat{y} \\
+0 & 0 & 0 & -f_0 \\
+\hat{x\prime} & 0 & \hat{x} & 0 \\
+0 & \hat{x\prime} & \hat{y} & 0 \\
+0 & 0 & f_0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix} \tag{7}
+$$
+
+#### **3. Calculate $V_0^{(kl)}[\hat{\xi}]$ and $\hat{W}^{(kl)}$. ($k,l=1,2,3$)**
+
+$$
+V_0^{(kl)}[\hat{\xi}]=\hat{T}^{(k)}\hat{T}^{(l)\intercal}, \quad \hat{W}^{(kl)}=((\theta, V_0^{(kl)}[\hat{\xi}]\theta))_2^- \tag{8}
+$$
+
+#### **4. Calculate $\xi^{(1)},\xi^{(2)},\xi^{(3)}$**
+
+$$
+\xi^{(1)}=
+\begin{pmatrix}
+0 \\
+0 \\
+0 \\
+-f_0\hat{x} \\
+-f_0y \\
+-f_0^2 \\
+\hat{x}\hat{y}\prime \\
+\hat{y}\hat{y}\prime \\
+f_0\hat{y}\prime \\
+\end{pmatrix}+\hat{T}^{(1)}\tilde{p}, \quad
+\xi^{(2)}=
+\begin{pmatrix}
+f_0\hat{x} \\
+f_0\hat{y} \\
+f_0^2 \\
+0 \\
+0 \\
+0 \\
+-\hat{x}\hat{x}\prime \\
+-\hat{y}\hat{x}\prime \\
+-f_0\hat{x}\prime \\
+\end{pmatrix}+\hat{T}^{(2)}\tilde{p}, \quad
+\xi^{(3)}=
+\begin{pmatrix}
+-\hat{x}\hat{y}\prime \\
+-\hat{y}\hat{y}\prime \\
+-f_0\hat{y}\prime \\
+\hat{x}\hat{x}\prime \\
+\hat{y}\hat{x}\prime \\
+f_0\hat{x}\prime \\
+0 \\
+0 \\
+0 \\
+\end{pmatrix}+\hat{T}^{(3)}\tilde{p} \tag{9}
+$$
+
+#### **5. Update $\tilde p, \hat{p}$**
+
+$$
+\tilde p \leftarrow \sum_{k,l=1}^3 \hat{W}^{(kl)}(\xi^{(k)}, \theta)\hat{T}^{(l)\intercal}\theta, \quad \hat{p} \leftarrow p-\tilde{p} \tag{10}
+$$
+
+#### **6. If $\| \tilde{p}\|^2\approx S$, return $(\hat{x},\hat{y}),(\hat{x}\prime,\hat{y}\prime)$**. If not, update $S(S \leftarrow \| \tilde{p}\|^2)$ and go back to step2.
+
 <br></br>
 
-## Reference
+To learn more about the formula, click [here](https://www.jstage.jst.go.jp/article/ipsjtcva/3/0/3_0_67/_pdf/-char/en).
+
+You can try planar triangulation by running below command.
+
+```bash
+python3 planar_triangulation.py
+```
+
+<br></br>
+
+# Reference
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
+- [Optimal Two-View Planar Scene Triangulation](https://www.jstage.jst.go.jp/article/ipsjtcva/3/0/3_0_67/_pdf/-char/en)
