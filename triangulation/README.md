@@ -153,5 +153,112 @@ The following two viewpoint camera images were used for the test data.
 
 <br></br>
 
+# Planar triangulation
+Triangulation that recovers the 3D position of a known plane from the corresponding points between two images taken of the plane and the camera matrix of each camera is called planar triangulation. This is the triangulation we have been discussing, with the added constraint that the restoration location be on a specified plane.
+
+## Perspective projection of a plane
+Consider taking a picture of a flat surface with two cameras. Let the respective camera matrices be $P$ and $P\prime$, and let a point $(X,Y,Z)$ on the plane be captured at a point $(x,y)$,$(x\prime,y\prime)$ on the respective images, the following relation follows from Eq(2) in triangulation.
+
+$$
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+P
+\begin{pmatrix}
+X \\
+Y \\
+Z \\
+1 \\
+\end{pmatrix}, \quad
+\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+P\prime
+\begin{pmatrix}
+X \\
+Y \\
+Z \\
+1 \\
+\end{pmatrix} \tag{1}
+$$
+
+The equation of the plane $Z=aX+bY+c$. The plane parallel to the $Z$-axis cannot be represented, in which case $X=aY+bZ+c$, or $Y=aX+bZ+c$.
+This allows us to write
+
+$$
+\begin{pmatrix}
+X \\
+Y \\
+Z \\
+1 \\
+\end{pmatrix}=
+C
+\begin{pmatrix}
+X \\
+Y \\
+1 \\
+\end{pmatrix}, \quad
+C\equiv
+\begin{pmatrix}
+1 & 0 & 0 \\
+0 & 1 & 0 \\
+a & b & c \\
+0 & 0 & 1 \\
+\end{pmatrix} \tag{2}
+$$
+
+Eq(1) becomes
+
+$$
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+\bar{P}
+\begin{pmatrix}
+X \\
+Y \\
+1 \\
+\end{pmatrix}, \quad
+\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+\bar{P\prime}
+\begin{pmatrix}
+X \\
+Y \\
+1 \\
+\end{pmatrix} \quad
+\bar{P}\equiv PC, \quad
+\bar{P\prime}\equiv P\prime C, \tag{3}
+$$
+
+Since a point on the plane and its shooting position on the image are one-to-one, the matrices $P$ and $P\prime$ are both regular matrices. This means that the perspective transformation from a plane to an image and vice versa is a projective transformation.
+
+$$
+\begin{pmatrix}
+x\prime/f_0 \\
+y\prime/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+H
+\begin{pmatrix}
+x/f_0 \\
+y/f_0 \\
+1 \\
+\end{pmatrix}, \quad
+H \equiv
+\bar{P\prime}\bar{P}^{-1} \tag{4}
+$$
+
+<br></br>
+
 ## Reference
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
