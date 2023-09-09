@@ -42,9 +42,61 @@ f_0 & 0 & 0 \\
 \end{pmatrix} \tag{2}
 $$
 
+### 2. Normalize matrix $H$ to determinant 1
+
+$$
+\tilde{H} \leftarrow \frac{\tilde{H}}{\sqrt[3]{| \tilde{H} |}} \tag{3}
+$$
+
+### 3. Singular value decomposition of $H$($U$ and $V$ are orthogonal matrix)
+
+$$
+\tilde{H}=U
+\begin{pmatrix}
+\sigma_1 & 0 & 0 \\
+0 & \sigma_2 & 0 \\
+0 & 0 & \sigma_3 \\
+\end{pmatrix}V^\intercal, \quad
+\sigma_1 \geq \sigma_2 \geq \sigma_3 > 0 \tag{4}
+$$
+
+### 4. Let the column vectors of matrix $V$ be $v_1, v_2, v_3$, and calculate the planar parameters $(n, h)$ as follows.
+
+$Norm$ denotes normalization to the unit vector.
+
+$$
+n=Norm\left[\sqrt{\sigma_1^2-\sigma_2^2}v_1\pm \sqrt{\sigma_2^2-\sigma_3^2}v_3\right], \quad h=\frac{\sigma_2}{\sigma_1 - \sigma_3} \tag{5}
+$$
+
+### 5. Calculate motion parameters $(t, R)$
+
+$$
+t=Norm\left[-\sigma_3\sqrt{\sigma_1^2-\sigma_2^2}v_1\pm \sigma_1\sqrt{\sigma_2^2-\sigma_3^2}v_3\right], \quad R=\frac{1}{\sigma_2} \left(I + \frac{\sigma_2^3nt^\intercal}{h} \right)\tilde{H}^\intercal \tag{6}
+$$
+
+### 6. The one that changes the sign of $n$ and $t$ at the same time is also a solution
+
 <br></br>
 
-## Formula details
+You can try homography decomposition by running follow command.
+
+```bash
+python3 decompose_homography.py
+```
+
+The meaning of each formula can be understood from [this book](https://www.morikita.co.jp/books/mid/081791).
+
+<br></br>
+
+## Solution Selection
+The method of reducing the number of solutions from four to one can be found in the literature below.
+
+- [Deeper understanding of the homography
+decomposition for vision-based control](https://inria.hal.science/inria-00174036/document)
+
+There is also a method where only one solution is calculated from the beginning.
+
+- [A Flexible New Technique for Camera Calibration](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf)
 
 <br></br>
 

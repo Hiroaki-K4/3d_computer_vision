@@ -80,16 +80,19 @@ def main():
         np.float32(noised_img_pnts_0), np.float32(noised_img_pnts_1)
     )
 
+    print("Homography matrix: ")
     print(H_cv)
+    print("")
 
     f = 160
     num, Rs, Ts, Ns, h = decompose_homography(H_cv, f)
 
-    print("num: ", num)
-    print("h: ", h)
+    print("~~~~~~~~~~~~~Homography decomposition~~~~~~~~~~~~~")
+    print("Solutions num: ", num)
     print("Rs: ", Rs)
     print("Ts: ", Ts)
     print("Ns: ", Ns)
+    print("h: ", h)
 
 
 if __name__ == "__main__":
