@@ -4,7 +4,7 @@ Shows the procedure for calculating the position of a plane and the position and
 <br></br>
 
 ## Self-calibration by plane
-In order to perform planar triangulation, we need the camera matrices $P,P\prime$ of the two cameras and the equation of the plane. We consider a self-calibration that computes this from only the homography matrix $H$ between the two images. The homography matrix is indefinite by a constant factor and has 8 degrees of freedom. The equation of the plane is determined by 3 parameters. Therefore, to self-calibrate, the camera matrices $P,P\prime$ must be expressed in terms of 5 parameters. The unknowns are the two focal lengths $f,f\prime$ and the relative translations $t$ (2 degrees of freedom) and rotations $R$ (3 degrees of freedom) of the camera, for a total of 7 degrees of freedom. To reduce this to 5 DoFs, we assume that the focal lengths $f,f\prime$ are known.
+In order to perform [planar triangulation](https://medium.com/@hirok4/implementation-of-planar-triangulation-c66ef654c7fa), we need the camera matrices $P,P\prime$ of the two cameras and the equation of the plane. We consider a self-calibration that computes this from only the homography matrix $H$ between the two images. The homography matrix is indefinite by a constant factor and has 8 degrees of freedom. The equation of the plane is determined by 3 parameters. Therefore, to self-calibrate, the camera matrices $P,P\prime$ must be expressed in terms of 5 parameters. The unknowns are the two focal lengths $f,f\prime$ and the relative translations $t$ (2 degrees of freedom) and rotations $R$ (3 degrees of freedom) of the camera, for a total of 7 degrees of freedom. To reduce this to 5 DoFs, we assume that the focal lengths $f,f\prime$ are known.
 
 The plane is represented by the following form.
 
@@ -14,6 +14,8 @@ $$
 
 Since the whole represents the same plane no matter how many times it is multiplied, it is multiplied by a constant and normalized so that $n=(n_1, n_2, n_3)^\intercal$ is the unit vector. The sign of $h$ is positive in the direction of $n$ and negative in the opposite direction.
 Consider how to compute the camera motion parameters $(R, t)$ and planar parameters $(n, h)$ from the homography matrix $H$. In calculations from images only, the absolute scale of the scene is undefined. Therefore, we assume that the translation of the camera is nonzero and compute a solution whose length is 1.
+
+<img src='images/plane.png' width='300'>
 
 <br></br>
 
@@ -60,7 +62,7 @@ $$
 \sigma_1 \geq \sigma_2 \geq \sigma_3 > 0 \tag{4}
 $$
 
-### 4. Let the column vectors of matrix $V$ be $v_1, v_2, v_3$, and calculate the planar parameters $(n, h)$ as follows.
+### 4. Let the column vectors of matrix $V$ be $v_1, v_2, v_3$, and calculate the planar parameters $(n, h)$ as follows
 
 $Norm$ denotes normalization to the unit vector.
 
