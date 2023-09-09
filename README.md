@@ -37,3 +37,9 @@ Let's enjoy 3D computer vision.
 ## [Projective Transformation](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/projective_transformation)
 
 <img src='projective_transformation/images/img_1.png' width='500'>
+
+<br></br>
+
+## [Homography decompostion](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/homography_decomposition)
+
+<img src='homography_decomposition/images/plane.png' width='350'>
