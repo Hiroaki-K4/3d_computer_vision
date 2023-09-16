@@ -1,7 +1,4 @@
 3d/
 .mypy_cache/
-# elliptic_fitting/__pycache__/
-# fundamental_matrix/__pycache__/
-# prepare_test_data_utils/__pycache__/
 */__pycache__/
 equirectangular_to_cubemap/*.mp4

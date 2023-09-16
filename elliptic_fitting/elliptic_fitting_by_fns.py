@@ -55,7 +55,7 @@ def elliptic_fitting_by_fns(noise_x, noise_y, f):
 
 def main():
     utils.plot_base()
-    corr_x, corr_y, noise_x, noise_y = utils.get_elliptic_points_with_tilt()
+    corr_x, corr_y, noise_x, noise_y = utils.get_elliptic_points_with_tilt(45)
 
     f_0 = 20
     theta = elliptic_fitting_by_least_squares.elliptic_fitting_by_least_squares(
