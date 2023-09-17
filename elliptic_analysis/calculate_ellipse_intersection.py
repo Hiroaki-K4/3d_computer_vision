@@ -35,7 +35,6 @@ def convert_to_conic_mat(theta):
 
 
 def calculate_ellipse_intersection(q1, q2):
-    lam = 0
     print("Q1: ", q1)
     print("Q2: ", q2)
     x = sympy.Symbol("x")
@@ -47,9 +46,13 @@ def calculate_ellipse_intersection(q1, q2):
         + np.linalg.det(q2)
     )
 
-    print(sympy.solve([eq]))
+    lam = sympy.re(sympy.solve([eq])[0][x])
 
-    return lam
+    net_q = np.dot(lam, q1) + q2
+
+    # TODO Caclculate n1, n2, n3 and intersection
+
+    return sympy.re(sympy.solve([eq])[0][x])
 
 
 def prepare_test_data():
