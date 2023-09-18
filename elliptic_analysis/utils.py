@@ -45,7 +45,7 @@ def eval_pos_diff(corr_x, corr_y, est_x, est_y):
     return diff_sum, diff_avg
 
 
-def get_elliptic_points_with_tilt(tilt):
+def get_elliptic_points_with_tilt(a, b, tilt, center):
     x = []
     y = []
     n_x = []
@@ -57,16 +57,14 @@ def get_elliptic_points_with_tilt(tilt):
         ]
     )
     for theta in range(360):
-        point = np.array(
-            [7.5 * np.cos(np.deg2rad(theta)), 5 * np.sin(np.deg2rad(theta))]
-        )
+        point = np.array([a * np.cos(np.deg2rad(theta)), b * np.sin(np.deg2rad(theta))])
         noise = np.random.normal(0, 0.2, point.shape)
         rotated_point = np.dot(R, point.T)
-        x.append(rotated_point[0])
-        y.append(rotated_point[1])
+        x.append(rotated_point[0] + center[0])
+        y.append(rotated_point[1] + center[1])
         if theta % 3 == 0:
             with_noise = rotated_point + noise
-            n_x.append(with_noise[0])
-            n_y.append(with_noise[1])
+            n_x.append(with_noise[0] + center[0])
+            n_y.append(with_noise[1] + center[1])
 
     return x, y, n_x, n_y
