@@ -201,5 +201,6 @@ def prepare_test_data(f_0):
 if __name__ == "__main__":
     f_0 = 1
     q1, q2 = prepare_test_data(f_0)
+    # TODO: Check q1 and q2 are correct
     lam = calculate_ellipse_intersection(q1, q2, f_0)
     plt.show()
