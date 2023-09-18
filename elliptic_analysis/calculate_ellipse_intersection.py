@@ -102,10 +102,24 @@ def get_intersection_with_substituting_y(n1, n2, n3, theta, f_0):
     # input()
 
 
+def draw_lines(n1, n2_0, n2_1, n3_0, n3_1, f_0):
+    start_x = 5
+    end_x = -5
+    line1_y_start = -(n1 * start_x + n3_0 * f_0) / n2_0
+    line1_y_end = -(n1 * end_x + n3_0 * f_0) / n2_0
+    line2_y_start = -(n1 * start_x + n3_1 * f_0) / n2_1
+    line2_y_end = -(n1 * end_x + n3_1 * f_0) / n2_1
+    print(line1_y_start)
+    plt.plot([start_x, end_x], [line1_y_start, line1_y_end], c="red")
+    plt.plot([start_x, end_x], [line2_y_start, line2_y_end], c="black")
+
+    input()
+
+
 def calculate_ellipse_intersection(q1, q2, f_0):
     print("Q1: ", q1)
     print("Q2: ", q2)
-    x = sympy.Symbol("x")
+    x = sympy.Symbol("x", real=True)
 
     eq = (
         x**3 * np.linalg.det(q1)
@@ -114,11 +128,21 @@ def calculate_ellipse_intersection(q1, q2, f_0):
         + np.linalg.det(q2)
     )
 
-    lam = sympy.solve([eq])[0][x]
+    sol = sympy.solve([eq])
+    if len(sol) > 0:
+        lam = sol[0][x]
+    else:
+        raise RuntimeError("There is no real solution.")
+    print(lam)
+    input()
 
     new_q = np.dot(lam, q1) + q2
     new_theta = convert_to_ellipse_mat(new_q)
+    # TODO Fix lines
     n1, n2_0, n2_1, n3_0, n3_1 = calculate_two_straight_lines(new_theta, f_0)
+    draw_lines(n1, n2_0, n2_1, n3_0, n3_1, f_0)
+    print("Line1: {0}x+{1}y+{2}=0".format(n1, n2_0, n3_0*f_0))
+    print("Line2: {0}x+{1}y+{2}=0".format(n1, n2_1, n3_1*f_0))
     if abs(n2_0) >= abs(n1):
         get_intersection_with_substituting_y(n1, n2_0, n3_0, new_theta, f_0)
     else:
@@ -181,7 +205,7 @@ def prepare_test_data(f_0):
 
     a = 7.5
     b = 5
-    tilt = 120
+    tilt = 60
     center = np.array([0, 0])
     q2_corr_x, q2_corr_y, q2_noise_x, q2_noise_y = utils.get_elliptic_points_with_tilt(
         a, b, tilt, center
@@ -201,6 +225,5 @@ def prepare_test_data(f_0):
 if __name__ == "__main__":
     f_0 = 1
     q1, q2 = prepare_test_data(f_0)
-    # TODO: Check q1 and q2 are correct
     lam = calculate_ellipse_intersection(q1, q2, f_0)
     plt.show()
