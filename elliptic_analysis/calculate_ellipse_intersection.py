@@ -2,8 +2,16 @@ import utils
 import math
 import sympy
 import numpy as np
-import elliptic_fitting_by_least_squares
 from matplotlib import pyplot as plt
+
+
+def change_zero_sign(mat):
+    for i in range(mat.shape[0]):
+        for j in range(mat.shape[1]):
+            if (mat[i, j]) == -0:
+                mat[i, j] = abs(mat[i, j])
+
+    return mat
 
 
 def calculate_cofactor(mat, i, j):
@@ -20,6 +28,7 @@ def create_cofactor_mat(mat):
         for j in range(mat.shape[1]):
             cof_mat[j, i] = calculate_cofactor(mat, i, j)
 
+    # return change_zero_sign(cof_mat)
     return cof_mat
 
 
@@ -45,6 +54,12 @@ def calculate_two_straight_lines(theta, f_0):
     n1 = theta[0]
     n2_0 = theta[1] - math.sqrt(theta[1] ** 2 - theta[0] * theta[2])
     n2_1 = theta[1] + math.sqrt(theta[1] ** 2 - theta[0] * theta[2])
+    print(n2_0)
+    print(n2_1)
+    print(theta[1])
+    # TODO: Too small. So I need to normalize over 1?
+    print(math.sqrt(theta[1] ** 2 - theta[0] * theta[2]))
+    input()
     n3_0 = (
         theta[3]
         - (theta[1] * theta[3] - theta[0] * theta[4])
@@ -76,7 +91,7 @@ def get_intersection_with_substituting_x(n1, n2, n3, theta, f_0):
         * y
         + (theta[0] * n3**2 - 2 * theta[3] * n1 * n3 + theta[5] * n1**2) * f_0**2
     )
-    print(sympy.solve([eq]))
+    # print(sympy.solve([eq]))
 
 
 def get_intersection_with_substituting_y(n1, n2, n3, theta, f_0):
@@ -98,7 +113,7 @@ def get_intersection_with_substituting_y(n1, n2, n3, theta, f_0):
         * x
         + (theta[2] * n3**2 - 2 * theta[4] * n2 * n3 + theta[5] * n2**2) * f_0**2
     )
-    print(sympy.solve([eq]))
+    # print(sympy.solve([eq]))
     # input()
 
 
@@ -109,17 +124,21 @@ def draw_lines(n1, n2_0, n2_1, n3_0, n3_1, f_0):
     line1_y_end = -(n1 * end_x + n3_0 * f_0) / n2_0
     line2_y_start = -(n1 * start_x + n3_1 * f_0) / n2_1
     line2_y_end = -(n1 * end_x + n3_1 * f_0) / n2_1
-    print(line1_y_start)
+    # print(line1_y_start)
     plt.plot([start_x, end_x], [line1_y_start, line1_y_end], c="red")
     plt.plot([start_x, end_x], [line2_y_start, line2_y_end], c="black")
 
-    input()
+    # input()
 
 
 def calculate_ellipse_intersection(q1, q2, f_0):
     print("Q1: ", q1)
     print("Q2: ", q2)
     x = sympy.Symbol("x", real=True)
+
+    print(create_cofactor_mat(q1))
+    print(create_cofactor_mat(q2))
+    input()
 
     eq = (
         x**3 * np.linalg.det(q1)
@@ -133,7 +152,7 @@ def calculate_ellipse_intersection(q1, q2, f_0):
         lam = sol[0][x]
     else:
         raise RuntimeError("There is no real solution.")
-    print(lam)
+    print("lam: ", lam)
     input()
 
     new_q = np.dot(lam, q1) + q2
@@ -205,7 +224,8 @@ def prepare_test_data(f_0):
 
     a = 7.5
     b = 5
-    tilt = 60
+    # tilt = 60
+    tilt = 120
     center = np.array([0, 0])
     q2_corr_x, q2_corr_y, q2_noise_x, q2_noise_y = utils.get_elliptic_points_with_tilt(
         a, b, tilt, center
@@ -223,7 +243,7 @@ def prepare_test_data(f_0):
 
 
 if __name__ == "__main__":
-    f_0 = 1
+    f_0 = 20
     q1, q2 = prepare_test_data(f_0)
     lam = calculate_ellipse_intersection(q1, q2, f_0)
     plt.show()
