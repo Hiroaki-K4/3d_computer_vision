@@ -68,3 +68,6 @@ def get_elliptic_points_with_tilt(a, b, tilt, center):
             n_y.append(with_noise[1] + center[1])
 
     return x, y, n_x, n_y
+
+def normalize_ellipse(theta):
+    return theta / np.linalg.norm(theta)

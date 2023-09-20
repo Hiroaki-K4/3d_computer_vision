@@ -157,6 +157,7 @@ def calculate_ellipse_intersection(q1, q2, f_0):
 
     new_q = np.dot(lam, q1) + q2
     new_theta = convert_to_ellipse_mat(new_q)
+    new_theta = utils.normalize_ellipse(new_theta)
     # TODO Fix lines
     n1, n2_0, n2_1, n3_0, n3_1 = calculate_two_straight_lines(new_theta, f_0)
     draw_lines(n1, n2_0, n2_1, n3_0, n3_1, f_0)
@@ -220,12 +221,16 @@ def prepare_test_data(f_0):
     #     q1_corr_x, q1_corr_y, f_0
     # )
     q1 = convert_ellipse_to_conic(a, b, tilt, center, f_0)
+    print(q1)
+    q1 = utils.normalize_ellipse(q1)
+    print(q1)
+    input()
     q1 = convert_to_conic_mat(q1)
 
     a = 7.5
     b = 5
-    # tilt = 60
-    tilt = 120
+    tilt = 60
+    # tilt = 120
     center = np.array([0, 0])
     q2_corr_x, q2_corr_y, q2_noise_x, q2_noise_y = utils.get_elliptic_points_with_tilt(
         a, b, tilt, center
@@ -234,6 +239,10 @@ def prepare_test_data(f_0):
         # q2_corr_x, q2_corr_y, f_0
     # )
     q2 = convert_ellipse_to_conic(a, b, tilt, center, f_0)
+    print(q2)
+    q2 = utils.normalize_ellipse(q2)
+    print(q2)
+    input()
     q2 = convert_to_conic_mat(q2)
 
     plt.scatter(q1_corr_x, q1_corr_y, marker="o", c="green", s=20)
