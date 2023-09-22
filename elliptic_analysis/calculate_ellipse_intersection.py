@@ -54,12 +54,11 @@ def calculate_two_straight_lines(theta, f_0):
     n1 = theta[0]
     n2_0 = theta[1] - math.sqrt(theta[1] ** 2 - theta[0] * theta[2])
     n2_1 = theta[1] + math.sqrt(theta[1] ** 2 - theta[0] * theta[2])
-    print(n2_0)
-    print(n2_1)
-    print(theta[1])
-    # TODO: Too small. So I need to normalize over 1?
-    print(math.sqrt(theta[1] ** 2 - theta[0] * theta[2]))
-    input()
+    print("n2_0: ", n2_0)
+    print("n2_1: ", n2_1)
+    # print(theta[0], theta[1], theta[2])
+    # print(math.sqrt(theta[1] ** 2 - theta[0] * theta[2]))
+    # input()
     n3_0 = (
         theta[3]
         - (theta[1] * theta[3] - theta[0] * theta[4])
@@ -70,6 +69,9 @@ def calculate_two_straight_lines(theta, f_0):
         + (theta[1] * theta[3] - theta[0] * theta[4])
         / math.sqrt(theta[1] ** 2 - theta[0] * theta[2])
     ) * f_0
+    # TODO: Maybe n3 is wrong.
+    print("n3: ", n3_0, n3_1)
+    print(theta[3])
 
     return n1, n2_0, n2_1, n3_0, n3_1
 
@@ -157,7 +159,10 @@ def calculate_ellipse_intersection(q1, q2, f_0):
 
     new_q = np.dot(lam, q1) + q2
     new_theta = convert_to_ellipse_mat(new_q)
-    new_theta = utils.normalize_ellipse(new_theta)
+    # print(new_theta)
+    # new_theta = utils.normalize_ellipse(new_theta)
+    # print(new_theta)
+    # input()
     # TODO Fix lines
     n1, n2_0, n2_1, n3_0, n3_1 = calculate_two_straight_lines(new_theta, f_0)
     draw_lines(n1, n2_0, n2_1, n3_0, n3_1, f_0)
@@ -213,7 +218,7 @@ def prepare_test_data(f_0):
     a = 7.5
     b = 5
     tilt = 45
-    center = np.array([0, 0])
+    center = np.array([1, 1])
     q1_corr_x, q1_corr_y, q1_noise_x, q1_noise_y = utils.get_elliptic_points_with_tilt(
         a, b, tilt, center
     )
@@ -222,16 +227,16 @@ def prepare_test_data(f_0):
     # )
     q1 = convert_ellipse_to_conic(a, b, tilt, center, f_0)
     print(q1)
-    q1 = utils.normalize_ellipse(q1)
+    # q1 = utils.normalize_ellipse(q1)
     print(q1)
     input()
     q1 = convert_to_conic_mat(q1)
 
     a = 7.5
     b = 5
-    tilt = 60
-    # tilt = 120
-    center = np.array([0, 0])
+    # tilt = 60
+    tilt = 120
+    center = np.array([1, 1])
     q2_corr_x, q2_corr_y, q2_noise_x, q2_noise_y = utils.get_elliptic_points_with_tilt(
         a, b, tilt, center
     )
@@ -240,7 +245,7 @@ def prepare_test_data(f_0):
     # )
     q2 = convert_ellipse_to_conic(a, b, tilt, center, f_0)
     print(q2)
-    q2 = utils.normalize_ellipse(q2)
+    # q2 = utils.normalize_ellipse(q2)
     print(q2)
     input()
     q2 = convert_to_conic_mat(q2)
@@ -252,7 +257,7 @@ def prepare_test_data(f_0):
 
 
 if __name__ == "__main__":
-    f_0 = 20
+    f_0 = 1
     q1, q2 = prepare_test_data(f_0)
     lam = calculate_ellipse_intersection(q1, q2, f_0)
     plt.show()
