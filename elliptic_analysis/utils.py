@@ -12,39 +12,6 @@ def plot_base():
     plt.grid()
 
 
-def solve_fitting(theta, corr_x, f_0):
-    y = sympy.Symbol("y")
-    fit_x = []
-    fit_y = []
-    for x in tqdm(corr_x):
-        f = (
-            theta[0] * x**2
-            + 2 * theta[1] * x * y
-            + theta[2] * y**2
-            + 2 * f_0 * (theta[3] * x + theta[4] * y)
-            + f_0**2 * theta[5]
-        )
-        solutions = sympy.solve(f, y)
-        for y_ans in solutions:
-            if type(y_ans) == sympy.core.add.Add:
-                continue
-            fit_x.append(x)
-            fit_y.append(y_ans)
-
-    return fit_x, fit_y
-
-
-def eval_pos_diff(corr_x, corr_y, est_x, est_y):
-    diff_sum = 0
-    for i in range(len(est_x)):
-        x_idx = corr_x.index(est_x[i])
-        diff_sum += math.dist([corr_x[x_idx], corr_y[x_idx]], [est_x[i], est_y[i]])
-
-    diff_avg = diff_sum / len(est_x)
-
-    return diff_sum, diff_avg
-
-
 def get_elliptic_points_with_tilt(a, b, tilt, center):
     x = []
     y = []
@@ -69,5 +36,18 @@ def get_elliptic_points_with_tilt(a, b, tilt, center):
 
     return x, y, n_x, n_y
 
+
 def normalize_ellipse(theta):
-    return theta / np.linalg.norm(theta.astype(float)) * 100000
+    return theta / np.linalg.norm(theta.astype(float))
+
+
+def check_conic_mat(x, y, f_0, q):
+    for i in range(len(x)):
+        res = (
+            q[0] * x[i] ** 2
+            + 2 * q[1] * x[i] * y[i]
+            + q[2] * y[i] ** 2
+            + 2 * f_0 * (q[3] * x[i] + q[4] * y[i])
+            + f_0**2 * q[5]
+        )
+        print("res: ", res)
