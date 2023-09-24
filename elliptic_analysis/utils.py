@@ -9,15 +9,15 @@ def plot_base():
     plt.grid()
 
 
-def get_elliptic_points_with_tilt(a, b, tilt, center):
+def get_elliptic_points_with_slope(a, b, slope, center):
     x = []
     y = []
     n_x = []
     n_y = []
     R = np.array(
         [
-            [np.cos(np.deg2rad(tilt)), -np.sin(np.deg2rad(tilt))],
-            [np.sin(np.deg2rad(tilt)), np.cos(np.deg2rad(tilt))],
+            [np.cos(np.deg2rad(slope)), -np.sin(np.deg2rad(slope))],
+            [np.sin(np.deg2rad(slope)), np.cos(np.deg2rad(slope))],
         ]
     )
     for theta in range(360):
@@ -96,8 +96,8 @@ def convert_to_ellipse_mat(q):
     return theta
 
 
-def convert_ellipse_to_conic(a, b, tilt, center, f_0):
-    theta = np.deg2rad(tilt)
+def convert_ellipse_to_conic(a, b, slope, center, f_0):
+    theta = np.deg2rad(slope)
     A = np.cos(theta) ** 2 / a**2 + np.sin(theta) ** 2 / b**2
     B = (1 / a**2 - 1 / b**2) * np.sin(theta) * np.cos(theta)
     C = np.sin(theta) ** 2 / a**2 + np.cos(theta) ** 2 / b**2
