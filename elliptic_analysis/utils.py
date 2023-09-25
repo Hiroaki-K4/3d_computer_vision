@@ -138,3 +138,17 @@ def convert_ellipse_to_conic(a, b, slope, center, f_0):
     ) / f_0**2
 
     return np.array([A, B, C, D, E, F])
+
+
+def prepare_test_data(a, b, slope, center, f_0):
+    plot_base()
+
+    q_corr_x, q_corr_y, q_noise_x, q_noise_y = get_elliptic_points_with_slope(
+        a, b, slope, center
+    )
+    q = convert_ellipse_to_conic(a, b, slope, center, f_0)
+    q = convert_to_conic_mat(q)
+
+    plt.scatter(q_corr_x, q_corr_y, marker="o", c="blue", s=20)
+
+    return q

@@ -121,6 +121,9 @@ def calculate_ellipse_intersection(q1, q2, f_0):
             n1, n2_1, n3_1, utils.convert_to_ellipse_mat(q1), f_0
         )
 
+    print(x_ans_1)
+    print(x_ans_2)
+
     intersection_x = x_ans_1 + x_ans_2
     intersection_y = y_ans_1 + y_ans_2
 
@@ -134,26 +137,12 @@ def calculate_ellipse_intersection(q1, q2, f_0):
     return x_ans_1, y_ans_1, x_ans_2, y_ans_2
 
 
-def prepare_test_data(a, b, slope, center, f_0):
-    utils.plot_base()
-
-    q_corr_x, q_corr_y, q_noise_x, q_noise_y = utils.get_elliptic_points_with_slope(
-        a, b, slope, center
-    )
-    q = utils.convert_ellipse_to_conic(a, b, slope, center, f_0)
-    q = utils.convert_to_conic_mat(q)
-
-    plt.scatter(q_corr_x, q_corr_y, marker="o", c="blue", s=20)
-
-    return q
-
-
 if __name__ == "__main__":
     a = 7.5
     b = 5
     center = np.array([1, 1])
     f_0 = 1
-    q1 = prepare_test_data(a, b, 20, center, f_0)
-    q2 = prepare_test_data(a, b, 60, center, f_0)
+    q1 = utils.prepare_test_data(a, b, 20, center, f_0)
+    q2 = utils.prepare_test_data(a, b, 60, center, f_0)
     x_ans_1, y_ans_1, x_ans_2, y_ans_2 = calculate_ellipse_intersection(q1, q2, f_0)
     plt.show()
