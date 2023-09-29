@@ -95,6 +95,21 @@ The red points are the intersections.
 
 <br></br>
 
+## Foot of perpendicular line to ellipse
+The point closest to the ellipse from the perpendicular line is calculated using geometric distance minimization, and this point is the foot of the perpendicular line.
+
+More information on geometric distance minimization can be found [here](https://link.springer.com/chapter/10.1007/978-3-031-01815-2_3).
+
+You can calculate the foot of perpendicular line to ellipse by running follow command.
+
+```bash
+python3 calculate_foot_of_perpendicular_line.py
+```
+
+<img src='images/foot_of_perpendicular_line.png' width='500'>
+
+<br></br>
+
 ## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Elliptic approximation by the least-squares method](https://imagingsolution.blog.fc2.com/blog-entry-20.html)

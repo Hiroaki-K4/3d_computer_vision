@@ -63,7 +63,7 @@ def main():
     a = 7.5
     b = 5
     slope = 0
-    center = np.array([1, 1])
+    center = np.array([0, 0])
     f_0 = 1
     q = utils.prepare_test_data(a, b, slope, center, f_0)
 
