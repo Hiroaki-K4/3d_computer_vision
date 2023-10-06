@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 sys.path.append("../")
-from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
+from prepare_test_data_utils import prepare_test_data
 
 
 def update_weight(theta, img_pnts_0, img_pnts_1, f_0):
@@ -187,7 +187,7 @@ def main():
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
-    ) = prepare_test_data_for_fundamental_matrix.prepare_test_data(
+    ) = prepare_test_data.prepare_test_data(
         False, False, "PLANE"
     )
 

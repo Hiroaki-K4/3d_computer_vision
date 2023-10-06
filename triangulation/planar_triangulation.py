@@ -10,7 +10,7 @@ from triangulation import (
 )
 
 sys.path.append("../")
-from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
+from prepare_test_data_utils import prepare_test_data
 from projective_transformation import (
     calculate_projective_trans_by_weighted_repetition as proj_trans,
 )
@@ -156,7 +156,7 @@ def main():
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
-    ) = prepare_test_data_for_fundamental_matrix.prepare_test_data(
+    ) = prepare_test_data.prepare_test_data(
         False, False, "PLANE"
     )
     f = 160

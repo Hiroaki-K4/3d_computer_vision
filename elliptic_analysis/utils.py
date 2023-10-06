@@ -9,6 +9,21 @@ def plot_base():
     plt.grid()
 
 
+def elliptic_fitting_by_least_squares(points, f):
+    xi_sum = np.zeros((6, 6))
+    for i in range(len(points)):
+        x = points[i][0][0]
+        y = points[i][0][1]
+        xi = np.array([[x**2, 2 * x * y, y**2, 2 * f * x, 2 * f * y, f * f]])
+        xi_sum += np.dot(xi.T, xi)
+
+    M = xi_sum / len(points)
+    w, v = np.linalg.eig(M)
+    min_eig_vec = v[:, np.argmin(w)]
+
+    return min_eig_vec
+
+
 def get_elliptic_points_with_slope(a, b, slope, center):
     x = []
     y = []

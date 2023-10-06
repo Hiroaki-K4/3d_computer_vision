@@ -5,7 +5,7 @@ import scipy
 import sys
 
 sys.path.append("../")
-from prepare_test_data_utils import prepare_test_data_for_fundamental_matrix
+from prepare_test_data_utils import prepare_test_data
 
 
 def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
@@ -444,7 +444,7 @@ def main(draw_test_data, draw_epipolar):
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
-    ) = prepare_test_data_for_fundamental_matrix.prepare_test_data(
+    ) = prepare_test_data.prepare_test_data(
         draw_test_data, draw_epipolar
     )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
