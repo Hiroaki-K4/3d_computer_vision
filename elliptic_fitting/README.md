@@ -12,7 +12,7 @@ $$
 
 <br></br>
 
-<img src='../images/ellipse.png' width='400'>
+<img src='images/ellipse.png' width='600'>
 
 
 <br></br>
@@ -22,7 +22,7 @@ Let's draw circle and elliptic!
 python3 draw_elliptic.py
 ```
 
-<img src='../images/draw_elliptic.png' width='400'>
+<img src='images/draw_elliptic.png' width='600'>
 
 <br></br>
 
@@ -107,7 +107,7 @@ python3 elliptic_fitting_by_least_squares.py
 
 From the blue points with errors, $\theta$ is calculated and an ellipse is drawn in the below image.
 
-<img src='../images/least_squares.png' width='400'>
+<img src='images/least_squares.png' width='600'>
 
 The least squares method is simple but less accurate, and when the point sequence covers only part of the ellipse, it is easy to fit a small, flat ellipse that is far from the true shape.
 
@@ -214,7 +214,7 @@ The following is a description of each of the points in the image below.
 - The red points are estimated points by least square.
 - The green points are estimated points by iterative reweight
 
-<img src='../images/weighted.png' width='400'>
+<img src='images/weighted.png' width='600'>
 
 <br></br>
 
@@ -260,7 +260,7 @@ The following is a description of each of the points in the image below.
 - The red points are estimated points by iterative reweight.
 - The green points are estimated points by renormalization.
 
-<img src='../images/renormalization.png' width='400'>
+<img src='images/renormalization.png' width='600'>
 
 <br></br>
 
@@ -309,7 +309,7 @@ The following is a description of each of the points in the image below.
 - The black points are true points.
 - The green points are estimated points by FNS method.
 
-<img src='../images/fns.png' width='400'>
+<img src='images/fns.png' width='600'>
 
 <br></br>
 
@@ -346,7 +346,7 @@ The following is a description of each of the points in the image below.
 - The black points are true points.
 - The green points are estimated points by FNS method with RANSAC.
 
-<img src='../images/ransac.png' width='400'>
+<img src='images/ransac.png' width='600'>
 
 <br></br>
 

@@ -6,7 +6,7 @@ Let's enjoy 3D computer vision.
 
 ## [Elliptic Fitting](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/elliptic_fitting)
 
-<img src='images/least_squares.png' width='500'>
+<img src='elliptic_fitting/images/ransac.png' width='600'>
 
 <br></br>
 
@@ -18,7 +18,7 @@ Let's enjoy 3D computer vision.
 
 ## [Equirectangular to Cubemap](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/equirectangular_to_cubemap)
 
-<img src='equirectangular_to_cubemap/cube_map.png' width='500'>
+<img src='equirectangular_to_cubemap/cube_map.png' width='600'>
 
 <br></br>
 

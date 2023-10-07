@@ -45,9 +45,9 @@ def main():
             fit_x.append(x)
             fit_y.append(y_ans)
 
-    # plt.scatter(corr_x, corr_y, marker='o', c="black", s=20)
-    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20)
-    plt.scatter(fit_x, fit_y, marker="o", c="red", s=20)
+    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20, alpha=0.4, label="Noise input")
+    plt.scatter(fit_x, fit_y, marker="o", c="red", s=20, alpha=0.4, label="Least squares")
+    plt.legend()
     plt.show()
 
 

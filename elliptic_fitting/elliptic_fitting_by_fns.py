@@ -73,10 +73,11 @@ def main():
     print("least_sq_diff_avg: ", least_sq_diff_avg)
     print("fns_diff_avg: ", fns_diff_avg)
 
-    plt.scatter(corr_x, corr_y, marker="o", c="black", s=20)
-    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20)
-    plt.scatter(fit_x, fit_y, marker="o", c="red", s=20)
-    plt.scatter(f_fit_x, f_fit_y, marker="o", c="green", s=20)
+    plt.scatter(corr_x, corr_y, marker="o", c="black", s=20, alpha=0.4, label="Correct input")
+    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20, alpha=0.4, label="Noise input")
+    plt.scatter(fit_x, fit_y, marker="o", c="red", s=10, alpha=0.4, label="Least squares")
+    plt.scatter(f_fit_x, f_fit_y, marker="o", c="green", s=10, alpha=0.4, label="FNS")
+    plt.legend()
     plt.show()
 
 

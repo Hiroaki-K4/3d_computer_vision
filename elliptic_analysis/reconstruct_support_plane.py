@@ -7,6 +7,15 @@ import utils
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
 
+def convert_points_to_xy(points):
+    points_x = []
+    points_y = []
+    for point in points:
+        points_x.append(point[0][0])
+        points_y.append(point[0][1])
+
+    return points_x, points_y
+
 
 def main():
     rot_euler_deg_0 = [0, 0, 0]
@@ -22,11 +31,11 @@ def main():
     ) = prepare_test_data.prepare_test_data(
         False, False, "CIRCLE", rot_euler_deg_0, rot_euler_deg_1
     )
-    print(img_pnts_1)
-    input()
+    points_x, points_y = convert_points_to_xy(img_pnts_1)
     f_0 = 20
-    theta = utils.elliptic_fitting_by_least_squares(img_pnts_1, f_0)
+    theta = utils.elliptic_fitting_by_least_squares(points_x, points_y, f_0)
     print("theta: ", theta)
+    utils.draw_elliptic_fitting(theta, f_0, points_x, points_y)
 
 
 if __name__ == "__main__":

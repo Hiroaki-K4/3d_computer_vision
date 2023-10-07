@@ -179,10 +179,11 @@ def main():
     fns_diff, fns_diff_avg = utils.eval_pos_diff(corr_x, corr_y, f_fit_x, f_fit_y)
     print("fns_diff_avg: ", fns_diff_avg)
 
-    plt.scatter(corr_x, corr_y, marker="o", c="black", s=20)
-    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20)
-    plt.scatter(removed_x, removed_y, marker="o", c="red", s=20)
-    plt.scatter(f_fit_x, f_fit_y, marker="o", c="green", s=20)
+    plt.scatter(corr_x, corr_y, marker="o", c="black", s=20, alpha=0.4, label="Correct input")
+    plt.scatter(noise_x, noise_y, marker="o", c="blue", s=20, alpha=0.4, label="Noise input")
+    plt.scatter(removed_x, removed_y, marker="o", c="red", s=20, alpha=0.4, label="Noise removed input")
+    plt.scatter(f_fit_x, f_fit_y, marker="o", c="green", s=20, alpha=0.4, label="FNS")
+    plt.legend()
     plt.show()
 
 
