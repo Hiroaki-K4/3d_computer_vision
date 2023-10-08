@@ -24,3 +24,5 @@ python3 reconstruct_support_plane.py NotShow
 check_result "reconstruct_support_plane.py"
 cd ../
 
+# Test elliptic_fitting
+cd elliptic_fitting

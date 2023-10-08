@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import sys
 
 
 def plot_base():
@@ -63,8 +64,10 @@ def main():
     plt.scatter(c_x, c_y, marker="o", c="green")
     plt.scatter(e_x, e_y, marker="o", c="blue")
     plt.scatter(r_x, r_y, marker="o", c="red")
-    plt.show()
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()
