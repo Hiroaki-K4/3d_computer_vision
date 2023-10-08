@@ -48,7 +48,6 @@ def draw_elliptic_fitting(theta, f_0, ori_x, ori_y):
     plt.scatter(ori_x, ori_y, marker="o", c="blue", s=20, alpha=0.4, label="Correct input")
     plt.scatter(fit_x, fit_y, marker="o", c="red", s=20, alpha=0.4, label="Fitting")
     plt.legend()
-    plt.show()
 
 
 def get_elliptic_points_with_slope(a, b, slope, center):

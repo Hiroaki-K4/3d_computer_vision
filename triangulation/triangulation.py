@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 import sys
 
-sys.path.insert(0, "/home/hiroakik4/mypro/3d_computer_vision/fundamental_matrix")
-import calculate_f_matrix
+sys.path.append("../")
+from prepare_test_data_utils import prepare_test_data
 
 
 def calculate_camera_matrix_from_RT(R, T, f):
@@ -202,6 +202,13 @@ def optimal_correction(F, f_0, points_0, points_1):
 def main():
     draw_test_data = False
     draw_epipolar = False
+    rot_euler_deg_0 = [0, -10, 0]
+    rot_euler_deg_1 = [0, 30, 0]
+    T_0_in_camera_coord = [0, 0, 10]
+    T_1_in_camera_coord = [0, 0, 10]
+    f = 160
+    width = 640
+    height = 480
     (
         img_pnts_0,
         img_pnts_1,
@@ -210,10 +217,18 @@ def main():
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
-    ) = calculate_f_matrix.prepare_test_data(draw_test_data, draw_epipolar)
-    f = 160
-    width = 640
-    height = 480
+    ) = prepare_test_data.prepare_test_data(
+        draw_test_data,
+        draw_epipolar,
+        "CURVE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
+    )
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     P_0, P_1 = calculate_camera_matrix_from_RT(
@@ -227,13 +242,13 @@ def main():
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         )
         pos = simple_triangulation(
-            P_0, P_1, 640, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
+            P_0, P_1, width, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
         )
         x_0, y_0, x_1, y_1 = optimal_correction(
             F_true, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
         )
         opt_pos = simple_triangulation(
-            P_0, P_1, 640, np.array([x_0, y_0]), np.array([x_1, y_1])
+            P_0, P_1, width, np.array([x_0, y_0]), np.array([x_1, y_1])
         )
         print("point: ", i)
         print(

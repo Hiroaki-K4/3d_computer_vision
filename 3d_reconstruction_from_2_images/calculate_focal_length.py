@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import sys
-sys.path.append('../')
+
+sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
 
 
@@ -30,14 +31,40 @@ def calculate_focal_length(F):
 
 
 def main(draw_test_data, draw_epipolar):
-    img_pnts_0, img_pnts_1, noised_img_pnts_0, noised_img_pnts_1, F_matrix, rot_1_to_2, trans_1_to_2_in_camera_coord = prepare_test_data.prepare_test_data(draw_test_data, draw_epipolar)
+    rot_euler_deg_0 = [0, 0, 0]
+    rot_euler_deg_1 = [45, -30, 0]
+    T_0_in_camera_coord = [0, 0, 10]
+    T_1_in_camera_coord = [0, 0, 10]
+    f = 160
+    width = 640
+    height = 480
+    (
+        img_pnts_0,
+        img_pnts_1,
+        noised_img_pnts_0,
+        noised_img_pnts_1,
+        F_matrix,
+        rot_1_to_2,
+        trans_1_to_2_in_camera_coord,
+    ) = prepare_test_data.prepare_test_data(
+        draw_test_data,
+        draw_epipolar,
+        "CURVE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
+    )
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     print("F_matrix")
     print(F_matrix)
     calculate_focal_length(F_matrix)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     draw_test_data = False
     draw_epipolar = False
     main(draw_test_data, draw_epipolar)

@@ -14,7 +14,7 @@ def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
     return np.dot(np.dot(R_x, R_y), R_z)
 
 
-def create_curve_surface_points(radius, interval_deg):
+def create_circle_surface_points(radius, interval_deg):
     points = np.zeros((0, 3))
     for theta in range(360):
         if theta % interval_deg == 0:
@@ -25,7 +25,7 @@ def create_curve_surface_points(radius, interval_deg):
     return points
 
 
-def create_circle_surface_points(row, col, z_scale):
+def create_curve_surface_points(row, col, z_scale):
     points = np.zeros((0, 3))
     for i in range(row + 1):
         for j in range(col + 1):
@@ -106,34 +106,34 @@ def add_noise(img_pnts, noise_scale):
 def prepare_test_data(
     draw_test_data,
     draw_epipolar,
-    surface_type="CURVE",
-    rot_euler_deg_0=[0, -10, 0],
-    rot_euler_deg_1=[0, 30, 0],
+    surface_type,
+    rot_euler_deg_0,
+    rot_euler_deg_1,
+    T_0_in_camera_coord,
+    T_1_in_camera_coord,
+    f,
+    width,
+    height
 ):
     rot_mat_0 = euler_angle_to_rot_mat(
         rot_euler_deg_0[0], rot_euler_deg_0[1], rot_euler_deg_0[2]
     )
-    T_0_in_camera_coord = (0, 0, 10)
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
     rot_mat_1 = euler_angle_to_rot_mat(
         rot_euler_deg_1[0], rot_euler_deg_1[1], rot_euler_deg_1[2]
     )
-    T_1_in_camera_coord = (0, 0, 10)
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
     if surface_type == "CURVE":
         points = create_curve_surface_points(5, 5, 0.2)
     elif surface_type == "PLANE":
         points = create_curve_surface_points(5, 5, 0)
     elif surface_type == "CIRCLE":
-        points = create_curve_surface_points(5, 3)
+        points = create_circle_surface_points(5, 3)
     else:
         raise RuntimeError("Surface type is wrong")
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
     rodri_1, jac = cv2.Rodrigues(rot_mat_1)
 
-    f = 160
-    width = 640
-    height = 480
     pp = (width / 2, height / 2)
     camera_matrix = np.matrix(
         np.array([[f, 0, pp[0]], [0, f, pp[1]], [0, 0, 1]], dtype="double")

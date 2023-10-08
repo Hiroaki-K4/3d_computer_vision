@@ -179,6 +179,13 @@ def evaluate(noised_img_pnts_0, noised_img_pnts_1, H):
 
 
 def main():
+    rot_euler_deg_0 = [0, -10, 0]
+    rot_euler_deg_1 = [0, 30, 0]
+    T_0_in_camera_coord = [0, 0, 10]
+    T_1_in_camera_coord = [0, 0, 10]
+    f = 160
+    width = 640
+    height = 480
     (
         img_pnts_0,
         img_pnts_1,
@@ -188,7 +195,16 @@ def main():
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
     ) = prepare_test_data.prepare_test_data(
-        False, False, "PLANE"
+        False,
+        False,
+        "PLANE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
     )
 
     H = calculate_projective_trans_by_weighted_repetition(
@@ -209,8 +225,6 @@ def main():
     error_avg_cv = evaluate(noised_img_pnts_0, noised_img_pnts_1, H_cv)
     print("Error avg: ", error_avg_cv)
 
-    width = 640
-    height = 480
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     for pnt in noised_img_pnts_0:

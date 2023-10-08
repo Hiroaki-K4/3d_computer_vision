@@ -148,6 +148,13 @@ def planner_triangulation(P_0, P_1, f_0, points_0, points_1, homography):
 
 
 def main():
+    rot_euler_deg_0 = [0, -10, 0]
+    rot_euler_deg_1 = [0, 30, 0]
+    T_0_in_camera_coord = [0, 0, 10]
+    T_1_in_camera_coord = [0, 0, 10]
+    f = 160
+    width = 640
+    height = 480
     (
         img_pnts_0,
         img_pnts_1,
@@ -157,9 +164,15 @@ def main():
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
     ) = prepare_test_data.prepare_test_data(
-        False, False, "PLANE"
+        False, False, "PLANE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
     )
-    f = 160
     P_0, P_1 = calculate_camera_matrix_from_RT(
         rot_1_to_2, trans_1_to_2_in_camera_coord, f
     )
@@ -172,13 +185,13 @@ def main():
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         )
         pos = simple_triangulation(
-            P_0, P_1, 640, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
+            P_0, P_1, width, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
         )
         planner_point_0, planner_point_1 = planner_triangulation(
             P_0, P_1, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0], H
         )
         planar_pos = simple_triangulation(
-            P_0, P_1, 640, planner_point_0, planner_point_1
+            P_0, P_1, width, planner_point_0, planner_point_1
         )
         print("point: ", i)
         print(

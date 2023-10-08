@@ -64,6 +64,13 @@ def decompose_homography(H, f):
 
 
 def main():
+    rot_euler_deg_0 = [0, 0, 0]
+    rot_euler_deg_1 = [45, -30, 0]
+    T_0_in_camera_coord = [0, 0, 10]
+    T_1_in_camera_coord = [0, 0, 10]
+    f = 160
+    width = 640
+    height = 480
     (
         img_pnts_0,
         img_pnts_1,
@@ -73,7 +80,16 @@ def main():
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
     ) = prepare_test_data.prepare_test_data(
-        False, False, "PLANE"
+        False,
+        False,
+        "PLANE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
     )
 
     H_cv, _ = cv2.findHomography(
@@ -84,7 +100,6 @@ def main():
     print(H_cv)
     print("")
 
-    f = 160
     num, Rs, Ts, Ns, h = decompose_homography(H_cv, f)
 
     print("~~~~~~~~~~~~~Homography decomposition~~~~~~~~~~~~~")
