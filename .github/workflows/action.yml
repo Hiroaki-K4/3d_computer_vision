@@ -49,21 +49,21 @@ jobs:
     - name: Run test
       run: bash test.sh fundamental_matrix
 
-  homography_decomposition:
+  homography_decomposition_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Run test
       run: bash test.sh homography_decomposition
 
-  projective_transformation:
+  projective_transformation_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Run test
       run: bash test.sh projective_transformation
 
-  triangulation:
+  triangulation_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
