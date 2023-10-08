@@ -12,6 +12,7 @@ check_result() {
 	printf "${COLOR_GREEN}%s:%s %s${COLOR_RESET}\n" "$1" "$2" ' [OK]'
 }
 
+pip3 list
 source 3d/bin/activate
 
 # Test elliptic_analysis
