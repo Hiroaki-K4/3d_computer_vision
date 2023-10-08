@@ -1,6 +1,7 @@
+import sys
+
 import cv2
 import numpy as np
-import sys
 
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data

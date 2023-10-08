@@ -1,7 +1,7 @@
 import numpy as np
+import sympy
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-import sympy
 
 
 def plot_base():
@@ -45,7 +45,9 @@ def draw_elliptic_fitting(theta, f_0, ori_x, ori_y):
             fit_x.append(x)
             fit_y.append(y_ans)
 
-    plt.scatter(ori_x, ori_y, marker="o", c="blue", s=20, alpha=0.4, label="Correct input")
+    plt.scatter(
+        ori_x, ori_y, marker="o", c="blue", s=20, alpha=0.4, label="Correct input"
+    )
     plt.scatter(fit_x, fit_y, marker="o", c="red", s=20, alpha=0.4, label="Fitting")
     plt.legend()
 

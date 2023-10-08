@@ -1,0 +1,71 @@
+name: 3D COMPUTER VISION CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: docker run --rm -v $(pwd):/data cytopia/black . --check --verbose --diff --color
+
+  elliptic_analysis_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh elliptic_analysis
+
+  elliptic_fitting_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh elliptic_fitting
+
+  equirectangular_to_cubemap_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh equirectangular_to_cubemap
+
+  equirectangular_to_sphere_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh equirectangular_to_sphere
+
+  fundamental_matrix_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh fundamental_matrix
+
+  homography_decomposition_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh homography_decomposition
+
+  projective_transformation_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh projective_transformation
+
+  triangulation_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh triangulation

@@ -89,8 +89,11 @@ def main():
 
     plt.scatter(points_x, points_y, marker="o", c="red", s=40)
     plt.scatter(ans_points_x, ans_points_y, marker="o", c="red", s=40)
-    plt.show()
 
 
 if __name__ == "__main__":
     main()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()

@@ -2,11 +2,13 @@ import sys
 
 import cv2
 import numpy as np
-import utils
 from matplotlib import pyplot as plt
+
+import utils
 
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
+
 
 def convert_points_to_xy(points):
     points_x = []
@@ -20,9 +22,7 @@ def convert_points_to_xy(points):
 
 def reconstruct_support_plane(theta, f_0, f):
     q = utils.convert_to_conic_mat(theta)
-    conv_f = np.array([[1/f_0, 0, 0],
-                       [0, 1/f_0, 0],
-                       [0, 0, 1/f]])
+    conv_f = np.array([[1 / f_0, 0, 0], [0, 1 / f_0, 0], [0, 0, 1 / f]])
     q_conv = np.dot(np.dot(conv_f, q), conv_f)
     q_norm = q_conv / np.cbrt((-1) * np.linalg.det(q_conv))
 
@@ -58,8 +58,16 @@ def main():
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
     ) = prepare_test_data.prepare_test_data(
-        False, False, "CIRCLE", rot_euler_deg_0, rot_euler_deg_1, T_0_in_camera_coord,
-        T_1_in_camera_coord, f, width, height
+        False,
+        False,
+        "CIRCLE",
+        rot_euler_deg_0,
+        rot_euler_deg_1,
+        T_0_in_camera_coord,
+        T_1_in_camera_coord,
+        f,
+        width,
+        height,
     )
     points_x, points_y = convert_points_to_xy(img_pnts_1)
     f_0 = 20
@@ -73,4 +81,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    plt.show()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()

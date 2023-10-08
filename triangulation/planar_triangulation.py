@@ -164,7 +164,9 @@ def main():
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
     ) = prepare_test_data.prepare_test_data(
-        False, False, "PLANE",
+        False,
+        False,
+        "PLANE",
         rot_euler_deg_0,
         rot_euler_deg_1,
         T_0_in_camera_coord,

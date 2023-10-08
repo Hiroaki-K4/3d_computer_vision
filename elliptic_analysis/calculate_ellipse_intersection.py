@@ -1,4 +1,5 @@
 import math
+import sys
 
 import numpy as np
 import sympy
@@ -145,4 +146,7 @@ if __name__ == "__main__":
     q1 = utils.prepare_test_data(a, b, 20, center, f_0)
     q2 = utils.prepare_test_data(a, b, 60, center, f_0)
     x_ans_1, y_ans_1, x_ans_2, y_ans_2 = calculate_ellipse_intersection(q1, q2, f_0)
-    plt.show()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()

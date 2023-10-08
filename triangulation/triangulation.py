@@ -1,6 +1,7 @@
-import numpy as np
-import cv2
 import sys
+
+import cv2
+import numpy as np
 
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
@@ -199,7 +200,7 @@ def optimal_correction(F, f_0, points_0, points_1):
     return x_est_0, y_est_0, x_est_1, y_est_1
 
 
-def main():
+def main(show=True):
     draw_test_data = False
     draw_epipolar = False
     rot_euler_deg_0 = [0, -10, 0]
@@ -271,10 +272,15 @@ def main():
         cv2.circle(img_0, (int(x_0), int(y_0)), 3, (0, 0, 0), -1)
         cv2.circle(img_1, (int(x_1), int(y_1)), 3, (255, 0, 0), -1)
 
-    cv2.imshow("OPT_CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
-    cv2.imshow("OPT_CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
-    cv2.waitKey(0)
+    if show:
+        cv2.imshow("OPT_CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
+        cv2.imshow("OPT_CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
+        cv2.waitKey(0)
 
 
 if __name__ == "__main__":
-    main()
+    show = True
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        show = False
+
+    main(show)
