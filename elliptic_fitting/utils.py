@@ -1,8 +1,9 @@
-from matplotlib import pyplot as plt
-import sympy
-from tqdm import tqdm
 import math
+
 import numpy as np
+import sympy
+from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 
 def plot_base():

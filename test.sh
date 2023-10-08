@@ -26,3 +26,28 @@ cd ../
 
 # Test elliptic_fitting
 cd elliptic_fitting
+python3 draw_elliptic.py NotShow
+check_result "draw_elliptic.py"
+python3 elliptic_fitting_by_fns.py NotShow
+check_result "elliptic_fitting_by_fns.py"
+python3 elliptic_fitting_by_least_squares.py NotShow
+check_result "elliptic_fitting_by_least_squares.py"
+python3 elliptic_fitting_by_renormalization.py NotShow
+check_result "elliptic_fitting_by_renormalization.py"
+python3 elliptic_fitting_by_weighted_repetition.py NotShow
+check_result "elliptic_fitting_by_weighted_repetition.py"
+python3 remove_outlier_by_ransac.py NotShow
+check_result "remove_outlier_by_ransac.py"
+cd ../
+
+# Test equirectangular_to_cubemap
+cd equirectangular_to_cubemap
+python3 equirectangular_to_cubemap.py
+check_result "equirectangular_to_cubemap.py"
+cd ../
+
+# Test equirectangular_to_sphere
+cd equirectangular_to_sphere
+python3 equirectangular_to_sphere.py
+check_result "equirectangular_to_sphere.py"
+cd ../

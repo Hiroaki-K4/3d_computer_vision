@@ -1,5 +1,6 @@
 import math
 import sys
+
 import numpy as np
 import sympy
 from matplotlib import pyplot as plt

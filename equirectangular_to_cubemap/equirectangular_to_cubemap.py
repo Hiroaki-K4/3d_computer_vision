@@ -1,7 +1,8 @@
-from tqdm import tqdm
+import math
+
 import cv2
 import numpy as np
-import math
+from tqdm import tqdm
 
 
 def get_theta(x, y):

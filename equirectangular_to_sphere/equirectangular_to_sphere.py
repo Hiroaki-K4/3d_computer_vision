@@ -1,6 +1,8 @@
-import numpy as np
 import math
+import sys
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_base(elev=25, azim=-70):
@@ -66,8 +68,11 @@ def main():
 
     ax = plot_base()
     ax.scatter(sphere_x_list, sphere_y_list, sphere_z_list, s=40, c="green")
-    plt.show()
 
 
 if __name__ == "__main__":
     main()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()
