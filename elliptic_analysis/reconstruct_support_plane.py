@@ -73,4 +73,7 @@ def main():
 
 if __name__ == "__main__":
     main()
-    plt.show()
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        print("It shows nothing")
+    else:
+        plt.show()
