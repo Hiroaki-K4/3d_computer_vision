@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run test
-      run: - docker run --rm -v $(pwd):/data cytopia/black . --check --verbose --diff --color
+      run: docker run --rm -v $(pwd):/data cytopia/black . --check --verbose --diff --color
 
   test:
     runs-on: ubuntu-latest
