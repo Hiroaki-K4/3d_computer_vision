@@ -87,21 +87,21 @@ test_triangulation() {
 python3 -m pip install -r requirements.txt
 
 if [ $# -eq 1 ]; then
-    if [ $1 -eq "elliptic_analysis" ]; then
+    if [ $1 = "elliptic_analysis" ]; then
         test_elliptic_analysis
-    elif [ $1 -eq "elliptic_fitting" ]; then
+    elif [ $1 = "elliptic_fitting" ]; then
         test_elliptic_fitting
-    elif [ $1 -eq "equirectangular_to_cubemap" ]; then
+    elif [ $1 = "equirectangular_to_cubemap" ]; then
         test_equirectangular_to_cubemap
-    elif [ $1 -eq "equirectangular_to_sphere" ]; then
+    elif [ $1 = "equirectangular_to_sphere" ]; then
         test_equirectangular_to_sphere
-    elif [ $1 -eq "fundamental_matrix" ]; then
+    elif [ $1 = "fundamental_matrix" ]; then
         test_fundamental_matrix
-    elif [ $1 -eq "homography_decomposition" ]; then
+    elif [ $1 = "homography_decomposition" ]; then
         test_homography_decomposition
-    elif [ $1 -eq "projective_transformation" ]; then
+    elif [ $1 = "projective_transformation" ]; then
         test_projective_transformation
-    elif [ $1 -eq "triangulation" ]; then
+    elif [ $1 = "triangulation" ]; then
         test_triangulation
     else
         echo "Argument is wrong"
