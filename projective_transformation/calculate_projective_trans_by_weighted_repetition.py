@@ -178,7 +178,7 @@ def evaluate(noised_img_pnts_0, noised_img_pnts_1, H):
     return error / len(noised_img_pnts_0)
 
 
-def main():
+def main(show=True):
     rot_euler_deg_0 = [0, -10, 0]
     rot_euler_deg_1 = [0, 30, 0]
     T_0_in_camera_coord = [0, 0, 10]
@@ -231,14 +231,21 @@ def main():
         cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
     for pnt in noised_img_pnts_1:
         cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
-    cv2.imshow("CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
-    cv2.imshow("CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
+
     pers_img = cv2.warpPerspective(img_0, H, (width, height))
-    cv2.imshow("pers_weighted_rep", cv2.resize(pers_img, None, fx=0.5, fy=0.5))
     pers_img_cv = cv2.warpPerspective(img_0, H_cv, (width, height))
-    cv2.imshow("pers_opencv", cv2.resize(pers_img_cv, None, fx=0.5, fy=0.5))
-    cv2.waitKey(0)
+
+    if show:
+        cv2.imshow("CAM0", cv2.resize(img_0, None, fx=0.5, fy=0.5))
+        cv2.imshow("CAM1", cv2.resize(img_1, None, fx=0.5, fy=0.5))
+        cv2.imshow("pers_weighted_rep", cv2.resize(pers_img, None, fx=0.5, fy=0.5))
+        cv2.imshow("pers_opencv", cv2.resize(pers_img_cv, None, fx=0.5, fy=0.5))
+        cv2.waitKey(0)
 
 
 if __name__ == "__main__":
-    main()
+    show = True
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        show = False
+
+    main(show)

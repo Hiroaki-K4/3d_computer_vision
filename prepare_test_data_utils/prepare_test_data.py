@@ -1,6 +1,7 @@
-import numpy as np
 import math
+
 import cv2
+import numpy as np
 
 
 def euler_angle_to_rot_mat(x_deg, y_deg, z_deg):
@@ -113,7 +114,7 @@ def prepare_test_data(
     T_1_in_camera_coord,
     f,
     width,
-    height
+    height,
 ):
     rot_mat_0 = euler_angle_to_rot_mat(
         rot_euler_deg_0[0], rot_euler_deg_0[1], rot_euler_deg_0[2]
