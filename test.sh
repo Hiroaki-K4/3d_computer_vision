@@ -12,9 +12,7 @@ check_result() {
 	printf "${COLOR_GREEN}%s:%s %s${COLOR_RESET}\n" "$1" "$2" ' [OK]'
 }
 
-# python3 -m pip install -r requirements.txt
-# pip3 list
-# source 3d/bin/activate
+python3 -m pip install -r requirements.txt
 
 # Test elliptic_analysis
 cd elliptic_analysis
