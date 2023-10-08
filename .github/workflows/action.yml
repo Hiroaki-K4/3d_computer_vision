@@ -21,12 +21,40 @@ jobs:
     - name: Run test
       run: bash test.sh elliptic_analysis
 
-  elliptic_fitting_test:
+  elliptic_fitting_by_fns_test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Run test
-      run: bash test.sh elliptic_fitting
+      run: bash test.sh elliptic_fitting_by_fns
+
+  elliptic_fitting_by_least_squares_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh elliptic_fitting_by_least_squares
+
+  elliptic_fitting_by_renormalization_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh elliptic_fitting_by_renormalization
+
+  elliptic_fitting_by_weighted_repetition_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh elliptic_fitting_by_weighted_repetition
+
+  remove_outlier_by_ransac_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh remove_outlier_by_ransac
 
   equirectangular_to_cubemap_test:
     runs-on: ubuntu-latest
