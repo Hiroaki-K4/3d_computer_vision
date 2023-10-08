@@ -23,18 +23,38 @@ test_elliptic_analysis() {
     cd ../
 }
 
-test_elliptic_fitting() {
+test_elliptic_fitting_by_fns() {
     cd elliptic_fitting
     python3 draw_elliptic.py NotShow
     check_result "draw_elliptic.py"
     python3 elliptic_fitting_by_fns.py NotShow
     check_result "elliptic_fitting_by_fns.py"
+    cd ../
+}
+
+test_elliptic_fitting_by_least_squares() {
+    cd elliptic_fitting
     python3 elliptic_fitting_by_least_squares.py NotShow
     check_result "elliptic_fitting_by_least_squares.py"
+    cd ../
+}
+
+test_elliptic_fitting_by_renormalization() {
+    cd elliptic_fitting
     python3 elliptic_fitting_by_renormalization.py NotShow
     check_result "elliptic_fitting_by_renormalization.py"
+    cd ../
+}
+
+test_elliptic_fitting_by_weighted_repetition() {
+    cd elliptic_fitting
     python3 elliptic_fitting_by_weighted_repetition.py NotShow
     check_result "elliptic_fitting_by_weighted_repetition.py"
+    cd ../
+}
+
+test_remove_outlier_by_ransac() {
+    cd elliptic_fitting
     python3 remove_outlier_by_ransac.py NotShow
     check_result "remove_outlier_by_ransac.py"
     cd ../
@@ -89,8 +109,16 @@ python3 -m pip install -r requirements.txt
 if [ $# -eq 1 ]; then
     if [ $1 = "elliptic_analysis" ]; then
         test_elliptic_analysis
-    elif [ $1 = "elliptic_fitting" ]; then
-        test_elliptic_fitting
+    elif [ $1 = "elliptic_fitting_by_fns" ]; then
+        test_elliptic_fitting_by_fns
+    elif [ $1 = "elliptic_fitting_by_least_squares" ]; then
+        test_elliptic_fitting_by_least_squares
+    elif [ $1 = "elliptic_fitting_by_renormalization" ]; then
+        test_elliptic_fitting_by_renormalization
+    elif [ $1 = "elliptic_fitting_by_weighted_repetition" ]; then
+        test_elliptic_fitting_by_weighted_repetition
+    elif [ $1 = "remove_outlier_by_ransac" ]; then
+        test_remove_outlier_by_ransac
     elif [ $1 = "equirectangular_to_cubemap" ]; then
         test_equirectangular_to_cubemap
     elif [ $1 = "equirectangular_to_sphere" ]; then
@@ -110,7 +138,11 @@ if [ $# -eq 1 ]; then
 
 else
     test_elliptic_analysis
-    test_elliptic_fitting
+    test_elliptic_fitting_by_fns
+    test_elliptic_fitting_by_least_squares
+    test_elliptic_fitting_by_renormalization
+    test_elliptic_fitting_by_weighted_repetition
+    test_remove_outlier_by_ransac
     test_equirectangular_to_cubemap
     test_equirectangular_to_sphere
     test_fundamental_matrix
