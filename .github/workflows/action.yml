@@ -13,5 +13,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: test
-      run: echo "Hello"
+    - name: Run test
+      run: bash test.sh
