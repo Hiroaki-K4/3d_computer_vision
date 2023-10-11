@@ -11,6 +11,26 @@ def plot_base():
     plt.grid()
 
 
+def plot_base_3d(elev=25, azim=-70):
+    fig = plt.figure(figsize=(10, 10))
+    ax = fig.add_subplot(111, projection='3d')
+    # ax.view_init(elev=elev, azim=azim)
+    ax.set(xlim=(-1, 1), zlim=(-1, 1), ylim=(-1 ,1))
+    ax.set(xlabel='X', zlabel='Z', ylabel='Y')
+    ax.xaxis.pane.fill = ax.yaxis.pane.fill = ax.zaxis.pane.fill = False
+
+    alpha = 0.7
+    # Plot axis
+    ax.plot([-1, 1], [0, 0], [0, 0], linestyle=':', c='red', alpha=alpha)
+    ax.plot([0, 0], [-1, 1], [0, 0], linestyle=':', c='red', alpha=alpha)
+    ax.plot([0, 0], [0, 0], [-1, 1], linestyle=':', c='red', alpha=alpha)
+
+    elev, azim, roll = -30, 150, 180
+    ax.view_init(elev, azim, roll, vertical_axis='y')
+
+    return ax
+
+
 def elliptic_fitting_by_least_squares(points_x, points_y, f):
     xi_sum = np.zeros((6, 6))
     for i in range(len(points_x)):

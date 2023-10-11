@@ -42,7 +42,7 @@ def reconstruct_support_plane(theta, f_0, f):
 
 
 def main():
-    rot_euler_deg_0 = [0, 0, 0]
+    rot_euler_deg_0 = [0, 45, 0]
     rot_euler_deg_1 = [45, -30, 0]
     T_0_in_camera_coord = [0, 0, 10]
     T_1_in_camera_coord = [0, 0, 10]
@@ -57,6 +57,7 @@ def main():
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
+        points_3d,
     ) = prepare_test_data.prepare_test_data(
         False,
         False,
@@ -77,6 +78,8 @@ def main():
     f = 160
     nomral_vec = reconstruct_support_plane(theta, f_0, f)
     print("nomral_vec: ", nomral_vec)
+    ax = utils.plot_base_3d()
+    ax.quiver([0], [0], [0], [nomral_vec[0]], [nomral_vec[1]], [nomral_vec[2]], colors='r')
 
 
 if __name__ == "__main__":

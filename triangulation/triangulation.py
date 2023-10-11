@@ -218,6 +218,7 @@ def main(show=True):
         F_true,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
+        points_3d,
     ) = prepare_test_data.prepare_test_data(
         draw_test_data,
         draw_epipolar,

@@ -120,16 +120,18 @@ def prepare_test_data(
         rot_euler_deg_0[0], rot_euler_deg_0[1], rot_euler_deg_0[2]
     )
     trans_vec_0 = np.eye(3) * np.matrix(T_0_in_camera_coord).T
+    rotated_pos_0 = np.dot(rot_mat_0, trans_vec_0)
     rot_mat_1 = euler_angle_to_rot_mat(
         rot_euler_deg_1[0], rot_euler_deg_1[1], rot_euler_deg_1[2]
     )
     trans_vec_1 = np.eye(3) * np.matrix(T_1_in_camera_coord).T
+    rotated_pos_1 = np.dot(rot_mat_1, trans_vec_1)
     if surface_type == "CURVE":
-        points = create_curve_surface_points(5, 5, 0.2)
+        points_3d = create_curve_surface_points(5, 5, 0.2)
     elif surface_type == "PLANE":
-        points = create_curve_surface_points(5, 5, 0)
+        points_3d = create_curve_surface_points(5, 5, 0)
     elif surface_type == "CIRCLE":
-        points = create_circle_surface_points(5, 3)
+        points_3d = create_circle_surface_points(5, 3)
     else:
         raise RuntimeError("Surface type is wrong")
     rodri_0, jac = cv2.Rodrigues(rot_mat_0)
@@ -141,11 +143,13 @@ def prepare_test_data(
     )
     dist_coeffs = np.zeros((5, 1))
     img_pnts_0, jac = cv2.projectPoints(
-        points, rodri_0, trans_vec_0, camera_matrix, dist_coeffs
+        points_3d, rodri_0, trans_vec_0, camera_matrix, dist_coeffs
     )
     img_pnts_1, jac = cv2.projectPoints(
-        points, rodri_1, trans_vec_1, camera_matrix, dist_coeffs
+        points_3d, rodri_1, trans_vec_1, camera_matrix, dist_coeffs
     )
+    # print(points_3d)
+    # input()
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
@@ -183,4 +187,5 @@ def prepare_test_data(
         F_true_1_to_2,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
+        points_3d
     )
