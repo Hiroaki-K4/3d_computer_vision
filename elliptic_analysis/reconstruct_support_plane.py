@@ -79,7 +79,9 @@ def main():
     nomral_vec = reconstruct_support_plane(theta, f_0, f)
     print("nomral_vec: ", nomral_vec)
     ax = utils.plot_base_3d()
-    ax.quiver([0], [0], [0], [nomral_vec[0]], [nomral_vec[1]], [nomral_vec[2]], colors='r')
+    ax.quiver(
+        [0], [0], [0], [nomral_vec[0]], [nomral_vec[1]], [nomral_vec[2]], colors="r"
+    )
 
 
 if __name__ == "__main__":

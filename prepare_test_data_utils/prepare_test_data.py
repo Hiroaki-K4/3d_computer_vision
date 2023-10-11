@@ -187,5 +187,5 @@ def prepare_test_data(
         F_true_1_to_2,
         rot_1_to_2,
         trans_1_to_2_in_camera_coord,
-        points_3d
+        points_3d,
     )
