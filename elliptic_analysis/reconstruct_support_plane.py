@@ -20,6 +20,14 @@ def convert_points_to_xy(points):
     return points_x, points_y
 
 
+def convert_left_top_to_left_down(points_y, height):
+    conv_points_y = []
+    for pnt in points_y:
+        conv_points_y.append(height - 1 - pnt)
+
+    return conv_points_y
+
+
 def reconstruct_support_plane(theta, f_0, f):
     q = utils.convert_to_conic_mat(theta)
     conv_f = np.array([[1 / f_0, 0, 0], [0, 1 / f_0, 0], [0, 0, 1 / f]])
@@ -42,8 +50,8 @@ def reconstruct_support_plane(theta, f_0, f):
 
 
 def main():
-    rot_euler_deg_0 = [0, 45, 0]
-    rot_euler_deg_1 = [45, -30, 0]
+    rot_euler_deg_0 = [0, 0, 0]
+    rot_euler_deg_1 = [0, 0, 0]
     T_0_in_camera_coord = [0, 0, 10]
     T_1_in_camera_coord = [0, 0, 10]
     f = 160
@@ -70,12 +78,13 @@ def main():
         width,
         height,
     )
+    # TODO Maybe I need to think about aspect ratio of points
     points_x, points_y = convert_points_to_xy(img_pnts_1)
+    points_y = convert_left_top_to_left_down(points_y, height)
     f_0 = 20
     theta = utils.elliptic_fitting_by_least_squares(points_x, points_y, f_0)
     print("theta: ", theta)
     utils.draw_elliptic_fitting(theta, f_0, points_x, points_y)
-    f = 160
     nomral_vec = reconstruct_support_plane(theta, f_0, f)
     print("nomral_vec: ", nomral_vec)
     ax = utils.plot_base_3d()
