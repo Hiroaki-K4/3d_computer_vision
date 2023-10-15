@@ -51,7 +51,7 @@ def reconstruct_support_plane(theta, f_0, f):
 
 def main():
     rot_euler_deg_0 = [0, 0, 0]
-    rot_euler_deg_1 = [0, 0, 0]
+    rot_euler_deg_1 = [45, -30, 0]
     T_0_in_camera_coord = [0, 0, 10]
     T_1_in_camera_coord = [0, 0, 10]
     f = 160
@@ -78,7 +78,6 @@ def main():
         width,
         height,
     )
-    # TODO Maybe I need to think about aspect ratio of points
     points_x, points_y = convert_points_to_xy(img_pnts_1)
     points_y = convert_left_top_to_left_down(points_y, height)
     f_0 = 20
