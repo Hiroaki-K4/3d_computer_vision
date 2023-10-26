@@ -1,11 +1,8 @@
 import sys
-
-import cv2
 import numpy as np
 
 from triangulation import (
     calculate_camera_matrix_from_RT,
-    optimal_correction,
     simple_triangulation,
 )
 
