@@ -238,11 +238,11 @@ def prepare_test_data_three_images(
     img_pnts_1, jac = cv2.projectPoints(
         points_3d, rodri_1, trans_vec_1, camera_matrix, dist_coeffs
     )
-    img_pnts_1 = np.reshape(img_pnts_1, (img_pnts_0.shape[1], 2))
+    img_pnts_1 = np.reshape(img_pnts_1, (img_pnts_1.shape[0], 2))
     img_pnts_2, jac = cv2.projectPoints(
         points_3d, rodri_2, trans_vec_2, camera_matrix, dist_coeffs
     )
-    img_pnts_2 = np.reshape(img_pnts_2, (img_pnts_0.shape[2], 2))
+    img_pnts_2 = np.reshape(img_pnts_2, (img_pnts_2.shape[0], 2))
 
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)

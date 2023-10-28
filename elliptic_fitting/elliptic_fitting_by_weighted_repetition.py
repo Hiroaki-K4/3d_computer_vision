@@ -1,10 +1,9 @@
 import sys
 
-import numpy as np
-from matplotlib import pyplot as plt
-
 import elliptic_fitting_by_least_squares
+import numpy as np
 import utils
+from matplotlib import pyplot as plt
 
 
 def elliptic_fitting_by_weighted_repetition(noise_x, noise_y, f):
