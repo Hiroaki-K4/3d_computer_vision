@@ -4,10 +4,14 @@ sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
 
 
+def optimal_correction_from_three_images(pnts_0, pnts_1, pnts_2):
+    print(pnts_0)
+    E_0 = sys.float_info.max
+
+
 def main():
-    # prepare_test_data_three_images()
-    rot_euler_deg_0 = [0, 0, 0]
-    rot_euler_deg_1 = [0, -45, 0]
+    rot_euler_deg_0 = [0, -45, 0]
+    rot_euler_deg_1 = [0, 0, 0]
     rot_euler_deg_2 = [0, 45, 0]
     T_0_in_camera_coord = [0, 0, 10]
     T_1_in_camera_coord = [0, 0, 10]
@@ -18,14 +22,13 @@ def main():
     (
         img_pnts_0,
         img_pnts_1,
+        img_pnts_2,
         noised_img_pnts_0,
         noised_img_pnts_1,
-        F_true,
-        rot_1_to_2,
-        trans_1_to_2_in_camera_coord,
+        noised_img_pnts_2,
         points_3d,
     ) = prepare_test_data.prepare_test_data_three_images(
-        True,
+        False,
         "PLANE",
         rot_euler_deg_0,
         rot_euler_deg_1,
@@ -37,7 +40,9 @@ def main():
         width,
         height,
     )
-    print("ok")
+    prepare_test_data.optimal_correction_from_three_images(
+        noised_img_pnts_0, noised_img_pnts_1, noised_img_pnts_2
+    )
 
 
 if __name__ == "__main__":

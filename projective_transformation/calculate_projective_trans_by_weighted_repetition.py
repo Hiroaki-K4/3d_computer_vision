@@ -10,8 +10,8 @@ from prepare_test_data_utils import prepare_test_data
 def update_weight(theta, img_pnts_0, img_pnts_1, f_0):
     new_W = np.zeros((0, 3, 3))
     for i in range(len(img_pnts_0)):
-        p_0 = img_pnts_0[i][0]
-        p_1 = img_pnts_1[i][0]
+        p_0 = img_pnts_0[i]
+        p_1 = img_pnts_1[i]
         T_1 = np.array(
             [
                 [0, 0, 0, 0],
@@ -83,8 +83,8 @@ def calculate_projective_trans_by_weighted_repetition(img_pnts_0, img_pnts_1):
     count_thr = 1000
     while True:
         for i in range(len(img_pnts_0)):
-            p_0 = img_pnts_0[i][0]
-            p_1 = img_pnts_1[i][0]
+            p_0 = img_pnts_0[i]
+            p_1 = img_pnts_1[i]
             xi_1 = np.array(
                 [
                     [
@@ -169,11 +169,11 @@ def evaluate(noised_img_pnts_0, noised_img_pnts_1, H):
     for i in range(len(noised_img_pnts_0)):
         pnt_0 = noised_img_pnts_0[i]
         pnt_1 = noised_img_pnts_1[i]
-        from_pnt = np.array([pnt_0[0][0], pnt_0[0][1], 1])
+        from_pnt = np.array([pnt_0[0], pnt_0[1], 1])
         to_pnt = np.dot(H, from_pnt)
         to_1 = 1 / to_pnt[2]
         to_pnt = to_pnt * to_1
-        error += abs(pnt_1[0][0] - to_pnt[0]) + abs(pnt_1[0][1] - to_pnt[1])
+        error += abs(pnt_1[0] - to_pnt[0]) + abs(pnt_1[1] - to_pnt[1])
 
     return error / len(noised_img_pnts_0)
 
@@ -229,9 +229,9 @@ def main(show=True):
     img_0 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     img_1 = np.full((height, width, 3), (255, 255, 255), np.uint8)
     for pnt in noised_img_pnts_0:
-        cv2.circle(img_0, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
+        cv2.circle(img_0, (int(pnt[0]), int(pnt[1])), 3, (255, 0, 0), -1)
     for pnt in noised_img_pnts_1:
-        cv2.circle(img_1, (int(pnt[0][0]), int(pnt[0][1])), 3, (255, 0, 0), -1)
+        cv2.circle(img_1, (int(pnt[0]), int(pnt[1])), 3, (255, 0, 0), -1)
 
     pers_img = cv2.warpPerspective(img_0, H, (width, height))
     pers_img_cv = cv2.warpPerspective(img_0, H_cv, (width, height))

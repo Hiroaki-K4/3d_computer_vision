@@ -185,10 +185,10 @@ def main():
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         )
         pos = simple_triangulation(
-            P_0, P_1, width, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
+            P_0, P_1, width, noised_img_pnts_0[i], noised_img_pnts_1[i]
         )
         planner_point_0, planner_point_1 = planner_triangulation(
-            P_0, P_1, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0], H
+            P_0, P_1, f_0, noised_img_pnts_0[i], noised_img_pnts_1[i], H
         )
         planar_pos = simple_triangulation(
             P_0, P_1, width, planner_point_0, planner_point_1
@@ -196,12 +196,12 @@ def main():
         print("point: ", i)
         print(
             "2D points movement after planar triangulation: {0} -> {1}".format(
-                noised_img_pnts_0[i][0], planner_point_0
+                noised_img_pnts_0[i], planner_point_0
             )
         )
         print(
             "2D points movement after planar triangulation: {0} -> {1}".format(
-                noised_img_pnts_1[i][0], planner_point_1
+                noised_img_pnts_1[i], planner_point_1
             )
         )
         print(
