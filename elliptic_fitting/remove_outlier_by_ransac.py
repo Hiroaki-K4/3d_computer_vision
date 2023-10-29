@@ -2,9 +2,8 @@ import random
 import sys
 
 import numpy as np
-from matplotlib import pyplot as plt
-
 import utils
+from matplotlib import pyplot as plt
 
 
 def get_elliptic_points_with_outlier():

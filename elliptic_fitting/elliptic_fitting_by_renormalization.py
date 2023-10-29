@@ -1,12 +1,11 @@
 import sys
 
-import numpy as np
-import scipy
-from matplotlib import pyplot as plt
-
 import elliptic_fitting_by_least_squares
 import elliptic_fitting_by_weighted_repetition
+import numpy as np
+import scipy
 import utils
+from matplotlib import pyplot as plt
 
 
 def get_elliptic_points_with_tilt():

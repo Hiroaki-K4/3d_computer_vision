@@ -14,8 +14,8 @@ def convert_points_to_xy(points):
     points_x = []
     points_y = []
     for point in points:
-        points_x.append(point[0][0])
-        points_y.append(point[0][1])
+        points_x.append(point[0])
+        points_y.append(point[1])
 
     return points_x, points_y
 

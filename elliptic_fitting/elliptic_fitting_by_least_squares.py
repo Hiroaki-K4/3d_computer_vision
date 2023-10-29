@@ -2,10 +2,9 @@ import sys
 
 import numpy as np
 import sympy
+import utils
 from matplotlib import pyplot as plt
 from tqdm import tqdm
-
-import utils
 
 
 def elliptic_fitting_by_least_squares(noise_x, noise_y, f):

@@ -244,10 +244,10 @@ def main(show=True):
             "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
         )
         pos = simple_triangulation(
-            P_0, P_1, width, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
+            P_0, P_1, width, noised_img_pnts_0[i], noised_img_pnts_1[i]
         )
         x_0, y_0, x_1, y_1 = optimal_correction(
-            F_true, f_0, noised_img_pnts_0[i][0], noised_img_pnts_1[i][0]
+            F_true, f_0, noised_img_pnts_0[i], noised_img_pnts_1[i]
         )
         opt_pos = simple_triangulation(
             P_0, P_1, width, np.array([x_0, y_0]), np.array([x_1, y_1])
@@ -255,18 +255,18 @@ def main(show=True):
         print("point: ", i)
         print(
             "noised_pos: ",
-            noised_img_pnts_0[i][0][0],
-            noised_img_pnts_0[i][0][1],
-            noised_img_pnts_1[i][0][0],
-            noised_img_pnts_1[i][0][1],
+            noised_img_pnts_0[i][0],
+            noised_img_pnts_0[i][1],
+            noised_img_pnts_1[i][0],
+            noised_img_pnts_1[i][1],
         )
         print("opt_pos: ", x_0, y_0, x_1, y_1)
         print(
             "ori_pos: ",
-            img_pnts_0[i][0][0],
-            img_pnts_0[i][0][1],
-            img_pnts_1[i][0][0],
-            img_pnts_1[i][0][1],
+            img_pnts_0[i][0],
+            img_pnts_0[i][1],
+            img_pnts_1[i][0],
+            img_pnts_1[i][1],
         )
         print("simple_triangulation_ori: ", pos)
         print("simple_triangulation_opt: ", opt_pos)
