@@ -275,3 +275,65 @@ def prepare_test_data_three_images(
         noised_img_pnts_2,
         points_3d,
     )
+
+
+def prepare_multiple_test_images(
+    draw_test_data,
+    surface_type,
+    rot_euler_degrees,
+    T_in_camera_coords,
+    f,
+    width,
+    height,
+):
+    if len(rot_euler_degrees) != len(T_in_camera_coords):
+        raise RuntimeError("The number of rot arg and trans arg are different.")
+
+    pp = (width / 2, height / 2)
+    camera_matrix = np.matrix(
+        np.array([[f, 0, pp[0]], [0, f, pp[1]], [0, 0, 1]], dtype="double")
+    )
+    img_pnts_list = []
+    noised_img_pnts_list = []
+    for i in range(len(rot_euler_degrees)):
+        rot_mat = euler_angle_to_rot_mat(
+            rot_euler_degrees[i][0], rot_euler_degrees[i][1], rot_euler_degrees[i][2]
+        )
+        trans_vec = np.eye(3) * np.matrix(T_in_camera_coords[i]).T
+        if surface_type == "CURVE":
+            points_3d = create_curve_surface_points(5, 5, 0.2)
+        elif surface_type == "PLANE":
+            points_3d = create_curve_surface_points(5, 5, 0)
+        elif surface_type == "CIRCLE":
+            points_3d = create_circle_surface_points(5, 3)
+        else:
+            raise RuntimeError("Surface type is wrong")
+        rodri, jac = cv2.Rodrigues(rot_mat)
+
+        dist_coeffs = np.zeros((5, 1))
+        img_pnts, jac = cv2.projectPoints(
+            points_3d, rodri, trans_vec, camera_matrix, dist_coeffs
+        )
+        img_pnts = np.reshape(img_pnts, (img_pnts.shape[0], 2))
+        img_pnts_list.append(img_pnts)
+
+        img = np.full((height, width, 3), (255, 255, 255), np.uint8)
+
+        noise_scale = 0.2
+        noised_img_pnts = add_noise(img_pnts, noise_scale)
+        noised_img_pnts_list.append(noised_img_pnts)
+
+        for pnt in noised_img_pnts:
+            cv2.circle(img, (int(pnt[0]), int(pnt[1])), 3, (0, 0, 0), -1)
+
+        if draw_test_data:
+            cam_name = "CAM"+str(i)
+            cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
+
+    cv2.waitKey(0)
+
+    return (
+        img_pnts_list,
+        noised_img_pnts_list,
+        points_3d,
+    )
