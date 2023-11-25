@@ -7,15 +7,26 @@ from prepare_test_data_utils import prepare_test_data
 
 
 def calibrate_affine_camera(img_pnts_list):
-    # TODO Don't use for loop
-    for img_pnts in img_pnts_list:
-        x_pnts = img_pnts[:, 0]
-        y_pnts = img_pnts[:, 1]
-        t_x = sum(x_pnts) / len(x_pnts)
-        t_y = sum(y_pnts) / len(y_pnts)
-        A = t_x * t_y
-        C = t_x**2 - t_y**2
-        
+    A = np.empty(len(img_pnts_list))
+    C = np.empty(len(img_pnts_list))
+    W = np.empty((2 * len(img_pnts_list), len(img_pnts_list[0])))
+    for i in range(len(img_pnts_list)):
+        points = img_pnts_list[i]
+        t = np.mean(points, axis=0)
+        t_x = t[0]
+        t_y = t[1]
+        A[i] = t_x * t_y
+        C[i] = t_x**2 - t_y**2
+
+        W[i * 2] = points[:, 0]
+        W[i * 2 + 1] = points[:, 1]
+
+    U, S, Vt = np.linalg.svd(W)
+    U = U[:, :3]
+    print(U)
+    input()
+    print(S)
+    print(Vt)
 
 
 def main():
