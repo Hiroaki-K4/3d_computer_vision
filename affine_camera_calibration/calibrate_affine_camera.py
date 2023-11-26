@@ -23,6 +23,17 @@ def calibrate_affine_camera(img_pnts_list):
 
     U, S, Vt = np.linalg.svd(W)
     U = U[:, :3]
+    S = np.array([[S[0], 0, 0],
+                [0, S[1], 0],
+                [0, 0, S[2]]])
+    print(U.shape)
+    print("U", U)
+    input()
+    print("S: ", S)
+    input()
+    Vt = Vt[:, :3]
+    print("Vt: ", Vt)
+    input()
 
     B_all = np.zeros((3, 3, 3, 3))
     for i in range(B_all.shape[0]):
@@ -128,22 +139,32 @@ def calibrate_affine_camera(img_pnts_list):
         T = (-1) * T
 
     w, v = np.linalg.eig(T)
-    print(w)
-    print(v)
+    print("T_w: ", w)
+    print("T_v: ", v)
     A = np.empty((3, 3))
     # TODO Change depth data of test data for avoiding non-positive T
     for i in range(w.shape[0]):
-        print(w[i])
+        if w[i] < 0:
+            print("Matrix T is not a positive symetric matrix")
+            # return None, None
+
         A += np.dot(np.sqrt(w[i]), np.dot(v[:, i], v[:, i].T))
-        print(A)
-        input()
-    print(A)
+
+    print("Final A: ", A)
+
+    A = np.empty((3, 3))
+    print(U.shape)
     input()
+    motion_mat = np.dot(U, A)
+    print("motion_mat: ", motion_mat)
+    shape_mat = np.dot(np.dot(np.linalg.inv(A), S), Vt)
+
+    return motion_mat, shape_mat
 
 
 def main():
-    rot_euler_degrees = [[0, -30, 0], [0, -15, 0], [0, 0, 0], [0, 15, 0], [0, 30, 0]]
-    T_in_camera_coords = [[0, 0, 10], [0, 0, 10], [0, 0, 10], [0, 0, 10], [0, 0, 10]]
+    rot_euler_degrees = [[-10, -30, 0], [15, -15, 0], [0, 0, 0], [15, 15, 0], [10, 30, 0]]
+    T_in_camera_coords = [[0, 0, 10], [0, 0, 7.5], [0, 0, 5], [0, 0, 7.5], [0, 0, 10]]
     f = 160
     width = 640
     height = 480
