@@ -23,10 +23,122 @@ def calibrate_affine_camera(img_pnts_list):
 
     U, S, Vt = np.linalg.svd(W)
     U = U[:, :3]
-    print(U)
+
+    B_all = np.zeros((3, 3, 3, 3))
+    for i in range(B_all.shape[0]):
+        for j in range(B_all.shape[1]):
+            for k in range(B_all.shape[2]):
+                for l in range(B_all.shape[3]):
+                    for m in range(len(img_pnts_list)):
+                        u_k_1 = U[2 * m, :]
+                        u_k_2 = U[2 * m + 1, :]
+                        A_k = A[m]
+                        C_k = C[m]
+                        B_all[i, j, k, l] += (
+                            A_k**2
+                            * (
+                                u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
+                                + u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
+                                - u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
+                                - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
+                            )
+                            + 1
+                            / 4
+                            * C_k**2
+                            * (
+                                u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
+                                + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
+                                + u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
+                                + u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
+                            )
+                            - 1
+                            / 2
+                            * A_k
+                            * C_k
+                            * (
+                                u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
+                                + u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
+                                + u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
+                                + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
+                                - u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
+                                - u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
+                                - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
+                                - u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
+                            )
+                        )
+
+    B = np.array(
+        [
+            [
+                B_all[0, 0, 0, 0],
+                B_all[0, 0, 1, 1],
+                B_all[0, 0, 2, 2],
+                np.sqrt(2) * B_all[0, 0, 1, 2],
+                np.sqrt(2) * B_all[0, 0, 2, 0],
+                np.sqrt(2) * B_all[0, 0, 0, 1],
+            ],
+            [
+                B_all[1, 1, 0, 0],
+                B_all[1, 1, 1, 1],
+                B_all[1, 1, 2, 2],
+                np.sqrt(2) * B_all[1, 1, 1, 2],
+                np.sqrt(2) * B_all[1, 1, 2, 0],
+                np.sqrt(2) * B_all[1, 1, 0, 1],
+            ],
+            [
+                B_all[2, 2, 0, 0],
+                B_all[2, 2, 1, 1],
+                B_all[2, 2, 2, 2],
+                np.sqrt(2) * B_all[2, 2, 1, 2],
+                np.sqrt(2) * B_all[2, 2, 2, 0],
+                np.sqrt(2) * B_all[2, 2, 0, 1],
+            ],
+            [
+                np.sqrt(2) * B_all[1, 2, 0, 0],
+                np.sqrt(2) * B_all[1, 2, 1, 1],
+                np.sqrt(2) * B_all[1, 2, 2, 2],
+                2 * B_all[1, 2, 1, 2],
+                2 * B_all[1, 2, 2, 0],
+                2 * B_all[1, 2, 0, 1],
+            ],
+            [
+                np.sqrt(2) * B_all[2, 0, 0, 0],
+                np.sqrt(2) * B_all[2, 0, 1, 1],
+                np.sqrt(2) * B_all[2, 0, 2, 2],
+                2 * B_all[2, 0, 1, 2],
+                2 * B_all[2, 0, 2, 0],
+                2 * B_all[2, 0, 0, 1],
+            ],
+            [
+                np.sqrt(2) * B_all[0, 1, 0, 0],
+                np.sqrt(2) * B_all[0, 1, 1, 1],
+                np.sqrt(2) * B_all[0, 1, 2, 2],
+                2 * B_all[0, 1, 1, 2],
+                2 * B_all[0, 1, 2, 0],
+                2 * B_all[0, 1, 0, 1],
+            ],
+        ]
+    )
+    w, v = np.linalg.eig(B)
+    r = v[:, np.argmin(w)]
+    T = np.array([[r[0], r[5]/np.sqrt(2), r[4]/np.sqrt(2)],
+                [r[5]/np.sqrt(2), r[1], r[3]/np.sqrt(2)],
+                [r[4]/np.sqrt(2), r[3]/np.sqrt(2), r[2]]])
+    if np.linalg.det(T) < 0:
+        T = (-1) * T
+
+    w, v = np.linalg.eig(T)
+    print(w)
+    print(v)
+    A = np.empty((3, 3))
+    # TODO Change depth data of test data for avoiding non-positive T
+    for i in range(w.shape[0]):
+        print(w[i])
+        A += np.dot(np.sqrt(w[i]), np.dot(v[:, i], v[:, i].T))
+        print(A)
+        input()
+    print(A)
     input()
-    print(S)
-    print(Vt)
 
 
 def main():
