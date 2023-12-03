@@ -34,39 +34,16 @@ def calibrate_affine_camera(img_pnts_list):
                     for m in range(len(img_pnts_list)):
                         u_k_1 = U[2 * m, :]
                         u_k_2 = U[2 * m + 1, :]
-                        A_k = A[m]
-                        C_k = C[m]
                         B_all[i, j, k, l] += (
-                            A_k**2
-                            * (
-                                u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
-                                + u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
-                                - u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
-                                - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
-                            )
-                            + 1
-                            / 4
-                            * C_k**2
-                            * (
-                                u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
-                                + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
-                                + u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
-                                + u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
-                            )
-                            - 1
-                            / 2
-                            * A_k
-                            * C_k
-                            * (
-                                u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
-                                + u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
-                                + u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
-                                + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
-                                - u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
-                                - u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
-                                - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
-                                - u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
-                            )
+                            u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
+                            - u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
+                            - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
+                            + u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
+                        ) + 1 / 4 * (
+                            u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
+                            + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
+                            + u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
+                            + u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
                         )
 
     B = np.array(
@@ -145,8 +122,7 @@ def calibrate_affine_camera(img_pnts_list):
     print("A: ", A)
 
     motion_mat = np.dot(U, A)
-    print("motion_mat: ", motion_mat)
-    shape_mat = np.dot(np.dot(np.linalg.inv(A), S), Vt)
+    shape_mat = np.dot(np.dot(np.linalg.pinv(A), S), Vt.T)
 
     return motion_mat, shape_mat
 
@@ -171,7 +147,9 @@ def main():
         False, "CURVE", rot_euler_degrees, T_in_camera_coords, f, width, height
     )
 
-    calibrate_affine_camera(img_pnts_list)
+    motion_mat, shape_mat = calibrate_affine_camera(img_pnts_list)
+    print("motion_mat: ", motion_mat)
+    print("shape_mat: ", shape_mat)
 
 
 if __name__ == "__main__":
