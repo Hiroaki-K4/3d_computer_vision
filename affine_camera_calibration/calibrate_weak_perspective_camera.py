@@ -127,6 +127,16 @@ def calibrate_affine_camera(img_pnts_list):
     return motion_mat, shape_mat
 
 
+def convert_image_center(W):
+    for i in range(len(W)):
+        points = W[i]
+        print(points)
+        # TODO Decide scale
+        t = np.mean(points, axis=0)
+        print(t)
+        input()
+
+
 def main():
     rot_euler_degrees = [
         [-10, -30, 0],
@@ -148,9 +158,10 @@ def main():
     )
 
     motion_mat, shape_mat = calibrate_affine_camera(img_pnts_list)
-    print("motion_mat: ", motion_mat)
-    print("shape_mat: ", shape_mat)
-
+    print("motion_mat: ", motion_mat.shape)
+    print("shape_mat: ", shape_mat.shape)
+    W_est = np.dot(motion_mat, shape_mat)
+    W_convert = convert_image_center(W_est)
 
 if __name__ == "__main__":
     main()
