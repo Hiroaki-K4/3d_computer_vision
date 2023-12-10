@@ -327,7 +327,7 @@ def prepare_multiple_test_images(
             cv2.circle(img, (int(pnt[0]), int(pnt[1])), 3, (0, 0, 0), -1)
 
         if draw_test_data:
-            cam_name = "CAM"+str(i)
+            cam_name = "CAM" + str(i)
             cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
 
     cv2.waitKey(0)
