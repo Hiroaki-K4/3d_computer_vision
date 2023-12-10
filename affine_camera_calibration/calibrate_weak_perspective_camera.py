@@ -13,7 +13,6 @@ def calibrate_weak_perspective_camera(img_pnts_list):
     W = np.empty((2 * len(img_pnts_list), len(img_pnts_list[0])))
     for i in range(len(img_pnts_list)):
         points = img_pnts_list[i]
-        print("ori: ", points)
         t = np.mean(points, axis=0)
         t_x = t[0]
         t_y = t[1]
@@ -26,10 +25,7 @@ def calibrate_weak_perspective_camera(img_pnts_list):
     U, S, Vt = np.linalg.svd(W)
     U = U[:, :3]
     S = np.array([[S[0], 0, 0], [0, S[1], 0], [0, 0, S[2]]])
-    print(Vt.shape)
     V = Vt.T[:, :3]
-    print(V.shape)
-    # input()
 
     B_all = np.zeros((3, 3, 3, 3))
     for i in range(B_all.shape[0]):
@@ -124,36 +120,18 @@ def calibrate_weak_perspective_camera(img_pnts_list):
 
         A += np.dot(np.sqrt(w[i]), np.dot(v[:, i], v[:, i].T))
 
-    print("A: ", A)
-
     motion_mat = np.dot(U, A)
     shape_mat = np.dot(np.dot(np.linalg.pinv(A), S), V.T)
 
     return motion_mat, shape_mat
 
 
-def convert_image_center(W):
-    for i in range(len(W)):
-        points = W[i]
-        print(points)
-        t = np.mean(points, axis=0)
-        print(t)
-        input()
-
-
 def draw_reconstructed_points(W, width, height):
-    print(W.shape)
-    print(W.shape[0])
     for i in range(int(W.shape[0] / 2)):
         x_arr = W[i * 2]
         y_arr = W[i * 2 + 1]
-        print(x_arr)
-        print(y_arr)
-        # input()
         img = np.full((height, width, 3), (255, 255, 255), np.uint8)
         for j in range(int(x_arr.shape[0])):
-            print(j)
-            # input()
             cv2.circle(img, (int(x_arr[j]), int(y_arr[j])), 3, (0, 0, 0), -1)
             cam_name = "CAM" + str(i)
             cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
@@ -161,7 +139,7 @@ def draw_reconstructed_points(W, width, height):
     cv2.waitKey(0)
 
 
-def main():
+def main(show_flag: bool):
     rot_euler_degrees = [
         [-10, -30, 0],
         [15, -15, 0],
@@ -185,13 +163,12 @@ def main():
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
     W_est = np.dot(motion_mat, shape_mat)
-    print(W_est)
-    print(W_est.shape)
-    # input()
-    # TODO inprove accuracy
-    draw_reconstructed_points(W_est, width, height)
-    # W_convert = convert_image_center(W_est)
+    if show_flag:
+        draw_reconstructed_points(W_est, width, height)
 
 
 if __name__ == "__main__":
-    main()
+    show_flag = True
+    if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
+        show_flag = False
+    main(show_flag)
