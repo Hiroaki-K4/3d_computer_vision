@@ -57,6 +57,23 @@ def update_observation_matrix(W, Z, img_pnts_list, f_0):
             W[i * 3 + 2][j] = Z[i][j]
 
 
+def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
+    E = 0
+    for frm_idx in range(len(img_pnts_list)):
+        for point_idx in range(len(img_pnts_list[0])):
+            x = np.ones(3)
+            x[0] = img_pnts_list[frm_idx][point_idx][0] / f_0
+            x[1] = img_pnts_list[frm_idx][point_idx][1] / f_0
+            P = motion_mat[frm_idx*3:frm_idx*3+3, :]
+            X = shape_mat[:, point_idx]
+            pred_img_points = np.dot(P, X)
+            pred_img_points = pred_img_points * (1 / pred_img_points[2])
+            print("x: ", x)
+            print("pred", pred_img_points)
+            # TODO Implement reprojection error
+            input()
+
+
 def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
     A = np.empty((len(img_pnts_list), len(img_pnts_list)))
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
@@ -69,6 +86,8 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
 
     U, S, Vt = np.linalg.svd(norm_W)
     U = U[:, :4]
+    S = np.array([[S[0], 0, 0, 0], [0, S[1], 0, 0], [0, 0, S[2], 0], [0, 0, 0, S[3]]])
+    V = Vt.T[:, :4]
 
     for point_idx in range(len(img_pnts_list[0])):
         for frm_idx_1 in range(len(img_pnts_list)):
@@ -87,104 +106,13 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
     input()
 
     # TODO Add Camera matrix(P) and postion(X)
+    motion_mat = U
+    print(motion_mat.shape)
+    shape_mat = np.dot(S, V.T)
+    print(shape_mat.shape)
+    input()
+    calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0)
 
-    # B_all = np.zeros((3, 3, 3, 3))
-    # for i in range(B_all.shape[0]):
-    #     for j in range(B_all.shape[1]):
-    #         for k in range(B_all.shape[2]):
-    #             for l in range(B_all.shape[3]):
-    #                 for m in range(len(img_pnts_list)):
-    #                     u_k_1 = U[2 * m, :]
-    #                     u_k_2 = U[2 * m + 1, :]
-    #                     B_all[i, j, k, l] += (
-    #                         u_k_1[i] * u_k_1[j] * u_k_1[k] * u_k_1[l]
-    #                         - u_k_1[i] * u_k_1[j] * u_k_2[k] * u_k_2[l]
-    #                         - u_k_2[i] * u_k_2[j] * u_k_1[k] * u_k_1[l]
-    #                         + u_k_2[i] * u_k_2[j] * u_k_2[k] * u_k_2[l]
-    #                     ) + 1 / 4 * (
-    #                         u_k_1[i] * u_k_2[j] * u_k_1[k] * u_k_2[l]
-    #                         + u_k_2[i] * u_k_1[j] * u_k_1[k] * u_k_2[l]
-    #                         + u_k_1[i] * u_k_2[j] * u_k_2[k] * u_k_1[l]
-    #                         + u_k_2[i] * u_k_1[j] * u_k_2[k] * u_k_1[l]
-    #                     )
-
-    # B = np.array(
-    #     [
-    #         [
-    #             B_all[0, 0, 0, 0],
-    #             B_all[0, 0, 1, 1],
-    #             B_all[0, 0, 2, 2],
-    #             np.sqrt(2) * B_all[0, 0, 1, 2],
-    #             np.sqrt(2) * B_all[0, 0, 2, 0],
-    #             np.sqrt(2) * B_all[0, 0, 0, 1],
-    #         ],
-    #         [
-    #             B_all[1, 1, 0, 0],
-    #             B_all[1, 1, 1, 1],
-    #             B_all[1, 1, 2, 2],
-    #             np.sqrt(2) * B_all[1, 1, 1, 2],
-    #             np.sqrt(2) * B_all[1, 1, 2, 0],
-    #             np.sqrt(2) * B_all[1, 1, 0, 1],
-    #         ],
-    #         [
-    #             B_all[2, 2, 0, 0],
-    #             B_all[2, 2, 1, 1],
-    #             B_all[2, 2, 2, 2],
-    #             np.sqrt(2) * B_all[2, 2, 1, 2],
-    #             np.sqrt(2) * B_all[2, 2, 2, 0],
-    #             np.sqrt(2) * B_all[2, 2, 0, 1],
-    #         ],
-    #         [
-    #             np.sqrt(2) * B_all[1, 2, 0, 0],
-    #             np.sqrt(2) * B_all[1, 2, 1, 1],
-    #             np.sqrt(2) * B_all[1, 2, 2, 2],
-    #             2 * B_all[1, 2, 1, 2],
-    #             2 * B_all[1, 2, 2, 0],
-    #             2 * B_all[1, 2, 0, 1],
-    #         ],
-    #         [
-    #             np.sqrt(2) * B_all[2, 0, 0, 0],
-    #             np.sqrt(2) * B_all[2, 0, 1, 1],
-    #             np.sqrt(2) * B_all[2, 0, 2, 2],
-    #             2 * B_all[2, 0, 1, 2],
-    #             2 * B_all[2, 0, 2, 0],
-    #             2 * B_all[2, 0, 0, 1],
-    #         ],
-    #         [
-    #             np.sqrt(2) * B_all[0, 1, 0, 0],
-    #             np.sqrt(2) * B_all[0, 1, 1, 1],
-    #             np.sqrt(2) * B_all[0, 1, 2, 2],
-    #             2 * B_all[0, 1, 1, 2],
-    #             2 * B_all[0, 1, 2, 0],
-    #             2 * B_all[0, 1, 0, 1],
-    #         ],
-    #     ]
-    # )
-    # w, v = np.linalg.eig(B)
-    # r = v[:, np.argmin(w)]
-    # T = np.array(
-    #     [
-    #         [r[0], r[5] / np.sqrt(2), r[4] / np.sqrt(2)],
-    #         [r[5] / np.sqrt(2), r[1], r[3] / np.sqrt(2)],
-    #         [r[4] / np.sqrt(2), r[3] / np.sqrt(2), r[2]],
-    #     ]
-    # )
-    # if np.linalg.det(T) < 0:
-    #     T = (-1) * T
-
-    # w, v = np.linalg.eig(T)
-    # A = np.empty((3, 3))
-    # for i in range(w.shape[0]):
-    #     if w[i] < 0:
-    #         print("Matrix T is not a positive symetric matrix")
-    #         return None, None
-
-    #     A += np.dot(np.sqrt(w[i]), np.dot(v[:, i], v[:, i].T))
-
-    # motion_mat = np.dot(U, A)
-    # shape_mat = np.dot(np.dot(np.linalg.pinv(A), S), V.T)
-
-    # return motion_mat, shape_mat
 
 
 def draw_reconstructed_points(W, width, height):
