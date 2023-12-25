@@ -49,12 +49,12 @@ def update_projective_depth(Z, img_pnts_list, xi, point_idx, f_0):
 
 
 def update_observation_matrix(W, Z, img_pnts_list, f_0):
-    for i in range(len(img_pnts_list)):
-        for j in range(len(img_pnts_list[0])):
-            point = img_pnts_list[i][j]
-            W[i * 3][j] = Z[i][j] * point[0] / f_0
-            W[i * 3 + 1][j] = Z[i][j] * point[1] / f_0
-            W[i * 3 + 2][j] = Z[i][j]
+    for frm_idx in range(len(img_pnts_list)):
+        for point_idx in range(len(img_pnts_list[0])):
+            point = img_pnts_list[frm_idx][point_idx]
+            W[frm_idx * 3][point_idx] = Z[frm_idx][point_idx] * point[0] / f_0
+            W[frm_idx * 3 + 1][point_idx] = Z[frm_idx][point_idx] * point[1] / f_0
+            W[frm_idx * 3 + 2][point_idx] = Z[frm_idx][point_idx]
 
 
 def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
@@ -64,55 +64,54 @@ def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
             x = np.ones(3)
             x[0] = img_pnts_list[frm_idx][point_idx][0] / f_0
             x[1] = img_pnts_list[frm_idx][point_idx][1] / f_0
-            P = motion_mat[frm_idx*3:frm_idx*3+3, :]
+            P = motion_mat[frm_idx * 3 : frm_idx * 3 + 3, :]
             X = shape_mat[:, point_idx]
             pred_img_points = np.dot(P, X)
             pred_img_points = pred_img_points * (1 / pred_img_points[2])
-            print("x: ", x)
-            print("pred", pred_img_points)
-            # TODO Implement reprojection error
-            input()
+            # print("x: ", x)
+            # print("pred", pred_img_points)
+            E += np.linalg.norm(x - pred_img_points) ** 2
+
+    E = f_0 * np.sqrt(E / (len(img_pnts_list) * len(img_pnts_list[0])))
+
+    return E
 
 
 def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
     A = np.empty((len(img_pnts_list), len(img_pnts_list)))
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
     Z = np.ones((len(img_pnts_list), len(img_pnts_list[0])))
-    update_observation_matrix(W, Z, img_pnts_list, f_0)
+    E_thr = 0.01
+    E = sys.float_info.max
+    # TODO Speed up process
+    while E > E_thr:
+        update_observation_matrix(W, Z, img_pnts_list, f_0)
 
-    norm_W = normalize_each_column(W)
-    print("norm_W: ", norm_W)
-    print("norm_W: ", norm_W.shape)
+        norm_W = normalize_each_column(W)
+        U, S, Vt = np.linalg.svd(norm_W)
+        U = U[:, :4]
+        S = np.array(
+            [[S[0], 0, 0, 0], [0, S[1], 0, 0], [0, 0, S[2], 0], [0, 0, 0, S[3]]]
+        )
+        V = Vt.T[:, :4]
 
-    U, S, Vt = np.linalg.svd(norm_W)
-    U = U[:, :4]
-    S = np.array([[S[0], 0, 0, 0], [0, S[1], 0, 0], [0, 0, S[2], 0], [0, 0, 0, S[3]]])
-    V = Vt.T[:, :4]
+        for point_idx in range(len(img_pnts_list[0])):
+            for frm_idx_1 in range(len(img_pnts_list)):
+                for frm_idx_2 in range(len(img_pnts_list)):
+                    A[frm_idx_1][frm_idx_2] = calculate_mat_for_decreasing_error(
+                        img_pnts_list, U, point_idx, frm_idx_1, frm_idx_2, f_0
+                    )
 
-    for point_idx in range(len(img_pnts_list[0])):
-        for frm_idx_1 in range(len(img_pnts_list)):
-            for frm_idx_2 in range(len(img_pnts_list)):
-                A[frm_idx_1][frm_idx_2] = calculate_mat_for_decreasing_error(
-                    img_pnts_list, U, point_idx, frm_idx_1, frm_idx_2, f_0
-                )
+            w, v = np.linalg.eig(A)
+            xi = v[:, np.argmax(w)]
+            if sum(xi) < 0:
+                xi = (-1) * xi
+            update_projective_depth(Z, img_pnts_list, xi, point_idx, f_0)
 
-        w, v = np.linalg.eig(A)
-        xi = v[:, np.argmax(w)]
-        if sum(xi) < 0:
-            xi = (-1) * xi
-        update_projective_depth(Z, img_pnts_list, xi, point_idx, f_0)
-
-    print(Z)
-    input()
-
-    # TODO Add Camera matrix(P) and postion(X)
-    motion_mat = U
-    print(motion_mat.shape)
-    shape_mat = np.dot(S, V.T)
-    print(shape_mat.shape)
-    input()
-    calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0)
-
+        motion_mat = U
+        shape_mat = np.dot(S, V.T)
+        E = calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0)
+        print("E: ", E)
 
 
 def draw_reconstructed_points(W, width, height):
@@ -148,7 +147,7 @@ def main(show_flag: bool):
         False, "CURVE", rot_euler_degrees, T_in_camera_coords, f, width, height
     )
 
-    f_0 = 1
+    f_0 = width
     calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0)
     # motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
     #     img_pnts_list, f_0
