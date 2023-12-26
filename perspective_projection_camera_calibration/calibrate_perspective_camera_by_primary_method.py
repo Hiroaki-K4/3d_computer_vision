@@ -68,8 +68,6 @@ def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
             X = shape_mat[:, point_idx]
             pred_img_points = np.dot(P, X)
             pred_img_points = pred_img_points * (1 / pred_img_points[2])
-            # print("x: ", x)
-            # print("pred", pred_img_points)
             E += np.linalg.norm(x - pred_img_points) ** 2
 
     E = f_0 * np.sqrt(E / (len(img_pnts_list) * len(img_pnts_list[0])))
@@ -82,8 +80,8 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
     Z = np.ones((len(img_pnts_list), len(img_pnts_list[0])))
     E_thr = 0.01
+    # E_thr = 1.5
     E = sys.float_info.max
-    # TODO Speed up process
     while E > E_thr:
         update_observation_matrix(W, Z, img_pnts_list, f_0)
 
@@ -113,16 +111,24 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
         E = calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0)
         print("E: ", E)
 
+    print("Finish!!")
+    print("Final reprojection error: ", E)
+    return motion_mat, shape_mat
 
-def draw_reconstructed_points(W, width, height):
-    for i in range(int(W.shape[0] / 2)):
-        x_arr = W[i * 2]
-        y_arr = W[i * 2 + 1]
+
+def draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, height, f_0):
+    for frm_idx in range(len(img_pnts_list)):
         img = np.full((height, width, 3), (255, 255, 255), np.uint8)
-        for j in range(int(x_arr.shape[0])):
-            cv2.circle(img, (int(x_arr[j]), int(y_arr[j])), 3, (0, 0, 0), -1)
-            cam_name = "CAM" + str(i)
-            cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
+        for point_idx in range(len(img_pnts_list[0])):
+            P = motion_mat[frm_idx * 3 : frm_idx * 3 + 3, :]
+            X = shape_mat[:, point_idx]
+            pred_img_points = np.dot(P, X)
+            pred_img_points = pred_img_points * (1 / pred_img_points[2]) * f_0
+            print(pred_img_points)
+            cv2.circle(img, (int(pred_img_points[0]), int(pred_img_points[1])), 3, (0, 0, 0), -1)
+
+        cam_name = "CAM" + str(frm_idx)
+        cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
 
     cv2.waitKey(0)
 
@@ -148,15 +154,14 @@ def main(show_flag: bool):
     )
 
     f_0 = width
-    calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0)
-    # motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-    #     img_pnts_list, f_0
-    # )
-    # print("motion_mat: ", motion_mat.shape)
-    # print("shape_mat: ", shape_mat.shape)
-    # W_est = np.dot(motion_mat, shape_mat)
-    # if show_flag:
-    #     draw_reconstructed_points(W_est, width, height)
+    motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
+        img_pnts_list, f_0
+    )
+    print("motion_mat: ", motion_mat.shape)
+    print("shape_mat: ", shape_mat.shape)
+    W_est = np.dot(motion_mat, shape_mat)
+    if show_flag:
+        draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, height, f_0)
 
 
 if __name__ == "__main__":
