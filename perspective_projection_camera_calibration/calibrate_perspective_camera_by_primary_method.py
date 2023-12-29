@@ -79,8 +79,7 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
     A = np.empty((len(img_pnts_list), len(img_pnts_list)))
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
     Z = np.ones((len(img_pnts_list), len(img_pnts_list[0])))
-    E_thr = 0.01
-    # E_thr = 1.5
+    E_thr = 0.05
     E = sys.float_info.max
     while E > E_thr:
         update_observation_matrix(W, Z, img_pnts_list, f_0)
@@ -109,7 +108,7 @@ def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
         motion_mat = U
         shape_mat = np.dot(S, V.T)
         E = calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0)
-        print("E: ", E)
+        print("Reprojection error: ", E)
 
     print("Finish!!")
     print("Final reprojection error: ", E)
@@ -124,8 +123,23 @@ def draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, heigh
             X = shape_mat[:, point_idx]
             pred_img_points = np.dot(P, X)
             pred_img_points = pred_img_points * (1 / pred_img_points[2]) * f_0
-            print(pred_img_points)
-            cv2.circle(img, (int(pred_img_points[0]), int(pred_img_points[1])), 3, (0, 0, 0), -1)
+            cv2.circle(
+                img,
+                (int(pred_img_points[0]), int(pred_img_points[1])),
+                3,
+                (0, 0, 255),
+                -1,
+            )
+            cv2.circle(
+                img,
+                (
+                    int(img_pnts_list[frm_idx][point_idx][0]),
+                    int(img_pnts_list[frm_idx][point_idx][1]),
+                ),
+                3,
+                (0, 0, 0),
+                -1,
+            )
 
         cam_name = "CAM" + str(frm_idx)
         cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
@@ -159,9 +173,10 @@ def main(show_flag: bool):
     )
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
-    W_est = np.dot(motion_mat, shape_mat)
     if show_flag:
-        draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, height, f_0)
+        draw_reconstructed_points(
+            img_pnts_list, motion_mat, shape_mat, width, height, f_0
+        )
 
 
 if __name__ == "__main__":
