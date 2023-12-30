@@ -119,7 +119,60 @@ x_{\alpha k}=
 x_{\alpha k}/f_0 \\
 y_{\alpha k}/f_0 \\
 1 \\
-\end{pmatrix}
+\end{pmatrix} \tag{9}
+$$
+
+the observation matrix $W$ in Eq(3) can be written as follows.
+
+$$
+W=
+\begin{pmatrix}
+z_{11}x_{11} & ... & z_{N1}x_{N1} \\
+... & ... & ... \\
+z_{1M}x_{1M} & ... & z_{NM}x_{NM} \\
+\end{pmatrix} \tag{10}
+$$
+
+The primary method that calculate the projective depth $z_{\alpha k}$ is as follows.
+
+## 1. Set allowable reprojection error $\epsilon$ and initialize $z_{\alpha k}=1(\alpha=1,...,N, k=1,...,M)$
+
+## 2. Normalize each columns of the obserbation matrix W in Eq(10) to unit vectors and singular value decompostion. then, let first 4 columns of $U_{3M\times L}$ to $u_1,...,u_4$
+
+## 3. Perform the following calculations
+### (a) Define the $M\times M$ matrix $A^{(\alpha)}=(A_{k\lambda}^{(\alpha)})$
+However, $u_{ik}$ is a 3D vector whose first, second, and third components are the $3(k-1)+1$, $3(k-1)+2$, $3(k-1)+3$ components of the $3M$ vector $u_i(i=1,...,4)$.
+
+### (b) Calculate the unit vector $\xi_\alpha=(\xi_{\alpha k})$ corresponding to the max eigen value of the matrix $A^{(\alpha)}$. The sign is chosen as follows.
+
+$$
+\sum_{k=1}^M \xi_{\alpha k} \geq 0 \tag{11}
+$$
+
+### (c) Update the projective depth $z_{\alpha k}$ as follows
+$$
+z_{\alpha k} \leftarrow \frac{\xi_{\alpha k}}{|x_{\alpha k|}} \tag{12}
+$$
+
+## 4. Set the camera matrix $P_k$ and the 3D position $X_\alpha$ like step3,4 of the factorization method
+
+## 5. Calculate the reprojection error as follows
+
+$$
+E=f_0\sqrt{\frac{1}{MN}\sum_{\alpha=1}^N\sum_{k=1}^M |x_{\alpha k}-Z[P_kX_\alpha]|^2} \tag{13}
+$$
+
+$Z[]$ represents the normalization let the third component to 1.
+
+## 6. If $E < \epsilon$, finish. Otherwise, return to step2.
+
+Let $z_{\alpha k}=1$ as a initial value equivalent to assume the affine camera.
+The projective depth $z_{\alpha k}$ has a constant multiple of indeterminacy because the homogeneous matrix $X_\alpha$ also has it.
+Since the space spanned by $N$ columns of $W$ is equal to the space spanned by $N$ columns of matrix $U_{3M\times L}$ of Eq(6), if $z_{\alpha k}$ is correct, each columns of $W$ are included in the 4D space $L$.
+Set the $\alpha$ column of $W$ to $p_\alpha$, as is well known, its projection to the 4D space $L$ is as follows.
+
+$$
+\hat{p}_\alpha=\sum_{i=1}^4 (p_\alpha, u_i)u_i \tag{14}
 $$
 
 
