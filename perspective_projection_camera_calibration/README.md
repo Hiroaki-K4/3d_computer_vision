@@ -23,11 +23,119 @@ $$
 
 When the fourth component $X_{\alpha (4)}$ of $X_\alpha$ is $0$, it is interpreted that $X_\alpha$ represents a point at infinity in the $(X_\alpha, Y_\alpha, Z_\alpha)$ direction.
 
-Self-calibration of a perspective projection camera means calculating the simultaneous coordinates $X_\alpha(\alpha=1,...,N)$ of all points and the camera matrix $P_k(k=1,...,M)$ of all cameras from the observation point $(x_{\alpha k},y_{\alpha k})(\alpha=1,...,N,k=1,...,M)$.  
-However, $P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
+Self-calibration of a perspective projection camera means calculating the homogeneous coordinates $X_\alpha(\alpha=1,...,N)$ of all points and the camera matrix $P_k(k=1,...,M)$ of all cameras from the observation point $(x_{\alpha k},y_{\alpha k})(\alpha=1,...,N,k=1,...,M)$.
+
+<br></br>
+
+# Factorization method
+Arrange all observed image coordinates $(x_{\alpha k}, y_{\alpha k})$ and all projective depths $z_{\alpha k}$ in the form of the following matrix.
+
+$$
+W=
+\begin{pmatrix}
+z_{11}x_{11}/f_0 & z_{21}x_{21}/f_0 & ... & z_{N1}x_{N1}/f_0 \\
+z_{11}y_{11}/f_0 & z_{21}y_{21}/f_0 & ... & z_{N1}y_{N1}/f_0 \\
+z_{11} & z_{21} & ... & z_{N1} \\
+... & ... & ... & ... \\
+z_{1M}x_{1M}/f_0 & z_{2M}x_{2M}/f_0 & ... & z_{NM}x_{NM}/f_0 \\
+z_{1M}y_{1M}/f_0 & z_{2M}y_{2M}/f_0 & ... & z_{NM}y_{NM}/f_0 \\
+z_{1M} & z_{2M} & ... & z_{NM} \\
+\end{pmatrix} \tag{3}
+$$
+
+This $3M\times N$ matrix is called the observation matrix.
+Arrange the camera matrix $P_k$ of all cameras and the homogeneous coordinates $X_\alpha$ of all points in the form of the following matrix.
+
+$$
+M=
+\begin{pmatrix}
+P_1 \\
+... \\
+P_M \\
+\end{pmatrix}, \quad
+S=(X_1 ... X_N) \tag{4}
+$$
+
+$3M\times 4$ matrix $M$ is called the **motion matrix** and $4\times N$ matrix S is called the **shape matrix**.
+The following relationship holds from Eq(1) and definitions of $S$ and $M$.
+
+$$
+W=MS \tag{5}
+$$
+
+Therefore, if the projective $z_{\alpha k}$ is known, the camera matrix $P_k$ and the homogeneous matrix $X_\alpha$ can be determined by decomposing $W$ int the product of $M$ and $S$ using singular value decomposition.
+Therefore, find $z_{\alpha k}$ such that matrix $W$ in Eq(3) can be decomposed into the product of a certain $3M\times 4$ matrix $M$ and a certain $4\times N$ matrix $S$.
+The conditino that the matrix W can be decomposed in this way is that the rank of W is $4$.
+
+In the primary method, $z_{\alpha k}$ is defined so that the N columns of Eq(3) span a 4-dimentional subspace, that is, it can be written as a linear combinatin of $4$ basis vectors.
+
+Once the projective depth $z_{\alpha k}$ is determined, the camera matrix $P_k$ and the 3-dimentional position $X_\alpha$ are determined by factorizing $W$ as follows.
+
+
+## 1. Singular value decomposition of W
+
+$$
+W=U_{3M\times L}\Sigma_L V_{N\times L}^\intercal, \quad
+\Sigma=\begin{pmatrix}
+\sigma_1 & ... & 0 \\
+... & ... & ... \\
+0 & ... & \sigma_L \\
+\end{pmatrix} \tag{6}
+$$
+
+However, $L=min(3M,N)$, and $U_{3M\times L}$ and $V_{N\times L}$ are $3M\times L$ matrix and $N\times L$ matrix consisting of orthogonal columns.
+$\Sigma_L$ is the diagonal matrix with singular values $(\sigma_1\geq ...\geq \sigma_L)$ arraned on the diagonal elements.
+
+## 2. Let U be the $3M\times 4$ matrix consisting of the first 4 columns of $U_{3M\times L}$, and let V be the $N\times 4$ matrix consisting of the first 4 columns of $V_{N\times L}$. Then, set $\Sigma$ as follows.
+
+$$
+\Sigma=
+\begin{pmatrix}
+\sigma_1 & 0 & 0 & 0 \\
+0 & \sigma_2 & 0 & 0 \\
+0 & 0 & \sigma_3 & 0 \\
+0 & 0 & 0 & \sigma_4 \\
+\end{pmatrix} \tag{7}
+$$
+
+## 3. Set the motion matrix $M$ and the shape matrix $S$ as follows
+
+$$
+M=U, \quad S=\Sigma V^\intercal \tag{8}
+$$
+
+## 4. Set the camera matrix $P_k$ and the 3D position $X_\alpha$ as Eq(4)
+
+If the projective depth $z_{\alpha k}$ is calculated collectly, the rank of the observation matrix W is 4 and the singular values in Eq(6) are $\sigma=0(i=5,...,L)$. But $z_{\alpha k}$ is not exact, this is not completely true. Therefore, set $\sigma=0(i=5,...,L)$ and approximately decompose as $W\approx MS$ by singular value decomposition.
+
+<br></br>
+
+# Primary method
+If we set the 3-dimensional vector $x_{\alpha k}$ as follows,
+
+$$
+x_{\alpha k}=
+\begin{pmatrix}
+x_{\alpha k}/f_0 \\
+y_{\alpha k}/f_0 \\
+1 \\
+\end{pmatrix}
+$$
+
+
+
+<br></br>
+
+# Euclidean upgrading
+$P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
 
 $$
 P'_k=P_kH, \quad X'_\alpha=H^-X_\alpha \tag{3}
 $$
 
 
+
+<br></br>
+
+# Reference
+- [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
