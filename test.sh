@@ -104,6 +104,13 @@ test_triangulation() {
     cd ../
 }
 
+test_perspective_projection_camera_calibration() {
+    cd perspective_projection_camera_calibration
+    python3 calibrate_perspective_camera_by_primary_method.py NotShow
+    check_result "calibrate_perspective_camera_by_primary_method.py"
+    cd ../
+}
+
 python3 -m pip install -r requirements.txt
 
 if [ $# -eq 1 ]; then
@@ -131,6 +138,8 @@ if [ $# -eq 1 ]; then
         test_projective_transformation
     elif [ $1 = "triangulation" ]; then
         test_triangulation
+    elif [ $1 = "perspective_projection_camera_calibration" ]; then
+        test_perspective_projection_camera_calibration
     else
         echo "Argument is wrong"
         exit 1
@@ -149,4 +158,5 @@ else
     test_homography_decomposition
     test_projective_transformation
     test_triangulation
+    test_perspective_projection_camera_calibration
 fi

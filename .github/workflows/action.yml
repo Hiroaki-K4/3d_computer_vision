@@ -97,3 +97,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run test
       run: bash test.sh triangulation
+
+  perspective_projection_camera_calibration_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh perspective_projection_camera_calibration
