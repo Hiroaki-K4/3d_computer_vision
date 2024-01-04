@@ -63,9 +63,9 @@ $$
 W=MS \tag{5}
 $$
 
-Therefore, if the projective $z_{\alpha k}$ is known, the camera matrix $P_k$ and the homogeneous matrix $X_\alpha$ can be determined by decomposing $W$ int the product of $M$ and $S$ using singular value decomposition.
+Therefore, if the projective $z_{\alpha k}$ is known, the camera matrix $P_k$ and the homogeneous matrix $X_\alpha$ can be determined by decomposing $W$ into the product of $M$ and $S$ using singular value decomposition.
 Therefore, find $z_{\alpha k}$ such that matrix $W$ in Eq(3) can be decomposed into the product of a certain $3M\times 4$ matrix $M$ and a certain $4\times N$ matrix $S$.
-The conditino that the matrix W can be decomposed in this way is that the rank of W is $4$.
+The condition that the matrix W can be decomposed in this way is that the rank of W is $4$.
 
 In the primary method, $z_{\alpha k}$ is defined so that the N columns of Eq(3) span a 4-dimentional subspace, that is, it can be written as a linear combinatin of $4$ basis vectors.
 
@@ -141,17 +141,22 @@ The primary method that calculate the projective depth $z_{\alpha k}$ is as foll
 
 ## 3. Perform the following calculations
 ### (a) Define the $M\times M$ matrix $A^{(\alpha)}=(A_{k\lambda}^{(\alpha)})$
+
+$$
+A_{k\lambda}^{(\alpha)}=\frac{\sum_{i=1}^4 (x_{\alpha k}, u_{ik})(x_{\alpha \lambda}, u_{i\lambda})}{|x_{\alpha k}||x_{\alpha \lambda}|} \tag{11}
+$$
+
 However, $u_{ik}$ is a 3D vector whose first, second, and third components are the $3(k-1)+1$, $3(k-1)+2$, $3(k-1)+3$ components of the $3M$ vector $u_i(i=1,...,4)$.
 
 ### (b) Calculate the unit vector $\xi_\alpha=(\xi_{\alpha k})$ corresponding to the max eigen value of the matrix $A^{(\alpha)}$. The sign is chosen as follows.
 
 $$
-\sum_{k=1}^M \xi_{\alpha k} \geq 0 \tag{11}
+\sum_{k=1}^M \xi_{\alpha k} \geq 0 \tag{12}
 $$
 
 ### (c) Update the projective depth $z_{\alpha k}$ as follows
 $$
-z_{\alpha k} \leftarrow \frac{\xi_{\alpha k}}{|x_{\alpha k|}} \tag{12}
+z_{\alpha k} \leftarrow \frac{\xi_{\alpha k}}{|x_{\alpha k|}} \tag{13}
 $$
 
 ## 4. Set the camera matrix $P_k$ and the 3D position $X_\alpha$ like step3,4 of the factorization method
@@ -159,7 +164,7 @@ $$
 ## 5. Calculate the reprojection error as follows
 
 $$
-E=f_0\sqrt{\frac{1}{MN}\sum_{\alpha=1}^N\sum_{k=1}^M |x_{\alpha k}-Z[P_kX_\alpha]|^2} \tag{13}
+E=f_0\sqrt{\frac{1}{MN}\sum_{\alpha=1}^N\sum_{k=1}^M |x_{\alpha k}-Z[P_kX_\alpha]|^2} \tag{14}
 $$
 
 $Z[]$ represents the normalization let the third component to 1.
@@ -168,13 +173,53 @@ $Z[]$ represents the normalization let the third component to 1.
 
 Let $z_{\alpha k}=1$ as a initial value equivalent to assume the affine camera.
 The projective depth $z_{\alpha k}$ has a constant multiple of indeterminacy because the homogeneous matrix $X_\alpha$ also has it.
-Since the space spanned by $N$ columns of $W$ is equal to the space spanned by $N$ columns of matrix $U_{3M\times L}$ of Eq(6), if $z_{\alpha k}$ is correct, each columns of $W$ are included in the 4D space $L$.
-Set the $\alpha$ column of $W$ to $p_\alpha$, as is well known, its projection to the 4D space $L$ is as follows.
+Since the space spanned by $N$ columns of $W$ is equal to the space spanned by $N$ columns of matrix $U_{3M\times L}$ of Eq(6), if $z_{\alpha k}$ is correct, each columns of $W$ are included in the 4D space $L_4$.
+Set the $\alpha$ column of $W$ to $p_\alpha$, as is well known, its projection to the 4D space $L_4$ is as follows.
 
 $$
-\hat{p}_\alpha=\sum_{i=1}^4 (p_\alpha, u_i)u_i \tag{14}
+\hat{p}_\alpha=\sum_{i=1}^4 (p_\alpha, u_i)u_i \tag{15}
 $$
 
+<img src='images/geo.png' width='600'>
+
+Because $u_1,...,u_4$ are orthonormal bases and $p_\alpha$ is normalized as $|p_\alpha|=1$, the length of perpendicular drawn from $p_\alpha$ to $L_4$.
+
+$$
+\sqrt{|p_\alpha|^2-|\hat{p}_\alpha|^2}=\sqrt{1-\sum_{i=1}^4(p_\alpha, u_i)^2} \tag{16}
+$$
+
+If $z_{\alpha k}$ is correct, this should be 0, so set $z_{\alpha k}$ to maximize the following equation.
+
+$$
+\begin{align*}
+J_\alpha&=\sum_{i=1}^4(p_\alpha, u_i)^2=\sum_{i=1}^4\Bigl(\sum_{k=1}^M(z_{\alpha k}x_{\alpha k}, u_{ik})\Bigr)^2 \\
+&=\sum_{k,\lambda=1}^M \Bigl( \sum_{i=1}^4(x_{\alpha k}, u_ik)(x_{\alpha \lambda}, u_i\lambda) \Bigr) z_{\alpha k}z_{\alpha \lambda} \tag{17}
+\end{align*}
+$$
+
+Maximize $J_\alpha$ under the following normalization condition.
+
+$$
+|p_\alpha|^2=\sum_{k=1}^M z_{\alpha k}^2|x_{\alpha k}|^2=1 \tag{18}
+$$
+
+Define $\xi_{\alpha k}$ as follows and set $M$ dimentional vector $(\xi_{\alpha 1}, ..., \xi_{\alpha M})$ to $\xi_\alpha$, Eq(18) is simply written as $|\xi_\alpha|=1$. The matrix $A^{(\alpha)}$ is defined as Eq(11), Eq(17) can be written as follows.
+
+$$
+J_\alpha=\sum_{k,\lambda=1}^M A_{k\lambda}^{(\alpha)} \xi_{\alpha k} \xi_{\alpha \lambda}=(\xi_\alpha, A^{(\alpha)}\xi_\alpha) \tag{19}
+$$
+
+This is the quadratic form of $\xi_\alpha$, the unit vector $\xi_\alpha$ that maximize this is the unit eigen vector corresponds to the max eigen value of the matrix $A^{(\alpha)}$. The unit vector has the ambiguity of the sign, choose the sign as Eq(12).
+
+You can try the primary method by running following command.
+
+```bash
+python3 calibrate_perspective_camera_by_primary_method.py
+```
+
+Black points are input points and red points are reprojected points using calculated the motion matrix and the shape matrix. You can see the 2 types of points almost overlap.
+
+<img src='images/CAM2.png' width='600'>
 
 
 <br></br>
@@ -183,10 +228,8 @@ $$
 $P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
 
 $$
-P'_k=P_kH, \quad X'_\alpha=H^-X_\alpha \tag{3}
+P'_k=P_kH, \quad X'_\alpha=H^-X_\alpha
 $$
-
-
 
 <br></br>
 
