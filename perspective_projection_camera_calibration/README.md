@@ -224,7 +224,7 @@ Black points are input points and red points are reprojected points using calcul
 
 <br></br>
 
-# Euclidean upgrading
+# Euclideanization
 $P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
 
 $$
