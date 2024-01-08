@@ -75,13 +75,12 @@ def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
     return E
 
 
-def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
+def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0, error_thr):
     A = np.empty((len(img_pnts_list), len(img_pnts_list)))
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
     Z = np.ones((len(img_pnts_list), len(img_pnts_list[0])))
-    E_thr = 0.05
     E = sys.float_info.max
-    while E > E_thr:
+    while E > error_thr:
         update_observation_matrix(W, Z, img_pnts_list, f_0)
 
         norm_W = normalize_each_column(W)
@@ -169,7 +168,7 @@ def main(show_flag: bool):
 
     f_0 = width
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-        img_pnts_list, f_0
+        img_pnts_list, f_0, 0.05
     )
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
