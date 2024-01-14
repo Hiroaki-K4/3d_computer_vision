@@ -11,52 +11,47 @@ sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
 
 
-def calculate_mat_including_homography_mat(K, motion_mat):
-    print(K.shape)
-    print(motion_mat)
-    # input()
-    img_num = int(motion_mat.shape[0] / 3)
+def create_A_k_matrix(Q):
     A_k = np.zeros((4, 4, 4, 4))
-    for idx in range(img_num):
-        P = motion_mat[idx * 3 : idx * 3 + 3, :]
-        Q = np.dot(np.linalg.inv(K[idx]), P)
-        print(Q)
-        for i in range(4):
-            for j in range(4):
-                for k in range(4):
-                    for l in range(4):
-                        A_k[i][j][k][l] += (
-                            Q[0][i] * Q[0][j] * Q[0][k] * Q[0][l]
-                            - Q[0][i] * Q[0][j] * Q[1][k] * Q[1][l]
-                            - Q[1][i] * Q[1][j] * Q[0][k] * Q[0][l]
-                            + Q[1][i] * Q[1][j] * Q[1][k] * Q[1][l]
-                            + 1
-                            / 4
-                            * (
-                                (Q[0][i] * Q[1][j] * Q[0][k] * Q[1][l])
-                                + (Q[1][i] * Q[0][j] * Q[0][k] * Q[1][l])
-                                + (Q[0][i] * Q[1][j] * Q[1][k] * Q[1][l])
-                                + (Q[1][i] * Q[0][j] * Q[1][k] * Q[0][l])
-                            )
-                            + 1
-                            / 4
-                            * (
-                                (Q[1][i] * Q[2][j] * Q[1][k] * Q[2][l])
-                                + (Q[2][i] * Q[1][j] * Q[1][k] * Q[2][l])
-                                + (Q[1][i] * Q[2][j] * Q[2][k] * Q[1][l])
-                                + (Q[2][i] * Q[1][j] * Q[2][k] * Q[1][l])
-                            )
-                            + 1
-                            / 4
-                            * (
-                                (Q[2][i] * Q[0][j] * Q[2][k] * Q[0][l])
-                                + (Q[0][i] * Q[2][j] * Q[2][k] * Q[0][l])
-                                + (Q[2][i] * Q[0][j] * Q[0][k] * Q[2][l])
-                                + (Q[0][i] * Q[2][j] * Q[0][k] * Q[2][l])
-                            )
+    for i in range(4):
+        for j in range(4):
+            for k in range(4):
+                for l in range(4):
+                    A_k[i][j][k][l] += (
+                        Q[0][i] * Q[0][j] * Q[0][k] * Q[0][l]
+                        - Q[0][i] * Q[0][j] * Q[1][k] * Q[1][l]
+                        - Q[1][i] * Q[1][j] * Q[0][k] * Q[0][l]
+                        + Q[1][i] * Q[1][j] * Q[1][k] * Q[1][l]
+                        + 1
+                        / 4
+                        * (
+                            (Q[0][i] * Q[1][j] * Q[0][k] * Q[1][l])
+                            + (Q[1][i] * Q[0][j] * Q[0][k] * Q[1][l])
+                            + (Q[0][i] * Q[1][j] * Q[1][k] * Q[1][l])
+                            + (Q[1][i] * Q[0][j] * Q[1][k] * Q[0][l])
                         )
+                        + 1
+                        / 4
+                        * (
+                            (Q[1][i] * Q[2][j] * Q[1][k] * Q[2][l])
+                            + (Q[2][i] * Q[1][j] * Q[1][k] * Q[2][l])
+                            + (Q[1][i] * Q[2][j] * Q[2][k] * Q[1][l])
+                            + (Q[2][i] * Q[1][j] * Q[2][k] * Q[1][l])
+                        )
+                        + 1
+                        / 4
+                        * (
+                            (Q[2][i] * Q[0][j] * Q[2][k] * Q[0][l])
+                            + (Q[0][i] * Q[2][j] * Q[2][k] * Q[0][l])
+                            + (Q[2][i] * Q[0][j] * Q[0][k] * Q[2][l])
+                            + (Q[0][i] * Q[2][j] * Q[0][k] * Q[2][l])
+                        )
+                    )
 
-    # TODO Calculate A mat
+    return A_k
+
+
+def create_A_matrix(A_k):
     A = np.array(
         [
             [
@@ -83,9 +78,122 @@ def calculate_mat_including_homography_mat(K, motion_mat):
                 np.sqrt(2) * A_k[1][1][1][3],
                 np.sqrt(2) * A_k[1][1][2][3],
             ],
+            [
+                A_k[2][2][0][0],
+                A_k[2][2][1][1],
+                A_k[2][2][2][2],
+                A_k[2][2][3][3],
+                np.sqrt(2) * A_k[2][2][0][1],
+                np.sqrt(2) * A_k[2][2][0][2],
+                np.sqrt(2) * A_k[2][2][0][3],
+                np.sqrt(2) * A_k[2][2][1][2],
+                np.sqrt(2) * A_k[2][2][1][3],
+                np.sqrt(2) * A_k[2][2][2][3],
+            ],
+            [
+                A_k[3][3][0][0],
+                A_k[3][3][1][1],
+                A_k[3][3][2][2],
+                A_k[3][3][3][3],
+                np.sqrt(2) * A_k[3][3][0][1],
+                np.sqrt(2) * A_k[3][3][0][2],
+                np.sqrt(2) * A_k[3][3][0][3],
+                np.sqrt(2) * A_k[3][3][1][2],
+                np.sqrt(2) * A_k[3][3][1][3],
+                np.sqrt(2) * A_k[3][3][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[0][1][0][0],
+                np.sqrt(2) * A_k[0][1][1][1],
+                np.sqrt(2) * A_k[0][1][2][2],
+                np.sqrt(2) * A_k[0][1][3][3],
+                2 * A_k[0][1][0][1],
+                2 * A_k[0][1][0][2],
+                2 * A_k[0][1][0][3],
+                2 * A_k[0][1][1][2],
+                2 * A_k[0][1][1][3],
+                2 * A_k[0][1][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[0][2][0][0],
+                np.sqrt(2) * A_k[0][2][1][1],
+                np.sqrt(2) * A_k[0][2][2][2],
+                np.sqrt(2) * A_k[0][2][3][3],
+                2 * A_k[0][2][0][1],
+                2 * A_k[0][2][0][2],
+                2 * A_k[0][2][0][3],
+                2 * A_k[0][2][1][2],
+                2 * A_k[0][2][1][3],
+                2 * A_k[0][2][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[0][3][0][0],
+                np.sqrt(2) * A_k[0][3][1][1],
+                np.sqrt(2) * A_k[0][3][2][2],
+                np.sqrt(2) * A_k[0][3][3][3],
+                2 * A_k[0][3][0][1],
+                2 * A_k[0][3][0][2],
+                2 * A_k[0][3][0][3],
+                2 * A_k[0][3][1][2],
+                2 * A_k[0][3][1][3],
+                2 * A_k[0][3][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[1][2][0][0],
+                np.sqrt(2) * A_k[1][2][1][1],
+                np.sqrt(2) * A_k[1][2][2][2],
+                np.sqrt(2) * A_k[1][2][3][3],
+                2 * A_k[1][2][0][1],
+                2 * A_k[1][2][0][2],
+                2 * A_k[1][2][0][3],
+                2 * A_k[1][2][1][2],
+                2 * A_k[1][2][1][3],
+                2 * A_k[1][2][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[1][3][0][0],
+                np.sqrt(2) * A_k[1][3][1][1],
+                np.sqrt(2) * A_k[1][3][2][2],
+                np.sqrt(2) * A_k[1][3][3][3],
+                2 * A_k[1][3][0][1],
+                2 * A_k[1][3][0][2],
+                2 * A_k[1][3][0][3],
+                2 * A_k[1][3][1][2],
+                2 * A_k[1][3][1][3],
+                2 * A_k[1][3][2][3],
+            ],
+            [
+                np.sqrt(2) * A_k[2][3][0][0],
+                np.sqrt(2) * A_k[2][3][1][1],
+                np.sqrt(2) * A_k[2][3][2][2],
+                np.sqrt(2) * A_k[2][3][3][3],
+                2 * A_k[2][3][0][1],
+                2 * A_k[2][3][0][2],
+                2 * A_k[2][3][0][3],
+                2 * A_k[2][3][1][2],
+                2 * A_k[2][3][1][3],
+                2 * A_k[2][3][2][3],
+            ],
         ]
     )
-    print(A_k)
+
+    return A
+
+
+def calculate_mat_including_homography_mat(K, motion_mat):
+    print(K.shape)
+    print(motion_mat)
+    # input()
+    img_num = int(motion_mat.shape[0] / 3)
+    A_k = np.zeros((4, 4, 4, 4))
+    for idx in range(img_num):
+        P = motion_mat[idx * 3 : idx * 3 + 3, :]
+        Q = np.dot(np.linalg.inv(K[idx]), P)
+        print(Q)
+        A_k += create_A_k_matrix(Q)
+
+    A = create_A_matrix(A_k)
+    print(A)
     input()
 
 
