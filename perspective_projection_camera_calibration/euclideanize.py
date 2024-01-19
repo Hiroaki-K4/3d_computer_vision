@@ -181,19 +181,39 @@ def create_A_matrix(A_k):
 
 
 def calculate_mat_including_homography_mat(K, motion_mat):
-    print(K.shape)
-    print(motion_mat)
-    # input()
     img_num = int(motion_mat.shape[0] / 3)
     A_k = np.zeros((4, 4, 4, 4))
     for idx in range(img_num):
         P = motion_mat[idx * 3 : idx * 3 + 3, :]
         Q = np.dot(np.linalg.inv(K[idx]), P)
-        print(Q)
         A_k += create_A_k_matrix(Q)
 
     A = create_A_matrix(A_k)
-    print(A)
+    w, v = np.linalg.eig(A)
+    w = v[:, np.argmin(w)]
+    omega = np.array(
+        [
+            [w[0], w[4] / np.sqrt(2), w[5] / np.sqrt(2), w[6] / np.sqrt(2)],
+            [w[4] / np.sqrt(2), w[1], w[7] / np.sqrt(2), w[8] / np.sqrt(2)],
+            [w[5] / np.sqrt(2), w[7] / np.sqrt(2), w[2], w[9] / np.sqrt(2)],
+            [w[6] / np.sqrt(2), w[8] / np.sqrt(2), w[9] / np.sqrt(2), w[3]],
+        ]
+    )
+    o_w, o_v = np.linalg.eig(omega)
+    print("o_w: ", o_w)
+    sort_idx = np.argsort(o_w)[::-1]
+    print(sort_idx)
+    print("sort: ", o_w[sort_idx[2]])
+    # TODO Reshape to multipe array
+    # o_v[sort_idx[0]] = np.reshape(o_v[sort_idx[0]], (4, 1))
+    o_v[sort_idx[0]] = np.array([[o_v[sort_idx[0]]]])
+    print(o_v[sort_idx[0]].shape)
+    input()
+    if o_w[sort_idx[2]] > 0:
+        omega = o_v[sort_idx[0]] * np.dot(o_v[sort_idx[0]], o_v[sort_idx[0]].T)
+    else:
+        omega = o_v[sort_idx[0]] * np.dot(o_v[sort_idx[0]], o_v[sort_idx[0]].T)
+    print("ome: ", omega)
     input()
 
 
