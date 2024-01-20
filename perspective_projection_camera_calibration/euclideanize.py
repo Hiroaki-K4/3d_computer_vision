@@ -200,20 +200,25 @@ def calculate_mat_including_homography_mat(K, motion_mat):
         ]
     )
     o_w, o_v = np.linalg.eig(omega)
-    print("o_w: ", o_w)
     sort_idx = np.argsort(o_w)[::-1]
-    print(sort_idx)
-    print("sort: ", o_w[sort_idx[2]])
-    # TODO Reshape to multipe array
-    # o_v[sort_idx[0]] = np.reshape(o_v[sort_idx[0]], (4, 1))
-    o_v[sort_idx[0]] = np.array([[o_v[sort_idx[0]]]])
-    print(o_v[sort_idx[0]].shape)
-    input()
+    o_v_0 = np.reshape(o_v[sort_idx[0]], (4, 1))
+    o_v_1 = np.reshape(o_v[sort_idx[1]], (4, 1))
+    o_v_2 = np.reshape(o_v[sort_idx[2]], (4, 1))
+    o_v_3 = np.reshape(o_v[sort_idx[3]], (4, 1))
     if o_w[sort_idx[2]] > 0:
-        omega = o_v[sort_idx[0]] * np.dot(o_v[sort_idx[0]], o_v[sort_idx[0]].T)
+        omega = (
+            o_w[sort_idx[0]] * np.dot(o_v_0, o_v_0.T)
+            + o_w[sort_idx[1]] * np.dot(o_v_1, o_v_1.T)
+            + o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
+        )
     else:
-        omega = o_v[sort_idx[0]] * np.dot(o_v[sort_idx[0]], o_v[sort_idx[0]].T)
+        omega = (
+            -o_w[sort_idx[3]] * np.dot(o_v_3, o_v_3.T)
+            -o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
+            -o_w[sort_idx[2]] * np.dot(o_v_1, o_v_1.T)
+        )
     print("ome: ", omega)
+    print("ome: ", omega.shape)
     input()
 
 

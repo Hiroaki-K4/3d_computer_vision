@@ -224,11 +224,69 @@ Black points are input points and red points are reprojected points using calcul
 
 <br></br>
 
-# Euclideanization
+# Euclidean upgrading
 $P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
 
 $$
-P'_k=P_kH, \quad X'_\alpha=H^-X_\alpha
+P'_k=P_kH, \quad X'_\alpha=H^-X_\alpha \tag{20}
+$$
+
+It means that the recoverd shape is a projective transformation $H$ of the true shape. For example, a cube is projected to a hexahedron because length, angle and ratio are not preserved. The operation that corrects the ratio and angle is called **Euclidean upgrading**.
+
+<img src='images/euc.png' width='400'>
+
+For Euclidean upgrading, we have to define $H$ so that $P'_k$ satisfiy some property that camera matrix should satisfiy.
+
+First, we try remove translation $t_k$ and rotation $R_k$ from camera matrix by removing fourth column of $P_k$.
+
+$$
+P_k
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix}
+=K_k
+\begin{pmatrix}
+R_k^\intercal & 0
+\end{pmatrix}
+\tag{22}
+$$
+
+We can remove rotation $R_k$ by multiplying this matrix and its transpose.
+
+$$
+P_k
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix}
+P_k^\intercal
+=K_k
+K_k^\intercal
+\tag{21}
+$$
+
+We find $H$ such that $P'_k=P_kH$ satisfies above equation. Considering $H$ has the indeterminacy of constant times, we get below equation.
+
+$$
+P_k\Omega P_k^\intercal \simeq K_kK_k^\intercal \tag{22}
+$$
+
+Matrix $\Omega$ is defined as follows.
+
+$$
+\Omega \equiv H
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix}
+H^\intercal \tag{23}
 $$
 
 <br></br>
