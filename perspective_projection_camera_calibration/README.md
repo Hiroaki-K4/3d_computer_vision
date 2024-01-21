@@ -289,6 +289,78 @@ $$
 H^\intercal \tag{23}
 $$
 
+We find $\Omega$ satisfies Eq(23) and calculate $H$ satisfies Eq(22) by using $\Omega$. We should iterate as follows because right side includes unknown $K_k$.
+
+1. Define camera intrinsic parameter $K_k$ and calculate $\Omega$ by Eq(22).
+2. Fix each $K_k$ so that Eq(22) holds true for $\Omega$.
+3. Recalculate $\Omega$ for the modified $K_k$ and iterate it until Eq(22) holds for every $k$.
+
+## Caculation of $\Omega$
+Define camera intrinsic parameter by using focal length and approximate value of optical axis points ($u_{0k},v_{0k}$).
+
+$$
+K_k=
+\begin{pmatrix}
+f_k & 0 & u_{0k} \\
+0 & f_k & v_{0k} \\
+0 & 0 & f_0 \\
+\end{pmatrix}
+\tag{24}
+$$
+
+We calculate $\Omega$ satisfies Eq(22) by this $K_k$ and $P_k$.
+
+Eq(22) can be rewritten as follows.
+
+$$
+K_k^{-1}P_k\Omega^\intercal P_k^\intercal K_k^{-1 \intercal} \simeq I \tag{25}
+$$
+
+Since $(1,1)$ element and $(1,2)$ element of left side matrix and off-diagonal elements are zero, we get 4 linear equation about $\Omega$. Calculate $\Omega$ by least square method with $4M$ equations. Specific steps are as follows.
+
+### 1. Calculate $3\times4$ matrix $Q_k$($k=1,...,M$)
+
+$$
+Q_k=K_k^{-1}P_K \tag{26}
+$$
+
+### 2. Define $4\times4\times4\times4$ array $A=(A_{ijkl})$
+
+$$
+A_{ijkl}=\sum_{k=1}^M(Q_{k(1i)}Q_{k(1j)}Q_{k(1k)}Q_{k(1l)}
+- Q_{k(1i)}Q_{k(1j)}Q_{k(2k)}Q_{k(2l)} \\
+- Q_{k(2i)}Q_{k(2j)}Q_{k(1k)}Q_{k(1l)}
++ Q_{k(2i)}Q_{k(2j)}Q_{k(2k)}Q_{k(2l)} \\
+
++\frac{1}{4}(
+Q_{k(1i)}Q_{k(2j)}Q_{k(1k)}Q_{k(2l)}
++ Q_{k(2i)}Q_{k(1j)}Q_{k(1k)}Q_{k(2l)} \\
+Q_{k(1i)}Q_{k(2j)}Q_{k(2k)}Q_{k(1l)}
++ Q_{k(2i)}Q_{k(1j)}Q_{k(2k)}Q_{k(1l)}) \\
+
++\frac{1}{4}(
+Q_{k(2i)}Q_{k(3j)}Q_{k(2k)}Q_{k(3l)}
++ Q_{k(3i)}Q_{k(2j)}Q_{k(2k)}Q_{k(3l)} \\
+Q_{k(2i)}Q_{k(3j)}Q_{k(3k)}Q_{k(2l)}
++ Q_{k(3i)}Q_{k(2j)}Q_{k(3k)}Q_{k(2l)}) \\
+
++\frac{1}{4}(
+Q_{k(3i)}Q_{k(1j)}Q_{k(3k)}Q_{k(1l)}
++ Q_{k(1i)}Q_{k(3j)}Q_{k(3k)}Q_{k(1l)} \\
+Q_{k(3i)}Q_{k(1j)}Q_{k(1k)}Q_{k(3l)}
++ Q_{k(1i)}Q_{k(3j)}Q_{k(1k)}Q_{k(3l)})) \tag{27}
+$$
+
+$Q_{k(ij)}$ is $(i,j)$ element of $Q_k$.
+
+### 3. Define $10\times 10$ matrix A
+
+$$
+A=
+$$
+
+
+
 <br></br>
 
 # Reference
