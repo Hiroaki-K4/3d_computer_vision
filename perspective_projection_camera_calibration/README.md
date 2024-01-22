@@ -357,6 +357,55 @@ $Q_{k(ij)}$ is $(i,j)$ element of $Q_k$.
 
 $$
 A=
+\begin{pmatrix}
+A_{1111} & A_{1122} & A_{1133} & A_{1144} & \sqrt 2 A_{1112} & \sqrt 2 A_{1113} & \sqrt 2 A_{1114} & \sqrt 2 A_{1123} & \sqrt 2 A_{1124} & \sqrt 2 A_{1134} \\
+
+A_{2211} & A_{2222} & A_{2233} & A_{2244} & \sqrt 2 A_{2212} & \sqrt 2 A_{2213} & \sqrt 2 A_{2214} & \sqrt 2 A_{2223} & \sqrt 2 A_{2224} & \sqrt 2 A_{2234} \\
+
+A_{3311} & A_{3322} & A_{3333} & A_{3344} & \sqrt 2 A_{3312} & \sqrt 2 A_{3313} & \sqrt 2 A_{3314} & \sqrt 2 A_{3323} & \sqrt 2 A_{3324} & \sqrt 2 A_{3334} \\
+
+A_{4411} & A_{4422} & A_{4433} & A_{4444} & \sqrt 2 A_{4412} & \sqrt 2 A_{4413} & \sqrt 2 A_{4414} & \sqrt 2 A_{4423} & \sqrt 2 A_{4424} & \sqrt 2 A_{4434} \\
+
+\sqrt 2 A_{1211} & \sqrt 2 A_{1222} & \sqrt 2 A_{1233} & \sqrt 2 A_{1244} & 2 A_{1212} & 2 A_{1213} & 2 A_{1214} & 2 A_{1223} & 2 A_{1224} & 2 A_{1234} \\
+
+\sqrt 2 A_{1311} & \sqrt 2 A_{1322} & \sqrt 2 A_{1333} & \sqrt 2 A_{1344} & 2 A_{1312} & 2 A_{1313} & 2 A_{1314} & 2 A_{1323} & 2 A_{1324} & 2 A_{1334} \\
+
+\sqrt 2 A_{1411} & \sqrt 2 A_{1422} & \sqrt 2 A_{1433} & \sqrt 2 A_{1444} & 2 A_{1412} & 2 A_{1413} & 2 A_{1414} & 2 A_{1423} & 2 A_{1424} & 2 A_{1434} \\
+
+\sqrt 2 A_{2311} & \sqrt 2 A_{2322} & \sqrt 2 A_{2333} & \sqrt 2 A_{2344} & 2 A_{2312} & 2 A_{2313} & 2 A_{2314} & 2 A_{2323} & 2 A_{2324} & 2 A_{2334} \\
+
+\sqrt 2 A_{2411} & \sqrt 2 A_{2422} & \sqrt 2 A_{2433} & \sqrt 2 A_{2444} & 2 A_{2412} & 2 A_{2413} & 2 A_{2414} & 2 A_{2423} & 2 A_{2424} & 2 A_{2434} \\
+
+\sqrt 2 A_{3411} & \sqrt 2 A_{3422} & \sqrt 2 A_{3433} & \sqrt 2 A_{3444} & 2 A_{3412} & 2 A_{3413} & 2 A_{3414} & 2 A_{3423} & 2 A_{3424} & 2 A_{3434} \\
+
+\end{pmatrix}
+\tag{28}
+$$
+
+### 4. Calculate 10-dimentional unit vector $w=(w_i)$ for minimum eigen value of matrix $A$
+
+### 5. Define matrix $\Omega$ as follows
+
+$$
+\Omega=
+\begin{pmatrix}
+w_1 & w_5/\sqrt 2 & w_6/\sqrt 2 & w_7/\sqrt 2 \\
+w_5/\sqrt 2 & w_2 & w_8/\sqrt 2 & w_9/\sqrt 2 \\
+w_6/\sqrt 2 & w_8/\sqrt 2 & w_3 & w_{10}/\sqrt 2 \\
+w_7/\sqrt 2 & w_9/\sqrt 2 & w_{10}/\sqrt 2 & w_4
+\end{pmatrix} \tag{29}
+$$
+
+### 6. Calculate unit eigen vectors $w_1,...,w_4$ for eigen values $\sigma_1 \geq ... \geq \sigma_4$ of $\Omega$
+
+### 7. Redefine $\Omega$ as follows
+
+$$
+\Omega=
+\begin{cases}
+\sigma_1w_1w_1^\intercal + \sigma_2w_2w_1^\intercal + \sigma_3w_3w_3^\intercal, \qquad \sigma_3 > 0 \\
+-\sigma_4w_4w_4^\intercal - \sigma_3w_3w_3^\intercal - \sigma_2w_2w_2^\intercal, \qquad \sigma_2 < 0
+\end{cases} \tag{30}
 $$
 
 
