@@ -408,6 +408,32 @@ $$
 \end{cases} \tag{30}
 $$
 
+### Explanation
+Define matrix $Q_k$ as Eq(26), Eq(25) can be written as follows.
+
+$$
+Q_k\Omega Q_k^\intercal \simeq I \tag{31}
+$$
+
+The fact that $(1,1)$ element and $(2,2)$ element of left side are equal and off-diagonal elements are zero can be written as follows.
+
+$$
+\begin{align*}
+\sum_{i,j=1}^4Q_{k(1i)}Q_{k(1j)}\Omega_{ij} - \sum_{i,j=1}^4Q_{k(2i)}Q_{k(2j)}\Omega_{ij} &= 0, \\
+\sum_{i,j=1}^4Q_{k(1i)}Q_{k(2j)}\Omega_{ij}&=0, \\
+\sum_{i,j=1}^4Q_{k(2i)}Q_{k(3j)}\Omega_{ij}&=0, \\
+\sum_{i,j=1}^4Q_{k(1i)}Q_{k(1j)}\Omega_{ij}&=0
+\end{align*} \tag{32}
+$$
+
+We calculate $\Omega$ minimize sum $K$ of square of these left sides over $k_1,...,M$. Define $A_{ijkl}$ as Eq(27), $K$ can be written as follows.
+
+$$
+K=\sum_{i,j,k,l=1}^4 A_{ijkl}\Omega_{ij}\Omega_{kl} \tag{33}
+$$
+
+Let $10\times10$ symetric matrix $A$ be like Eq(28) and define $10$ dimentional vector $w=(w_i)$ as
+
 
 
 <br></br>
