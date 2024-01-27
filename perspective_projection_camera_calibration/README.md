@@ -432,9 +432,23 @@ $$
 K=\sum_{i,j,k,l=1}^4 A_{ijkl}\Omega_{ij}\Omega_{kl} \tag{33}
 $$
 
-Let $10\times10$ symetric matrix $A$ be like Eq(28) and define $10$ dimentional vector $w=(w_i)$ as
+Let $10\times10$ symetric matrix $A$ be like Eq(28) and define $10$ dimentional vector $w=(w_i)$ as Eq(29), the above equation can be rewritten in quadratic form of $w$.
 
+$$
+K=(w,Aw) \tag{34}
+$$
 
+We normalize $\Omega$ to $|\Omega|^2=\sum_{i,j=1}^4 \Omega_{ij}^2=1$ because $\Omega$ can only be determined except for constant multiplication. This means $|w|^2=1$ from Eq(29). The unit vector $w$ minimizes Eq(34) is the eigen unit vector for minimum eigen value of matrix A. Therefore, $\Omega$ can be determined by deploying the element like Eq(29). $\Omega$ must be rank 3 semipositive symmetric matrix by definition of Eq(23). Let the eigen value of $\Omega$ be $\sigma_1 \geq ... \geq \sigma_2$ and define corresponding unit vectors as $w_1,...,w_4$, $\Omega$ can be written as follows.
+
+$$
+\Omega=\sigma_1 w_1 w_1^\intercal + \sigma_2 w_2 w_2^\intercal + \sigma_3 w_3 w_3^\intercal + \sigma_4 w_4 w_4^\intercal \tag{35}
+$$
+
+From this, remove unit vector fore minimum eigen value and redefine $\Omega$ by 3 bigger unit values and their eigen vectors. At this time, the sign of $\Omega$ of Eq(29) is indeterminate because the sign of unit vector $w$ is indeterminate. Therefore, we constrain rank3 like Eq(30) by choosing sign of $\Omega$ so that eigen value becomes positive.
+
+<br></br>
+
+## K correction
 
 <br></br>
 
