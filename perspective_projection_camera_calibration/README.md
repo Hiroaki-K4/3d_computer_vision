@@ -449,6 +449,20 @@ From this, remove unit vector fore minimum eigen value and redefine $\Omega$ by 
 <br></br>
 
 ## K correction
+It is good that Calculated $\Omega$ satisfies Eq(22), but $K_k$ is not necessarily true, so it does not necessarily hold true. Therefore, fix $K_k$ to $K_k\delta K_k$ by multiplying $K_k$ by $\delta K_k$ close to the identity matrix. $\delta K_k$ is determined so that following equation holds true.
+
+$$
+P_k \Omega P_k \simeq (K_k\delta K_k)(K_k\delta K_k)^\intercal \tag{36}
+$$
+
+This equation can be written as follows.
+
+$$
+K_k^{-1} P_k \Omega P_k K_k^{\intercal-1} \simeq \delta K_k \delta K_k \tag{37}
+$$
+
+We define $\delta K_k$ so that $Q_k\Omega Q_k^\intercal$ is a constant times $\delta K_k \delta K_k$. Specific steps are as follows.
+
 
 <br></br>
 
