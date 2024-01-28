@@ -214,12 +214,40 @@ def calculate_mat_including_homography_mat(K, motion_mat):
     else:
         omega = (
             -o_w[sort_idx[3]] * np.dot(o_v_3, o_v_3.T)
-            -o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
-            -o_w[sort_idx[2]] * np.dot(o_v_1, o_v_1.T)
+            - o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
+            - o_w[sort_idx[2]] * np.dot(o_v_1, o_v_1.T)
         )
-    print("ome: ", omega)
-    print("ome: ", omega.shape)
-    input()
+
+    return omega
+
+
+def fix_camera_matrix(omega, K, P):
+    Q = np.dot(np.linalg.inv(K), P)
+    left_side = np.dot(np.dot(Q, omega), Q.T)
+    F = (
+        (left_side[0][0] + left_side[1][1]) / left_side[2][2]
+        - (left_side[0][2] / left_side[2][2]) ** 2
+        - (left_side[1][2] / left_side[2][2]) ** 2
+    )
+    if left_side[2][2] <= 0 or F <= 0:
+        return K
+
+    fix_u = left_side[0][2] / left_side[2][2]
+    fix_v = left_side[1][2] / left_side[2][2]
+    fix_f = np.sqrt(
+        1
+        / 2
+        * (
+            (left_side[0][0] + left_side[1][1]) / left_side[2][2]
+            - fix_u**2
+            - fix_v**2
+        )
+    )
+    fix_K = np.array([[fix_f, 0, fix_u], [0, fix_f, fix_v], [0, 0, 1]])
+    K = np.dot(K, fix_K)
+    K = np.dot(left_side[2][2], K)
+
+    return K
 
 
 def euclideanize(motion_mat, shape_mat, f, f_0, opt_axis):
@@ -232,7 +260,16 @@ def euclideanize(motion_mat, shape_mat, f, f_0, opt_axis):
         K_new = np.array([[f, 0, opt_axis[0]], [0, f, opt_axis[1]], [0, 0, f_0]])
         K[i] = K_new
 
-    calculate_mat_including_homography_mat(K, motion_mat)
+    print(K)
+    omega = calculate_mat_including_homography_mat(K, motion_mat)
+    for i in range(img_num):
+        K_k = K[i]
+        P = motion_mat[i * 3 : i * 3 + 3, :]
+        K_k = fix_camera_matrix(omega, K_k, P)
+        K[i] = K_k
+
+    print(K)
+    input()
 
 
 def main(show_flag: bool):
