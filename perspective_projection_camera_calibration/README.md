@@ -463,6 +463,63 @@ $$
 
 We define $\delta K_k$ so that $Q_k\Omega Q_k^\intercal$ is a constant times $\delta K_k \delta K_k$. Specific steps are as follows.
 
+### 1. Define element of $Q\Omega Q^\intercal$ as follows
+
+$$
+Q\Omega Q^\intercal=
+\begin{pmatrix}
+c_{k(11)} & c_{k(12)} & c_{k(13)} \\
+c_{k(21)} & c_{k(22)} & c_{k(23)} \\
+c_{k(31)} & c_{k(32)} & c_{k(33)} \tag{38}
+\end{pmatrix}
+$$
+
+### 2. Calculate $F_k$
+
+$$
+F_k=\frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \Bigl(\frac{c_{k(13)}}{c_{k(33)}}\Bigr)^2 - \Bigl(\frac{c_{k(23)}}{c_{k(33)}}\Bigr)^2 \tag{39}
+$$
+
+### 3. If $c_{k(33)} \leq 0$ or $F_k \leq 0$, finish without fixing $K_k$
+
+### 4. Otherwise, calculate amounts of correction of optical axis point $(u_{0k}, v_{0k})$ and focal length $f_k$
+
+$$
+\begin{align*}
+\delta u_{0k} &= \frac{c_{k(13)}}{c_{k(33)}}, \quad \delta v_{0k} = \frac{c_{k(23)}}{c_{k(33)}} \\
+\delta f_k &= \sqrt{\frac{1}{2} \Bigl( \frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \delta u_{0k}^2 - \delta u_{0k}^2 \Bigr)} \tag{40}
+\end{align*}
+$$
+
+### 5. Calculate $\delta K_k$
+
+$$
+\delta K_k =
+\begin{pmatrix}
+\delta f_k & 0 & \delta u_{0k} \\
+0 & \delta f_k & \delta v_{0k} \\
+0 & 0 & 1 \tag{41}
+\end{pmatrix}
+$$
+
+### 6. Fix $K_k$
+
+$$
+K_k \leftarrow K_k \delta K_k, \quad K_k \leftarrow \sqrt{c_{k(33)}} K_k \tag{42}
+$$
+
+### Explanation
+We define amount of correction of $K_k$ by difinition of camera parameter. $\delta u_{0k}, \delta v_{0k}$ are close to $0$ and $\delta f_k$ is a correction ratio close to $1$. $\delta K_k \delta K_k^\intercal$ is as follows.
+
+$$
+\delta K_k \delta K_k^\intercal=
+\begin{pmatrix}
+\delta f_k^2+\delta u_{0k}^2 & \delta u_{0k}\delta v_{0k} & \delta u_{0k} \\
+\delta u_{0k}\delta v_{0k} & \delta f_k^2+\delta v_{0k}^2 & \delta v_{0k} \\
+\delta u_{0k} & \delta v_{0k} & 1 \tag{43}
+\end{pmatrix}
+$$
+
 
 <br></br>
 
