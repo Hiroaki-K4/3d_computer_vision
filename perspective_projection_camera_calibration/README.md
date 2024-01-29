@@ -520,6 +520,7 @@ $$
 \end{pmatrix}
 $$
 
+Define $\delta u_{0k},\delta v_{0k}$ as Eq(40) so that above value is a constant times Eq(38). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(38) is not positive or the radical in Eq(40) is not positive, We don't fix $K$. Eq(38) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(38) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(26). This is done with Eq(42).
 
 <br></br>
 
