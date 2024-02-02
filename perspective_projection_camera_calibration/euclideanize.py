@@ -205,20 +205,29 @@ def calculate_mat_including_homography_mat(K, motion_mat):
     o_v_1 = np.reshape(o_v[sort_idx[1]], (4, 1))
     o_v_2 = np.reshape(o_v[sort_idx[2]], (4, 1))
     o_v_3 = np.reshape(o_v[sort_idx[3]], (4, 1))
+    H = np.empty((4, 4))
     if o_w[sort_idx[2]] > 0:
         omega = (
             o_w[sort_idx[0]] * np.dot(o_v_0, o_v_0.T)
             + o_w[sort_idx[1]] * np.dot(o_v_1, o_v_1.T)
             + o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
         )
+        H[:, 0] = np.sqrt(o_w[sort_idx[0]]) * o_v[sort_idx[0]]
+        H[:, 1] = np.sqrt(o_w[sort_idx[1]]) * o_v[sort_idx[1]]
+        H[:, 2] = np.sqrt(o_w[sort_idx[2]]) * o_v[sort_idx[2]]
+        H[:, 3] = o_v[sort_idx[3]]
     else:
         omega = (
             -o_w[sort_idx[3]] * np.dot(o_v_3, o_v_3.T)
             - o_w[sort_idx[2]] * np.dot(o_v_2, o_v_2.T)
             - o_w[sort_idx[2]] * np.dot(o_v_1, o_v_1.T)
         )
+        H[:, 0] = np.sqrt((-1) * o_w[sort_idx[3]]) * o_v[sort_idx[3]]
+        H[:, 1] = np.sqrt((-1) * o_w[sort_idx[2]]) * o_v[sort_idx[2]]
+        H[:, 2] = np.sqrt((-1) * o_w[sort_idx[1]]) * o_v[sort_idx[1]]
+        H[:, 3] = o_v[sort_idx[0]]
 
-    return omega
+    return omega, H
 
 
 def fix_camera_matrix(omega, K, P):
@@ -260,15 +269,15 @@ def euclideanize(motion_mat, shape_mat, f, f_0, opt_axis):
         K_new = np.array([[f, 0, opt_axis[0]], [0, f, opt_axis[1]], [0, 0, f_0]])
         K[i] = K_new
 
-    print(K)
-    omega = calculate_mat_including_homography_mat(K, motion_mat)
+    print("K before: ", K)
+    omega, H = calculate_mat_including_homography_mat(K, motion_mat)
     for i in range(img_num):
         K_k = K[i]
         P = motion_mat[i * 3 : i * 3 + 3, :]
         K_k = fix_camera_matrix(omega, K_k, P)
         K[i] = K_k
 
-    print(K)
+    print("K after: ", K)
     input()
 
 

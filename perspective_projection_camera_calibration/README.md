@@ -448,7 +448,7 @@ From this, remove unit vector fore minimum eigen value and redefine $\Omega$ by 
 
 <br></br>
 
-## K correction
+## $K$ correction
 It is good that Calculated $\Omega$ satisfies Eq(22), but $K_k$ is not necessarily true, so it does not necessarily hold true. Therefore, fix $K_k$ to $K_k\delta K_k$ by multiplying $K_k$ by $\delta K_k$ close to the identity matrix. $\delta K_k$ is determined so that following equation holds true.
 
 $$
@@ -521,6 +521,24 @@ $$
 $$
 
 Define $\delta u_{0k},\delta v_{0k}$ as Eq(40) so that above value is a constant times Eq(38). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(38) is not positive or the radical in Eq(40) is not positive, We don't fix $K$. Eq(38) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(38) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(26). This is done with Eq(42).
+
+## Calculation of $H$
+Think about defining $4\times 4$ homography matrix $H$ satisfies Eq(23). Eq(23) can be written as follows by defining column of $H$ as $h1,...,h4$.
+
+$$
+\Omega=h_1h_1^\intercal + h_2h_2^\intercal + h_3h_3^\intercal \tag{44}
+$$
+
+Therefore, we can't define the $4$ column $h_4$ because we remove the translation $t_k$. This corresponds to that absolute location of world coordinate can't be determined. Therefore, we can set $h_4$ arbitrarily so that $H$ becomes regular matrix. The simple way is to choose $\Omega$ so that $\sigma_1, \sigma_2, \sigma_3$ become positive and turn $\sqrt{\sigma_1}w_1, \sqrt{\sigma_2}w_2, \sqrt{\sigma_3}w_3, w_4$ into $h_1, h_2, h_3, h_4$.
+
+$$
+H=
+\begin{cases}
+(\sqrt{\sigma_1}w_1, \sqrt{\sigma_2}w_2, \sqrt{\sigma_3}w_3, w_4), \quad \sigma_3 > 0 \\
+(\sqrt{-\sigma_4}w_4, \sqrt{-\sigma_3}w_3, \sqrt{-\sigma_2}w_2, w_1), \quad \sigma_2 < 0 \tag{45}
+\end{cases}
+$$
+
 
 <br></br>
 
