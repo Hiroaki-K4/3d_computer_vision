@@ -1,4 +1,5 @@
 import sys
+import math
 
 import numpy as np
 
@@ -232,31 +233,33 @@ def calculate_mat_including_homography_mat(K, motion_mat):
 
 def fix_camera_matrix(omega, K, P):
     Q = np.dot(np.linalg.inv(K), P)
-    left_side = np.dot(np.dot(Q, omega), Q.T)
+    c = np.dot(np.dot(Q, omega), Q.T)
     F = (
-        (left_side[0][0] + left_side[1][1]) / left_side[2][2]
-        - (left_side[0][2] / left_side[2][2]) ** 2
-        - (left_side[1][2] / left_side[2][2]) ** 2
+        (c[0][0] + c[1][1]) / c[2][2]
+        - (c[0][2] / c[2][2]) ** 2
+        - (c[1][2] / c[2][2]) ** 2
     )
-    if left_side[2][2] <= 0 or F <= 0:
-        return K
+    if c[2][2] <= 0 or F <= 0:
+        return None, c
 
-    fix_u = left_side[0][2] / left_side[2][2]
-    fix_v = left_side[1][2] / left_side[2][2]
-    fix_f = np.sqrt(
-        1
-        / 2
-        * (
-            (left_side[0][0] + left_side[1][1]) / left_side[2][2]
-            - fix_u**2
-            - fix_v**2
-        )
-    )
+    fix_u = c[0][2] / c[2][2]
+    fix_v = c[1][2] / c[2][2]
+    fix_f = np.sqrt(1 / 2 * ((c[0][0] + c[1][1]) / c[2][2] - fix_u**2 - fix_v**2))
     fix_K = np.array([[fix_f, 0, fix_u], [0, fix_f, fix_v], [0, 0, 1]])
     K = np.dot(K, fix_K)
-    K = np.dot(left_side[2][2], K)
+    K = np.dot(c[2][2], K)
 
-    return K
+    return K, c
+
+
+def calculate_error(c):
+    J = (
+        (c[0][0] / c[2][2] - 1) ** 2
+        + (c[1][1] / c[2][2] - 1) ** 2
+        + 2 * (c[0][1] ** 2 + c[1][2] ** 2 + c[2][0] ** 2) / c[2][2] ** 2
+    )
+
+    return J
 
 
 def euclideanize(motion_mat, shape_mat, f, f_0, opt_axis):
@@ -269,16 +272,32 @@ def euclideanize(motion_mat, shape_mat, f, f_0, opt_axis):
         K_new = np.array([[f, 0, opt_axis[0]], [0, f, opt_axis[1]], [0, 0, f_0]])
         K[i] = K_new
 
-    print("K before: ", K)
-    omega, H = calculate_mat_including_homography_mat(K, motion_mat)
-    for i in range(img_num):
-        K_k = K[i]
-        P = motion_mat[i * 3 : i * 3 + 3, :]
-        K_k = fix_camera_matrix(omega, K_k, P)
-        K[i] = K_k
+    while True:
+        omega, H = calculate_mat_including_homography_mat(K, motion_mat)
+        J = []
+        for i in range(img_num):
+            K_k = K[i]
+            P = motion_mat[i * 3 : i * 3 + 3, :]
+            K_k, c = fix_camera_matrix(omega, K_k, P)
+            if K_k is None:
+                J.append(sys.float_info.max)
+            else:
+                K[i] = K_k
+                J_k = calculate_error(c)
+                J.append(J_k)
 
-    print("K after: ", K)
-    input()
+        sort_J = sorted(J)
+        if img_num % 2 == 0:
+            J_med_curr = (
+                sort_J[math.floor(img_num / 2) - 1] + sort_J[math.floor(img_num / 2)]
+            ) / 2
+        else:
+            J_med_curr = sort_J[math.floor(img_num / 2)]
+
+        if J_med_curr < 1e-3 or J_med_curr > J_med:
+            return H, K
+        else:
+            J_med = J_med_curr
 
 
 def main(show_flag: bool):
@@ -303,7 +322,7 @@ def main(show_flag: bool):
 
     f_0 = width
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-        img_pnts_list, f_0, 2.0
+        img_pnts_list, f_0, 0.05
     )
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
@@ -312,11 +331,12 @@ def main(show_flag: bool):
             img_pnts_list, motion_mat, shape_mat, width, height, f_0
         )
 
-    euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
+    H, K = euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
+    print("Final H: ", H)
+    print("Final K: ", K)
 
 
 if __name__ == "__main__":
-    # TODO Return flag when finish implementing
     show_flag = False
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False

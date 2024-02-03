@@ -539,6 +539,36 @@ H=
 \end{cases}
 $$
 
+## Euclidean upgrading
+The method of Euclidean upgrading is as follows.
+
+### 1. Let $\hat{J}_{med}$ be $\hat{J}_{med}=\infty$ and set initial value of intrinsic parameter matrix $K_k$
+
+### 2. Calculate $\Omega$
+
+### 3. Caclulate $H$
+
+### 4. Fix each $K_k$
+
+### 5. If $K_k$ is fixed, set $J_k$ as follows. When K isn't fixed, let $J_k=\infty$.
+
+$$
+J_k = \Bigl( \frac{c_{k(11)}}{c_{k(33)}} - 1 \Bigr)^2 + \Bigl( \frac{c_{k(22)}}{c_{k(33)}} - 1 \Bigr)^2 + 2\frac{c_{k(12)}^2 + c_{k(23)}^2 + c_{k(31)}^2}{c_{k(33)}^2} \tag{46}
+$$
+
+### 6. Calculate following median
+
+$$
+J_{med}=med_{k=1}^M J_k \tag{47}
+$$
+
+### 7. If $J_{med} \approx 0$ or $J_{med} \geq \hat{J}_{med}$, return $H,K_k$ and finish
+
+### 8. Otherwise, let $\hat{J}_{med} \leftarrow J_{med}$ and return step2
+
+### Explanation
+
+
 
 <br></br>
 
