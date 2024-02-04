@@ -3,6 +3,8 @@ import sys
 import cv2
 import numpy as np
 
+import euclideanize
+
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
 
@@ -168,10 +170,14 @@ def main(show_flag: bool):
 
     f_0 = width
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-        img_pnts_list, f_0, 0.05
+        img_pnts_list, f_0, 2.0
     )
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
+    H, K = euclideanize.euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
+    print("H: ", H)
+    # TODO Add 3D reconstruction calculation
+
     if show_flag:
         draw_reconstructed_points(
             img_pnts_list, motion_mat, shape_mat, width, height, f_0
@@ -179,7 +185,7 @@ def main(show_flag: bool):
 
 
 if __name__ == "__main__":
-    show_flag = True
+    show_flag = False
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False
     main(show_flag)
