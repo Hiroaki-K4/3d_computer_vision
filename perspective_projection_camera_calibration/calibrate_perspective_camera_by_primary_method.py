@@ -148,6 +148,49 @@ def draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, heigh
     cv2.waitKey(0)
 
 
+def rotate_and_translate_original_points(R, t, X_s):
+    Z_s = X_s[2, :]
+    sign_sum = np.sum(np.sign(Z_s))
+    if sign_sum <= 0:
+        sign = -1
+    else:
+        sign = 1
+
+    moved_X = np.zeros(np.shape(X_s))
+    for col in range(X_s.shape[1]):
+        X = X_s[:, col]
+        moved_X[:, col] = np.dot(R.T, (sign * X - sign * t))
+
+    return moved_X
+
+
+def reconstruct_3d_position(motion_mat, shape_mat, H, K):
+    print("motion_mat: ", motion_mat.shape)
+    print("shape_mat: ", shape_mat.shape)
+    print("H: ", H.shape)
+    print("K: ", K.shape)
+    fix_X = np.dot(np.linalg.inv(H), shape_mat)
+    norm_X = fix_X / fix_X[3, :]
+    norm_X = norm_X[:3, :]
+    fix_P = np.dot(motion_mat, H)
+    moved_Xs = np.zeros((K.shape[0], 3, shape_mat.shape[1]))
+    for frm_idx in range(K.shape[0]):
+        P_k = fix_P[frm_idx * 3 : frm_idx * 3 + 3, :]
+        kp = np.dot(np.linalg.inv(K[frm_idx]), P_k)
+        A_k = kp[:, :3]
+        b_k = kp[:, 3]
+        s = np.cbrt(np.linalg.det(A_k))
+        A_k = A_k / s
+        b_k = b_k / s
+        U, S, Vh = np.linalg.svd(A_k)
+        R_k = np.dot(Vh.T, U.T)
+        t_k = -np.dot(R_k, b_k)
+        moved_X = rotate_and_translate_original_points(R_k, t_k, norm_X)
+        moved_Xs[frm_idx, :, :] = moved_X
+
+    return moved_Xs
+
+
 def main(show_flag: bool):
     rot_euler_degrees = [
         [-10, -30, 0],
@@ -176,7 +219,10 @@ def main(show_flag: bool):
     print("shape_mat: ", shape_mat.shape)
     H, K = euclideanize.euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
     print("H: ", H)
-    # TODO Add 3D reconstruction calculation
+    moved_Xs = reconstruct_3d_position(motion_mat, shape_mat, H, K)
+    print(moved_Xs)
+    print(moved_Xs.shape)
+    # TODO Draw 3D position
 
     if show_flag:
         draw_reconstructed_points(
