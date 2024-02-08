@@ -1,6 +1,7 @@
 import sys
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 
 import euclideanize
@@ -191,6 +192,22 @@ def reconstruct_3d_position(motion_mat, shape_mat, H, K):
     return moved_Xs
 
 
+def draw_reconstructed_3d_points(moved_Xs):
+    for i in range(moved_Xs.shape[0]):
+        ax = plt.figure().add_subplot(projection="3d")
+        title = "IMG " + str(i)
+        ax.set_title(title)
+        ax.set(xlabel="X", ylabel="Y", zlabel="Z")
+        for j in range(moved_Xs.shape[2]):
+            X = moved_Xs[i][0][j]
+            Y = moved_Xs[i][1][j]
+            Z = moved_Xs[i][2][j]
+            print(X, Y, Z)
+            ax.scatter(X, Z, -Y)
+    plt.show()
+    # TODO Check draw result
+
+
 def main(show_flag: bool):
     rot_euler_degrees = [
         [-10, -30, 0],
@@ -213,7 +230,7 @@ def main(show_flag: bool):
 
     f_0 = width
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-        img_pnts_list, f_0, 2.0
+        img_pnts_list, f_0, 0.05
     )
     print("motion_mat: ", motion_mat.shape)
     print("shape_mat: ", shape_mat.shape)
@@ -222,16 +239,16 @@ def main(show_flag: bool):
     moved_Xs = reconstruct_3d_position(motion_mat, shape_mat, H, K)
     print(moved_Xs)
     print(moved_Xs.shape)
-    # TODO Draw 3D position
 
     if show_flag:
+        draw_reconstructed_3d_points(moved_Xs)
         draw_reconstructed_points(
             img_pnts_list, motion_mat, shape_mat, width, height, f_0
         )
 
 
 if __name__ == "__main__":
-    show_flag = False
+    show_flag = True
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False
     main(show_flag)
