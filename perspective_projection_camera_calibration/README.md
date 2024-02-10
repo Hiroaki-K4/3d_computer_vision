@@ -223,6 +223,7 @@ Black points are input points and red points are reprojected points using calcul
 
 
 <br></br>
+<br></br>
 
 # Euclidean upgrading
 $P_k,X_\alpha$ satisfying Eq(1) is not unique. This is because $P'_kX'_\alpha=P_kX_\alpha$ holds even if the following transformation is performed using any $4\times 4$ regular matrix $H$.
@@ -294,6 +295,8 @@ We find $\Omega$ satisfies Eq(23) and calculate $H$ satisfies Eq(22) by using $\
 1. Define camera intrinsic parameter $K_k$ and calculate $\Omega$ by Eq(22).
 2. Fix each $K_k$ so that Eq(22) holds true for $\Omega$.
 3. Recalculate $\Omega$ for the modified $K_k$ and iterate it until Eq(22) holds for every $k$.
+
+<br></br>
 
 ## Caculation of $\Omega$
 Define camera intrinsic parameter by using focal length and approximate value of optical axis points ($u_{0k},v_{0k}$).
@@ -522,6 +525,8 @@ $$
 
 Define $\delta u_{0k},\delta v_{0k}$ as Eq(40) so that above value is a constant times Eq(38). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(38) is not positive or the radical in Eq(40) is not positive, We don't fix $K$. Eq(38) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(38) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(26). This is done with Eq(42).
 
+<br></br>
+
 ## Calculation of $H$
 Think about defining $4\times 4$ homography matrix $H$ satisfies Eq(23). Eq(23) can be written as follows by defining column of $H$ as $h1,...,h4$.
 
@@ -538,6 +543,8 @@ H=
 (\sqrt{-\sigma_4}w_4, \sqrt{-\sigma_3}w_3, \sqrt{-\sigma_2}w_2, w_1), \quad \sigma_2 < 0 \tag{45}
 \end{cases}
 $$
+
+<br></br>
 
 ## Euclidean upgrading
 The method of Euclidean upgrading is as follows.
@@ -569,8 +576,79 @@ $$
 ### Explanation
 $J_k$ of Eq(46) measures how close Eq(38) is to constant times the identity matrix. Ideally, we should iterate for every $k$ until $F_k\approx 0$, it often doesn't get that far in reality. There are several possible reasons for this. First, positions of each images are not necessarily correct because of some errors in real data. Also, camera matrix $P_k$ are not necessarily calculated correctly by using primary method. That's why, we evaluate median in step6 to exclude images with large error. 
 
-## 3D reconstruction calculation
+<br></br>
 
+## 3D reconstruction calculation
+If you get projective transformation matrix $H$ and intrinsic paramter matrix $K_k$, you can calculate each 3D positions $X_\alpha, Y_\alpha, Z_\alpha$ and $t_k, R_k$ by converting $X_\alpha$ and camera matrix $P_k$ as follows.
+
+### 1. Projective transform each $X_\alpha$ as follows
+
+$$
+X_\alpha \leftarrow H^{-1}X_\alpha \tag{48}
+$$
+
+### 2. Define elements of $X_\alpha$ as follows and calculate 3D position $(X_\alpha, Y_\alpha, Z_\alpha)$ by Eq(2)
+
+### 3. Projective transform each $P_k$ as follows
+
+$$
+P_k \leftarrow P_k H \tag{49}
+$$
+
+### 4. Calculate matrix $A_k$ and vector $b_k$
+
+$$
+K_k^{-1}P_k=
+\begin{pmatrix}
+A_k & b_k \tag{50}
+\end{pmatrix}
+$$
+
+### 5. Define scale constant $s$ as follows and normalize $A_k$ and $b_k$
+
+$$
+A_k \leftarrow \frac{A_k}{s}, \quad b_k \leftarrow \frac{b_k}{s} \tag{51}
+$$
+
+### 6. Perform singular value decomposition of $A_k$ as follows
+
+$$
+A_k=U_A\Sigma_A V_A^\intercal \tag{52}
+$$
+
+### 7. Calculate rotation $R_k$ as follows
+
+$$
+R_k=V_A U_A^\intercal \tag{53}
+$$
+
+### 8. Calculate translation $t_k$ as follows
+
+$$
+t_k=-R_k b \tag{54}
+$$
+
+### 9. Calculate the position of the point seen from the coordinate system from the $k$-th camera as follows
+
+$$
+\begin{pmatrix}
+X_{\alpha k} \\
+Y_{\alpha k} \\
+Z_{\alpha k} \\
+\end{pmatrix}=
+R_k^\intercal
+\begin{pmatrix}
+\begin{pmatrix}
+X_{\alpha} \\
+Y_{\alpha} \\
+Z_{\alpha} \\
+\end{pmatrix}-t_k
+\end{pmatrix} \tag{55}
+$$
+
+### 10. If the formula below doesn't hold, we change signs of $t_k$ and $(X_\alpha, Y_\alpha, Z_\alpha)$. $sgn(x)$ is sign function that return $1, 0, -1$ according to $x>0,x=0,x<0$.
+
+### Explanation
 
 <br></br>
 
