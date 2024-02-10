@@ -219,7 +219,7 @@ python3 calibrate_perspective_camera_by_primary_method.py
 
 Black points are input points and red points are reprojected points using calculated the motion matrix and the shape matrix. You can see the 2 types of points almost overlap.
 
-<img src='images/CAM2.png' width='600'>
+<img src='images/calib.png' width='600'>
 
 
 <br></br>

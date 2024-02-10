@@ -1,3 +1,4 @@
+import os
 import sys
 
 import cv2
@@ -144,23 +145,20 @@ def draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, heigh
             )
 
         cam_name = "CAM" + str(frm_idx)
-        cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
+        resize_img = cv2.resize(img, None, fx=0.5, fy=0.5)
+        file_name = cam_name + ".png"
+        save_path = os.path.join("images", file_name)
+        cv2.imwrite(save_path, resize_img)
+        cv2.imshow(cam_name, resize_img)
 
     cv2.waitKey(0)
 
 
 def rotate_and_translate_original_points(R, t, X_s):
-    Z_s = X_s[2, :]
-    sign_sum = np.sum(np.sign(Z_s))
-    if sign_sum <= 0:
-        sign = -1
-    else:
-        sign = 1
-
     moved_X = np.zeros(np.shape(X_s))
     for col in range(X_s.shape[1]):
         X = X_s[:, col]
-        moved_X[:, col] = np.dot(R.T, (sign * X - sign * t))
+        moved_X[:, col] = np.dot(R.T, (X - t))
 
     return moved_X
 
@@ -187,6 +185,10 @@ def reconstruct_3d_position(motion_mat, shape_mat, H, K):
         R_k = np.dot(Vh.T, U.T)
         t_k = -np.dot(R_k, b_k)
         moved_X = rotate_and_translate_original_points(R_k, t_k, norm_X)
+        Z_s = moved_X[2, :]
+        sign_sum = np.sum(np.sign(Z_s))
+        if sign_sum <= 0:
+            moved_X = rotate_and_translate_original_points(R_k, -t_k, -norm_X)
         moved_Xs[frm_idx, :, :] = moved_X
 
     return moved_Xs
@@ -202,10 +204,9 @@ def draw_reconstructed_3d_points(moved_Xs):
             X = moved_Xs[i][0][j]
             Y = moved_Xs[i][1][j]
             Z = moved_Xs[i][2][j]
-            print(X, Y, Z)
             ax.scatter(X, Z, -Y)
+
     plt.show()
-    # TODO Check draw result
 
 
 def main(show_flag: bool):
@@ -214,7 +215,7 @@ def main(show_flag: bool):
         [15, -15, 0],
         [0, 0, 0],
         [15, 15, 0],
-        [10, 30, 0],
+        [10, 45, 0],
     ]
     T_in_camera_coords = [[0, 0, 10], [0, 0, 7.5], [0, 0, 5], [0, 0, 7.5], [0, 0, 10]]
     f = 160
@@ -232,13 +233,8 @@ def main(show_flag: bool):
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
         img_pnts_list, f_0, 0.05
     )
-    print("motion_mat: ", motion_mat.shape)
-    print("shape_mat: ", shape_mat.shape)
     H, K = euclideanize.euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
-    print("H: ", H)
     moved_Xs = reconstruct_3d_position(motion_mat, shape_mat, H, K)
-    print(moved_Xs)
-    print(moved_Xs.shape)
 
     if show_flag:
         draw_reconstructed_3d_points(moved_Xs)
