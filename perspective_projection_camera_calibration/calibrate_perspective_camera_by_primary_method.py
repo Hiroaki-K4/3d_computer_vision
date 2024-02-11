@@ -204,12 +204,12 @@ def draw_reconstructed_3d_points(moved_Xs):
             X = moved_Xs[i][0][j]
             Y = moved_Xs[i][1][j]
             Z = moved_Xs[i][2][j]
-            ax.scatter(X, Z, -Y)
+            ax.scatter(X, Z, -Y, color="blue")
 
     plt.show()
 
 
-def main(show_flag: bool):
+def main(show_flag: bool, show_3d_points: bool):
     rot_euler_degrees = [
         [-10, -30, 0],
         [15, -15, 0],
@@ -236,8 +236,10 @@ def main(show_flag: bool):
     H, K = euclideanize.euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
     moved_Xs = reconstruct_3d_position(motion_mat, shape_mat, H, K)
 
-    if show_flag:
+    if show_3d_points:
         draw_reconstructed_3d_points(moved_Xs)
+
+    if show_flag:
         draw_reconstructed_points(
             img_pnts_list, motion_mat, shape_mat, width, height, f_0
         )
@@ -245,6 +247,9 @@ def main(show_flag: bool):
 
 if __name__ == "__main__":
     show_flag = True
+    show_3d_points = False
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False
-    main(show_flag)
+    if len(sys.argv) == 2 and sys.argv[1] == "Show3DPoints":
+        show_3d_points = True
+    main(show_flag, show_3d_points)

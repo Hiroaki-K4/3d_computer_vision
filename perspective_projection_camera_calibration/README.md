@@ -252,7 +252,7 @@ P_k
 \begin{pmatrix}
 R_k^\intercal & 0
 \end{pmatrix}
-\tag{22}
+\tag{21}
 $$
 
 We can remove rotation $R_k$ by multiplying this matrix and its transpose.
@@ -268,13 +268,13 @@ P_k
 P_k^\intercal
 =K_k
 K_k^\intercal
-\tag{21}
+\tag{22}
 $$
 
 We find $H$ such that $P'_k=P_kH$ satisfies above equation. Considering $H$ has the indeterminacy of constant times, we get below equation.
 
 $$
-P_k\Omega P_k^\intercal \simeq K_kK_k^\intercal \tag{22}
+P_k\Omega P_k^\intercal \simeq K_kK_k^\intercal \tag{23}
 $$
 
 Matrix $\Omega$ is defined as follows.
@@ -287,14 +287,14 @@ $$
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & 0 \\
 \end{pmatrix}
-H^\intercal \tag{23}
+H^\intercal \tag{24}
 $$
 
-We find $\Omega$ satisfies Eq(23) and calculate $H$ satisfies Eq(22) by using $\Omega$. We should iterate as follows because right side includes unknown $K_k$.
+We find $\Omega$ satisfies Eq(23) and calculate $H$ satisfies Eq(24) by using $\Omega$. We should iterate as follows because right side includes unknown $K_k$.
 
-1. Define camera intrinsic parameter $K_k$ and calculate $\Omega$ by Eq(22).
-2. Fix each $K_k$ so that Eq(22) holds true for $\Omega$.
-3. Recalculate $\Omega$ for the modified $K_k$ and iterate it until Eq(22) holds for every $k$.
+1. Define camera intrinsic parameter $K_k$ and calculate $\Omega$ by Eq(23).
+2. Fix each $K_k$ so that Eq(23) holds true for $\Omega$.
+3. Recalculate $\Omega$ for the modified $K_k$ and iterate it until Eq(24) holds for every $k$.
 
 <br></br>
 
@@ -308,15 +308,15 @@ f_k & 0 & u_{0k} \\
 0 & f_k & v_{0k} \\
 0 & 0 & f_0 \\
 \end{pmatrix}
-\tag{24}
+\tag{25}
 $$
 
-We calculate $\Omega$ satisfies Eq(22) by this $K_k$ and $P_k$.
+We calculate $\Omega$ satisfies Eq(23) by this $K_k$ and $P_k$.
 
-Eq(22) can be rewritten as follows.
+Eq(23) can be rewritten as follows.
 
 $$
-K_k^{-1}P_k\Omega^\intercal P_k^\intercal K_k^{-1 \intercal} \simeq I \tag{25}
+K_k^{-1}P_k\Omega^\intercal P_k^\intercal K_k^{-1 \intercal} \simeq I \tag{26}
 $$
 
 Since $(1,1)$ element and $(1,2)$ element of left side matrix and off-diagonal elements are zero, we get 4 linear equation about $\Omega$. Calculate $\Omega$ by least square method with $4M$ equations. Specific steps are as follows.
@@ -324,7 +324,7 @@ Since $(1,1)$ element and $(1,2)$ element of left side matrix and off-diagonal e
 ### 1. Calculate $3\times4$ matrix $Q_k$($k=1,...,M$)
 
 $$
-Q_k=K_k^{-1}P_K \tag{26}
+Q_k=K_k^{-1}P_K \tag{27}
 $$
 
 ### 2. Define $4\times4\times4\times4$ array $A=(A_{ijkl})$
@@ -351,7 +351,7 @@ Q_{k(2i)}Q_{k(3j)}Q_{k(3k)}Q_{k(2l)}
 Q_{k(3i)}Q_{k(1j)}Q_{k(3k)}Q_{k(1l)}
 + Q_{k(1i)}Q_{k(3j)}Q_{k(3k)}Q_{k(1l)} \\
 Q_{k(3i)}Q_{k(1j)}Q_{k(1k)}Q_{k(3l)}
-+ Q_{k(1i)}Q_{k(3j)}Q_{k(1k)}Q_{k(3l)})) \tag{27}
++ Q_{k(1i)}Q_{k(3j)}Q_{k(1k)}Q_{k(3l)})) \tag{28}
 $$
 
 $Q_{k(ij)}$ is $(i,j)$ element of $Q_k$.
@@ -382,7 +382,7 @@ A_{4411} & A_{4422} & A_{4433} & A_{4444} & \sqrt 2 A_{4412} & \sqrt 2 A_{4413} 
 \sqrt 2 A_{3411} & \sqrt 2 A_{3422} & \sqrt 2 A_{3433} & \sqrt 2 A_{3444} & 2 A_{3412} & 2 A_{3413} & 2 A_{3414} & 2 A_{3423} & 2 A_{3424} & 2 A_{3434} \\
 
 \end{pmatrix}
-\tag{28}
+\tag{29}
 $$
 
 ### 4. Calculate 10-dimentional unit vector $w=(w_i)$ for minimum eigen value of matrix $A$
@@ -396,7 +396,7 @@ w_1 & w_5/\sqrt 2 & w_6/\sqrt 2 & w_7/\sqrt 2 \\
 w_5/\sqrt 2 & w_2 & w_8/\sqrt 2 & w_9/\sqrt 2 \\
 w_6/\sqrt 2 & w_8/\sqrt 2 & w_3 & w_{10}/\sqrt 2 \\
 w_7/\sqrt 2 & w_9/\sqrt 2 & w_{10}/\sqrt 2 & w_4
-\end{pmatrix} \tag{29}
+\end{pmatrix} \tag{30}
 $$
 
 ### 6. Calculate unit eigen vectors $w_1,...,w_4$ for eigen values $\sigma_1 \geq ... \geq \sigma_4$ of $\Omega$
@@ -408,14 +408,14 @@ $$
 \begin{cases}
 \sigma_1w_1w_1^\intercal + \sigma_2w_2w_1^\intercal + \sigma_3w_3w_3^\intercal, \qquad \sigma_3 > 0 \\
 -\sigma_4w_4w_4^\intercal - \sigma_3w_3w_3^\intercal - \sigma_2w_2w_2^\intercal, \qquad \sigma_2 < 0
-\end{cases} \tag{30}
+\end{cases} \tag{31}
 $$
 
 ### Explanation
-Define matrix $Q_k$ as Eq(26), Eq(25) can be written as follows.
+Define matrix $Q_k$ as Eq(27), Eq(26) can be written as follows.
 
 $$
-Q_k\Omega Q_k^\intercal \simeq I \tag{31}
+Q_k\Omega Q_k^\intercal \simeq I \tag{32}
 $$
 
 The fact that $(1,1)$ element and $(2,2)$ element of left side are equal and off-diagonal elements are zero can be written as follows.
@@ -426,42 +426,42 @@ $$
 \sum_{i,j=1}^4Q_{k(1i)}Q_{k(2j)}\Omega_{ij}&=0, \\
 \sum_{i,j=1}^4Q_{k(2i)}Q_{k(3j)}\Omega_{ij}&=0, \\
 \sum_{i,j=1}^4Q_{k(1i)}Q_{k(1j)}\Omega_{ij}&=0
-\end{align*} \tag{32}
+\end{align*} \tag{33}
 $$
 
-We calculate $\Omega$ minimize sum $K$ of square of these left sides over $k_1,...,M$. Define $A_{ijkl}$ as Eq(27), $K$ can be written as follows.
+We calculate $\Omega$ minimize sum $K$ of square of these left sides over $k_1,...,M$. Define $A_{ijkl}$ as Eq(28), $K$ can be written as follows.
 
 $$
-K=\sum_{i,j,k,l=1}^4 A_{ijkl}\Omega_{ij}\Omega_{kl} \tag{33}
+K=\sum_{i,j,k,l=1}^4 A_{ijkl}\Omega_{ij}\Omega_{kl} \tag{34}
 $$
 
-Let $10\times10$ symetric matrix $A$ be like Eq(28) and define $10$ dimentional vector $w=(w_i)$ as Eq(29), the above equation can be rewritten in quadratic form of $w$.
+Let $10\times10$ symetric matrix $A$ be like Eq(29) and define $10$ dimentional vector $w=(w_i)$ as Eq(30), the above equation can be rewritten in quadratic form of $w$.
 
 $$
-K=(w,Aw) \tag{34}
+K=(w,Aw) \tag{35}
 $$
 
-We normalize $\Omega$ to $|\Omega|^2=\sum_{i,j=1}^4 \Omega_{ij}^2=1$ because $\Omega$ can only be determined except for constant multiplication. This means $|w|^2=1$ from Eq(29). The unit vector $w$ minimizes Eq(34) is the eigen unit vector for minimum eigen value of matrix A. Therefore, $\Omega$ can be determined by deploying the element like Eq(29). $\Omega$ must be rank 3 semipositive symmetric matrix by definition of Eq(23). Let the eigen value of $\Omega$ be $\sigma_1 \geq ... \geq \sigma_2$ and define corresponding unit vectors as $w_1,...,w_4$, $\Omega$ can be written as follows.
+We normalize $\Omega$ to $|\Omega|^2=\sum_{i,j=1}^4 \Omega_{ij}^2=1$ because $\Omega$ can only be determined except for constant multiplication. This means $|w|^2=1$ from Eq(30). The unit vector $w$ minimizes Eq(35) is the eigen unit vector for minimum eigen value of matrix A. Therefore, $\Omega$ can be determined by deploying the element like Eq(30). $\Omega$ must be rank 3 semipositive symmetric matrix by definition of Eq(24). Let the eigen value of $\Omega$ be $\sigma_1 \geq ... \geq \sigma_2$ and define corresponding unit vectors as $w_1,...,w_4$, $\Omega$ can be written as follows.
 
 $$
-\Omega=\sigma_1 w_1 w_1^\intercal + \sigma_2 w_2 w_2^\intercal + \sigma_3 w_3 w_3^\intercal + \sigma_4 w_4 w_4^\intercal \tag{35}
+\Omega=\sigma_1 w_1 w_1^\intercal + \sigma_2 w_2 w_2^\intercal + \sigma_3 w_3 w_3^\intercal + \sigma_4 w_4 w_4^\intercal \tag{36}
 $$
 
-From this, remove unit vector fore minimum eigen value and redefine $\Omega$ by 3 bigger unit values and their eigen vectors. At this time, the sign of $\Omega$ of Eq(29) is indeterminate because the sign of unit vector $w$ is indeterminate. Therefore, we constrain rank3 like Eq(30) by choosing sign of $\Omega$ so that eigen value becomes positive.
+From this, remove unit vector fore minimum eigen value and redefine $\Omega$ by 3 bigger unit values and their eigen vectors. At this time, the sign of $\Omega$ of Eq(30) is indeterminate because the sign of unit vector $w$ is indeterminate. Therefore, we constrain rank3 like Eq(31) by choosing sign of $\Omega$ so that eigen value becomes positive.
 
 <br></br>
 
 ## $K$ correction
-It is good that Calculated $\Omega$ satisfies Eq(22), but $K_k$ is not necessarily true, so it does not necessarily hold true. Therefore, fix $K_k$ to $K_k\delta K_k$ by multiplying $K_k$ by $\delta K_k$ close to the identity matrix. $\delta K_k$ is determined so that following equation holds true.
+It is good that Calculated $\Omega$ satisfies Eq(23), but $K_k$ is not necessarily true, so it does not necessarily hold true. Therefore, fix $K_k$ to $K_k\delta K_k$ by multiplying $K_k$ by $\delta K_k$ close to the identity matrix. $\delta K_k$ is determined so that following equation holds true.
 
 $$
-P_k \Omega P_k \simeq (K_k\delta K_k)(K_k\delta K_k)^\intercal \tag{36}
+P_k \Omega P_k \simeq (K_k\delta K_k)(K_k\delta K_k)^\intercal \tag{37}
 $$
 
 This equation can be written as follows.
 
 $$
-K_k^{-1} P_k \Omega P_k K_k^{\intercal-1} \simeq \delta K_k \delta K_k \tag{37}
+K_k^{-1} P_k \Omega P_k K_k^{\intercal-1} \simeq \delta K_k \delta K_k \tag{38}
 $$
 
 We define $\delta K_k$ so that $Q_k\Omega Q_k^\intercal$ is a constant times $\delta K_k \delta K_k$. Specific steps are as follows.
@@ -473,14 +473,14 @@ Q\Omega Q^\intercal=
 \begin{pmatrix}
 c_{k(11)} & c_{k(12)} & c_{k(13)} \\
 c_{k(21)} & c_{k(22)} & c_{k(23)} \\
-c_{k(31)} & c_{k(32)} & c_{k(33)} \tag{38}
+c_{k(31)} & c_{k(32)} & c_{k(33)} \tag{39}
 \end{pmatrix}
 $$
 
 ### 2. Calculate $F_k$
 
 $$
-F_k=\frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \Bigl(\frac{c_{k(13)}}{c_{k(33)}}\Bigr)^2 - \Bigl(\frac{c_{k(23)}}{c_{k(33)}}\Bigr)^2 \tag{39}
+F_k=\frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \Bigl(\frac{c_{k(13)}}{c_{k(33)}}\Bigr)^2 - \Bigl(\frac{c_{k(23)}}{c_{k(33)}}\Bigr)^2 \tag{40}
 $$
 
 ### 3. If $c_{k(33)} \leq 0$ or $F_k \leq 0$, finish without fixing $K_k$
@@ -490,7 +490,7 @@ $$
 $$
 \begin{align*}
 \delta u_{0k} &= \frac{c_{k(13)}}{c_{k(33)}}, \quad \delta v_{0k} = \frac{c_{k(23)}}{c_{k(33)}} \\
-\delta f_k &= \sqrt{\frac{1}{2} \Bigl( \frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \delta u_{0k}^2 - \delta u_{0k}^2 \Bigr)} \tag{40}
+\delta f_k &= \sqrt{\frac{1}{2} \Bigl( \frac{c_{k(11)} + c_{k(22)}}{c_{k(33)}} - \delta u_{0k}^2 - \delta u_{0k}^2 \Bigr)} \tag{41}
 \end{align*}
 $$
 
@@ -501,14 +501,14 @@ $$
 \begin{pmatrix}
 \delta f_k & 0 & \delta u_{0k} \\
 0 & \delta f_k & \delta v_{0k} \\
-0 & 0 & 1 \tag{41}
+0 & 0 & 1 \tag{42}
 \end{pmatrix}
 $$
 
 ### 6. Fix $K_k$
 
 $$
-K_k \leftarrow K_k \delta K_k, \quad K_k \leftarrow \sqrt{c_{k(33)}} K_k \tag{42}
+K_k \leftarrow K_k \delta K_k, \quad K_k \leftarrow \sqrt{c_{k(33)}} K_k \tag{43}
 $$
 
 ### Explanation
@@ -519,19 +519,19 @@ $$
 \begin{pmatrix}
 \delta f_k^2+\delta u_{0k}^2 & \delta u_{0k}\delta v_{0k} & \delta u_{0k} \\
 \delta u_{0k}\delta v_{0k} & \delta f_k^2+\delta v_{0k}^2 & \delta v_{0k} \\
-\delta u_{0k} & \delta v_{0k} & 1 \tag{43}
+\delta u_{0k} & \delta v_{0k} & 1 \tag{44}
 \end{pmatrix}
 $$
 
-Define $\delta u_{0k},\delta v_{0k}$ as Eq(40) so that above value is a constant times Eq(38). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(38) is not positive or the radical in Eq(40) is not positive, We don't fix $K$. Eq(38) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(38) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(26). This is done with Eq(42).
+Define $\delta u_{0k},\delta v_{0k}$ as Eq(41) so that above value is a constant times Eq(39). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(39) is not positive or the radical in Eq(41) is not positive, We don't fix $K$. Eq(39) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(39) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(27). This is done with Eq(43).
 
 <br></br>
 
 ## Calculation of $H$
-Think about defining $4\times 4$ homography matrix $H$ satisfies Eq(23). Eq(23) can be written as follows by defining column of $H$ as $h1,...,h4$.
+Think about defining $4\times 4$ homography matrix $H$ satisfies Eq(24). Eq(24) can be written as follows by defining column of $H$ as $h1,...,h4$.
 
 $$
-\Omega=h_1h_1^\intercal + h_2h_2^\intercal + h_3h_3^\intercal \tag{44}
+\Omega=h_1h_1^\intercal + h_2h_2^\intercal + h_3h_3^\intercal \tag{45}
 $$
 
 Therefore, we can't define the $4$ column $h_4$ because we remove the translation $t_k$. This corresponds to that absolute location of world coordinate can't be determined. Therefore, we can set $h_4$ arbitrarily so that $H$ becomes regular matrix. The simple way is to choose $\Omega$ so that $\sigma_1, \sigma_2, \sigma_3$ become positive and turn $\sqrt{\sigma_1}w_1, \sqrt{\sigma_2}w_2, \sqrt{\sigma_3}w_3, w_4$ into $h_1, h_2, h_3, h_4$.
@@ -540,7 +540,7 @@ $$
 H=
 \begin{cases}
 (\sqrt{\sigma_1}w_1, \sqrt{\sigma_2}w_2, \sqrt{\sigma_3}w_3, w_4), \quad \sigma_3 > 0 \\
-(\sqrt{-\sigma_4}w_4, \sqrt{-\sigma_3}w_3, \sqrt{-\sigma_2}w_2, w_1), \quad \sigma_2 < 0 \tag{45}
+(\sqrt{-\sigma_4}w_4, \sqrt{-\sigma_3}w_3, \sqrt{-\sigma_2}w_2, w_1), \quad \sigma_2 < 0 \tag{46}
 \end{cases}
 $$
 
@@ -560,13 +560,13 @@ The method of Euclidean upgrading is as follows.
 ### 5. If $K_k$ is fixed, set $J_k$ as follows. When K isn't fixed, let $J_k=\infty$.
 
 $$
-J_k = \Bigl( \frac{c_{k(11)}}{c_{k(33)}} - 1 \Bigr)^2 + \Bigl( \frac{c_{k(22)}}{c_{k(33)}} - 1 \Bigr)^2 + 2\frac{c_{k(12)}^2 + c_{k(23)}^2 + c_{k(31)}^2}{c_{k(33)}^2} \tag{46}
+J_k = \Bigl( \frac{c_{k(11)}}{c_{k(33)}} - 1 \Bigr)^2 + \Bigl( \frac{c_{k(22)}}{c_{k(33)}} - 1 \Bigr)^2 + 2\frac{c_{k(12)}^2 + c_{k(23)}^2 + c_{k(31)}^2}{c_{k(33)}^2} \tag{47}
 $$
 
 ### 6. Calculate following median
 
 $$
-J_{med}=med_{k=1}^M J_k \tag{47}
+J_{med}=med_{k=1}^M J_k \tag{48}
 $$
 
 ### 7. If $J_{med} \approx 0$ or $J_{med} \geq \hat{J}_{med}$, return $H,K_k$ and finish
@@ -574,7 +574,7 @@ $$
 ### 8. Otherwise, let $\hat{J}_{med} \leftarrow J_{med}$ and return step2
 
 ### Explanation
-$J_k$ of Eq(46) measures how close Eq(38) is to constant times the identity matrix. Ideally, we should iterate for every $k$ until $F_k\approx 0$, it often doesn't get that far in reality. There are several possible reasons for this. First, positions of each images are not necessarily correct because of some errors in real data. Also, camera matrix $P_k$ are not necessarily calculated correctly by using primary method. That's why, we evaluate median in step6 to exclude images with large error. 
+$J_k$ of Eq(47) measures how close Eq(39) is to constant times the identity matrix. Ideally, we should iterate for every $k$ until $F_k\approx 0$, it often doesn't get that far in reality. There are several possible reasons for this. First, positions of each images are not necessarily correct because of some errors in real data. Also, camera matrix $P_k$ are not necessarily calculated correctly by using primary method. That's why, we evaluate median in step6 to exclude images with large error. 
 
 <br></br>
 
@@ -584,7 +584,7 @@ If you get projective transformation matrix $H$ and intrinsic paramter matrix $K
 ### 1. Projective transform each $X_\alpha$ as follows
 
 $$
-X_\alpha \leftarrow H^{-1}X_\alpha \tag{48}
+X_\alpha \leftarrow H^{-1}X_\alpha \tag{49}
 $$
 
 ### 2. Define elements of $X_\alpha$ as follows and calculate 3D position $(X_\alpha, Y_\alpha, Z_\alpha)$ by Eq(2)
@@ -592,7 +592,7 @@ $$
 ### 3. Projective transform each $P_k$ as follows
 
 $$
-P_k \leftarrow P_k H \tag{49}
+P_k \leftarrow P_k H \tag{50}
 $$
 
 ### 4. Calculate matrix $A_k$ and vector $b_k$
@@ -600,32 +600,32 @@ $$
 $$
 K_k^{-1}P_k=
 \begin{pmatrix}
-A_k & b_k \tag{50}
+A_k & b_k \tag{51}
 \end{pmatrix}
 $$
 
 ### 5. Define scale constant $s$ as follows and normalize $A_k$ and $b_k$
 
 $$
-A_k \leftarrow \frac{A_k}{s}, \quad b_k \leftarrow \frac{b_k}{s} \tag{51}
+A_k \leftarrow \frac{A_k}{s}, \quad b_k \leftarrow \frac{b_k}{s} \tag{52}
 $$
 
 ### 6. Perform singular value decomposition of $A_k$ as follows
 
 $$
-A_k=U_A\Sigma_A V_A^\intercal \tag{52}
+A_k=U_A\Sigma_A V_A^\intercal \tag{53}
 $$
 
 ### 7. Calculate rotation $R_k$ as follows
 
 $$
-R_k=V_A U_A^\intercal \tag{53}
+R_k=V_A U_A^\intercal \tag{54}
 $$
 
 ### 8. Calculate translation $t_k$ as follows
 
 $$
-t_k=-R_k b \tag{54}
+t_k=-R_k b \tag{55}
 $$
 
 ### 9. Calculate the position of the point seen from the coordinate system from the $k$-th camera as follows
@@ -643,12 +643,33 @@ X_{\alpha} \\
 Y_{\alpha} \\
 Z_{\alpha} \\
 \end{pmatrix}-t_k
-\end{pmatrix} \tag{55}
+\end{pmatrix} \tag{56}
 $$
 
 ### 10. If the formula below doesn't hold, we change signs of $t_k$ and $(X_\alpha, Y_\alpha, Z_\alpha)$. $sgn(x)$ is sign function that return $1, 0, -1$ according to $x>0,x=0,x<0$.
 
 ### Explanation
+$H^{-1}X_\alpha$ and $P_kH^{-1}$ are correct values for projective restored homogenious coordinates $X_\alpha$ and camera matrix $P_k$ by definition of projective transformation matrix $H$. Correct camera matrix $P_k$ is as follows.
+
+$$
+P_k=K_k
+\begin{pmatrix}
+R_k^\intercal & -R_k^\intercal t_k
+\end{pmatrix} \tag{57}
+$$
+
+In projective restoration, camera matrix $P_k$ can only be calculated except for constant multiplication. From this, If projective restoration and projective transformation $H$ of Euclidean upgrading are calculated correctly, the right side of Eq(51) is constant multiplication of $\begin{pmatrix}R_k^\intercal & -R_k^\intercal t_k\end{pmatrix}$. Therefore, if we normalize $A_k$ as $det A_k=1$, $A_k$ equals $R_k^\intercal$. However, projective restoration and Euclidean upgrading are not necessarily calculated correctly, $A_k$ is not necessarily rotation matrix. Therefore, when $A_k$ is singular value decomposed, if $A_k$ is rotation matrix, $\Sigma_A$ is identity matrix $I$, but this is not necessarily the case. So we replace $\Sigma_A$ with identity matrix $I$ and let it be $R_k^\intercal$.  
+The probelem of mirror image resolution occurs like 3D reconstruction by two images. Projective restoration has uncertainly of sign, so it is possible that above result of calculation is mirror image resolution. To determine this, calculate point $(X_\alpha, Y_\alpha, Z_\alpha)$ seen from the k-th camera coordinates as Eq(56). And determine whether it is mirror image resolution by step 10.
+
+You can try the Euclidean upgrading by running following command.
+
+```bash
+python3 calibrate_perspective_camera_by_primary_method.py Show3DPoints
+```
+
+Reconstructed 3D points are as follows.
+
+<img src='images/reconstructed_3d_points.png' width='600'>
 
 <br></br>
 
