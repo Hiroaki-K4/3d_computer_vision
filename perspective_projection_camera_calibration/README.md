@@ -334,19 +334,16 @@ A_{ijkl}=\sum_{k=1}^M(Q_{k(1i)}Q_{k(1j)}Q_{k(1k)}Q_{k(1l)}
 - Q_{k(1i)}Q_{k(1j)}Q_{k(2k)}Q_{k(2l)} \\
 - Q_{k(2i)}Q_{k(2j)}Q_{k(1k)}Q_{k(1l)}
 + Q_{k(2i)}Q_{k(2j)}Q_{k(2k)}Q_{k(2l)} \\
-
 +\frac{1}{4}(
 Q_{k(1i)}Q_{k(2j)}Q_{k(1k)}Q_{k(2l)}
 + Q_{k(2i)}Q_{k(1j)}Q_{k(1k)}Q_{k(2l)} \\
 Q_{k(1i)}Q_{k(2j)}Q_{k(2k)}Q_{k(1l)}
 + Q_{k(2i)}Q_{k(1j)}Q_{k(2k)}Q_{k(1l)}) \\
-
 +\frac{1}{4}(
 Q_{k(2i)}Q_{k(3j)}Q_{k(2k)}Q_{k(3l)}
 + Q_{k(3i)}Q_{k(2j)}Q_{k(2k)}Q_{k(3l)} \\
 Q_{k(2i)}Q_{k(3j)}Q_{k(3k)}Q_{k(2l)}
 + Q_{k(3i)}Q_{k(2j)}Q_{k(3k)}Q_{k(2l)}) \\
-
 +\frac{1}{4}(
 Q_{k(3i)}Q_{k(1j)}Q_{k(3k)}Q_{k(1l)}
 + Q_{k(1i)}Q_{k(3j)}Q_{k(3k)}Q_{k(1l)} \\
@@ -362,25 +359,15 @@ $$
 A=
 \begin{pmatrix}
 A_{1111} & A_{1122} & A_{1133} & A_{1144} & \sqrt 2 A_{1112} & \sqrt 2 A_{1113} & \sqrt 2 A_{1114} & \sqrt 2 A_{1123} & \sqrt 2 A_{1124} & \sqrt 2 A_{1134} \\
-
 A_{2211} & A_{2222} & A_{2233} & A_{2244} & \sqrt 2 A_{2212} & \sqrt 2 A_{2213} & \sqrt 2 A_{2214} & \sqrt 2 A_{2223} & \sqrt 2 A_{2224} & \sqrt 2 A_{2234} \\
-
 A_{3311} & A_{3322} & A_{3333} & A_{3344} & \sqrt 2 A_{3312} & \sqrt 2 A_{3313} & \sqrt 2 A_{3314} & \sqrt 2 A_{3323} & \sqrt 2 A_{3324} & \sqrt 2 A_{3334} \\
-
 A_{4411} & A_{4422} & A_{4433} & A_{4444} & \sqrt 2 A_{4412} & \sqrt 2 A_{4413} & \sqrt 2 A_{4414} & \sqrt 2 A_{4423} & \sqrt 2 A_{4424} & \sqrt 2 A_{4434} \\
-
 \sqrt 2 A_{1211} & \sqrt 2 A_{1222} & \sqrt 2 A_{1233} & \sqrt 2 A_{1244} & 2 A_{1212} & 2 A_{1213} & 2 A_{1214} & 2 A_{1223} & 2 A_{1224} & 2 A_{1234} \\
-
 \sqrt 2 A_{1311} & \sqrt 2 A_{1322} & \sqrt 2 A_{1333} & \sqrt 2 A_{1344} & 2 A_{1312} & 2 A_{1313} & 2 A_{1314} & 2 A_{1323} & 2 A_{1324} & 2 A_{1334} \\
-
 \sqrt 2 A_{1411} & \sqrt 2 A_{1422} & \sqrt 2 A_{1433} & \sqrt 2 A_{1444} & 2 A_{1412} & 2 A_{1413} & 2 A_{1414} & 2 A_{1423} & 2 A_{1424} & 2 A_{1434} \\
-
 \sqrt 2 A_{2311} & \sqrt 2 A_{2322} & \sqrt 2 A_{2333} & \sqrt 2 A_{2344} & 2 A_{2312} & 2 A_{2313} & 2 A_{2314} & 2 A_{2323} & 2 A_{2324} & 2 A_{2334} \\
-
 \sqrt 2 A_{2411} & \sqrt 2 A_{2422} & \sqrt 2 A_{2433} & \sqrt 2 A_{2444} & 2 A_{2412} & 2 A_{2413} & 2 A_{2414} & 2 A_{2423} & 2 A_{2424} & 2 A_{2434} \\
-
 \sqrt 2 A_{3411} & \sqrt 2 A_{3422} & \sqrt 2 A_{3433} & \sqrt 2 A_{3444} & 2 A_{3412} & 2 A_{3413} & 2 A_{3414} & 2 A_{3423} & 2 A_{3424} & 2 A_{3434} \\
-
 \end{pmatrix}
 \tag{29}
 $$
@@ -523,7 +510,7 @@ $$
 \end{pmatrix}
 $$
 
-Define $\delta u_{0k},\delta v_{0k}$ as Eq(41) so that above value is a constant times Eq(39). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(39) is not positive or the radical in Eq(41) is not positive, We don't fix $K$. Eq(39) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(39) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(27). This is done with Eq(43).
+Define $\delta u_{0k},\delta v_{0k}$ as Eq(41) so that above value is a constant times Eq(39). $\delta f_k$ is the average of $(1,1)$ element and $(2,2)$ element. If $(3,3)$ element of Eq(39) is not positive or the radical in Eq(41) is not positive, we don't fix $K$. Eq(39) has indeterminancy of constant times and only raio between elements is meaningful. It is undesiable for calculation purposes that elements are too large or too small. Therefore, devide $Q_k$ by $\sqrt{c_{k(33)}}$ so that Eq(39) is close to identity matrix. This corresponds to multiply $K_k$ by $\sqrt{c_{k(33)}}$ from Eq(27). This is done with Eq(43).
 
 <br></br>
 
