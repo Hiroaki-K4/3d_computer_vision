@@ -1,37 +1,17 @@
-2D tracked points
------------------
+# Bundle adjustment
 
-The format is:
+## Appendix: Camera matrix decomposition
+We can calculate camera intrinsic parameter $K$, rotation $R$ and translation $t$ when $3\times 4$ camera matrix $P$ is given. The method is as follows.
 
-row1 : x1 y1 x2 y2 ... x36 y36 for track 1
-row2 : x1 y1 x2 y2 ... x36 y36 for track 2
-etc
+### 1. 
 
-i.e. a row gives the 2D measured position of a point as it is tracked
-through frames 1 to 36.  If there is no match found in a view then x
-and y are -1.
+You can get camera intrinsic parameter $K$, rotation $R$ and translation $t$ by running below command.
 
-Each row corresponds to a different point.  There are 4838 tracks.
+```bash
+python3 disassemble_camera_matrix.py
+```
 
-Here are some some useful matlab commands for pulling out and plotting
-individual tracks:
+<br></br>
 
-load viff.xy;
-
-i = find(viff== -1); % find where ends of tracks marked - indicator var
-viff(i) = nan;       % changes these to nan
-
-plot(viff(1,1:2:72),viff(1,2:2:72)) % plots track for point 1
-plot(viff(1:end,1:2:72)',viff(1:end,2:2:72)') % plots all tracks
-axis ij  % y in -ve direction
-
-x = viff(1:end,1:2:72)';  % pull out x coord of all tracks
-y = viff(1:end,2:2:72)';  % pull out y coord of all tracks
-
-m = finite(x);  % selects tracks apart from nans
-
-i = sum(m) > 6; % tracks longer than 6 views
-plot(x(:,i),y(:,i)) 
-axis ij
-
-Thanks to Andrew Fitzgibbon and Andrew Zisserman
+## Reference
+- [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
