@@ -561,7 +561,11 @@ $$
 ### 8. Otherwise, let $\hat{J}_{med} \leftarrow J_{med}$ and return step2
 
 ### Explanation
+<<<<<<< HEAD
 $J_k$ of Eq(47) measures how close Eq(39) is to constant times the identity matrix. Ideally, we should iterate for every $k$ until $F_k\approx 0$, it often doesn't get that far in reality. There are several possible reasons for this. First, positions of each images are not necessarily correct because of some errors in real data. Also, camera matrix $P_k$ are not necessarily calculated correctly by using primary method. That's why, we evaluate median in step6 to exclude images with large error.
+=======
+$J_k$ of Eq(47) measures how close Eq(39) is to constant times the identity matrix. Ideally, we should iterate for every $k$ until $F_k\approx 0$, it often doesn't get that far in reality. There are several possible reasons for this. First, positions of each images are not necessarily correct because of some errors in real data. Also, camera matrix $P_k$ are not necessarily calculated correctly by using primary method. That's why, we evaluate median in step6 to exclude images with large error. 
+>>>>>>> 333071230be03124b5c6b5ee0da8ebf71bb2e254
 
 <br></br>
 
