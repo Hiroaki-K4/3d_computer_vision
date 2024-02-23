@@ -1,0 +1,232 @@
+0000000000000000000000000000000000000000 c098a9c6be82e8b4bb70151166f8ee49cf96ec3b Hiroaki-K4 <49no19@gmail.com> 1679707827 +0900	commit (initial): first commit
+c098a9c6be82e8b4bb70151166f8ee49cf96ec3b 0000000000000000000000000000000000000000 Hiroaki-K4 <49no19@gmail.com> 1679707832 +0900	Branch: renamed refs/heads/master to refs/heads/main
+0000000000000000000000000000000000000000 c098a9c6be82e8b4bb70151166f8ee49cf96ec3b Hiroaki-K4 <49no19@gmail.com> 1679707832 +0900	Branch: renamed refs/heads/master to refs/heads/main
+c098a9c6be82e8b4bb70151166f8ee49cf96ec3b 4e53f5d70fc971e57c8e73dc6a25bfedf3784ed7 Hiroaki-K4 <49no19@gmail.com> 1679713190 +0900	commit: Add draw_elliptic.py
+4e53f5d70fc971e57c8e73dc6a25bfedf3784ed7 8148e8daacdd01ddc1accb8bdc072bae0fd79c7d Hiroaki-K4 <49no19@gmail.com> 1679795671 +0900	commit: Add get_elliptic_points_with_tilt function
+8148e8daacdd01ddc1accb8bdc072bae0fd79c7d 9519ccd6cd9da28d431b933d1aacc2a7654c41ba Hiroaki-K4 <49no19@gmail.com> 1679795694 +0900	commit: Add get_elliptic_points_with_tilt function
+9519ccd6cd9da28d431b933d1aacc2a7654c41ba 3d096db5f701d1a47d6526dcf11d5d8d531c3787 Hiroaki-K4 <49no19@gmail.com> 1679798331 +0900	commit: Update README about elliptic
+3d096db5f701d1a47d6526dcf11d5d8d531c3787 21c94a46529093575e6c3fd4739b11ecce50ce12 Hiroaki-K4 <49no19@gmail.com> 1679798419 +0900	commit: Update README about elliptic
+21c94a46529093575e6c3fd4739b11ecce50ce12 ce0ecf3c637e3d5a349584ab2e7c63c3b571ba40 Hiroaki-K4 <49no19@gmail.com> 1679798471 +0900	pull: Fast-forward
+ce0ecf3c637e3d5a349584ab2e7c63c3b571ba40 bfb48e45b5533234b481100371732d4dac42c297 Hiroaki-K4 <49no19@gmail.com> 1679799835 +0900	commit: Add elliptic_fitting_by_least_squares_method.py
+bfb48e45b5533234b481100371732d4dac42c297 2da34a5ddf91fed7294cde93df30d675e3ffbfb3 Hiroaki-K4 <49no19@gmail.com> 1679816460 +0900	commit: Fix README
+2da34a5ddf91fed7294cde93df30d675e3ffbfb3 5581a075c0c2231ad96b79e1da27b5a4faa61877 Hiroaki-K4 <49no19@gmail.com> 1680050175 +0900	commit: Update elliptic_fitting_by_least_squares.py
+5581a075c0c2231ad96b79e1da27b5a4faa61877 c5b20185fbc03e51f204c92759ec7bded695ae1c Hiroaki-K4 <49no19@gmail.com> 1680136671 +0900	commit: Update elliptic_fitting_by_least_squares
+c5b20185fbc03e51f204c92759ec7bded695ae1c a79d62aaa036f61eb209b34256aed036d81a526f Hiroaki-K4 <49no19@gmail.com> 1680223000 +0900	commit: Update README about ellipse fitting by least squeare method
+a79d62aaa036f61eb209b34256aed036d81a526f ae353aa13fc709c36c611f1528663f3147bc276d Hiroaki-K4 <49no19@gmail.com> 1680316408 +0900	commit: Updaet README about error
+ae353aa13fc709c36c611f1528663f3147bc276d 21b31d038f443d3c93a8f7d807fc8118d6810229 Hiroaki-K4 <49no19@gmail.com> 1680414104 +0900	commit: Update elliptic_fitting_by_weighted_repetition
+21b31d038f443d3c93a8f7d807fc8118d6810229 c74cc704fbb60b46be456d72bfbf24da038c3e8d Hiroaki-K4 <49no19@gmail.com> 1680480977 +0900	commit: Update README about iterative reweight
+c74cc704fbb60b46be456d72bfbf24da038c3e8d a86d1e8896ebcdc694b3d94855bbf14035b5fd67 Hiroaki-K4 <49no19@gmail.com> 1680568859 +0900	commit: Add elliptic_fitting_by_renormalization.py
+a86d1e8896ebcdc694b3d94855bbf14035b5fd67 093c581321bc724f6da7183b2154faad04578f6b Hiroaki-K4 <49no19@gmail.com> 1680655971 +0900	commit: Add elliptic_fitting_by_renormalization
+093c581321bc724f6da7183b2154faad04578f6b cff08554650cb152bba99579e665585282590a29 Hiroaki-K4 <49no19@gmail.com> 1680923666 +0900	commit: Add renormalization method
+cff08554650cb152bba99579e665585282590a29 8e7f2336a4122387d3ecda74c853bdc425d9c1fc Hiroaki-K4 <49no19@gmail.com> 1681528890 +0900	commit: Add FNS method
+8e7f2336a4122387d3ecda74c853bdc425d9c1fc 0eb40a7b2adc71faa9a6baf894707e4d8eff16ef Hiroaki-K4 <49no19@gmail.com> 1681617712 +0900	commit: Update README about FNS method
+0eb40a7b2adc71faa9a6baf894707e4d8eff16ef 3f859e06c5833391639d4cd2cb7a4315d99dabc8 Hiroaki-K4 <49no19@gmail.com> 1681775384 +0900	commit: Add remove_outlier_by_ransac
+3f859e06c5833391639d4cd2cb7a4315d99dabc8 144fbd464db2e09f3a27d7d06e497c4d50a4a06a Hiroaki-K4 <49no19@gmail.com> 1681777222 +0900	commit: Update README about RANSAC
+144fbd464db2e09f3a27d7d06e497c4d50a4a06a fa7355a3644b794632e4e5bb293d89cb9f63074c Hiroaki-K4 <49no19@gmail.com> 1682033379 +0900	commit: Add fundamental matrix
+fa7355a3644b794632e4e5bb293d89cb9f63074c ee22c67733fd16d616d0a44fb3cc5ceb376b50c4 Hiroaki-K4 <49no19@gmail.com> 1682211090 +0900	commit: Update README about F-matrix
+ee22c67733fd16d616d0a44fb3cc5ceb376b50c4 c73a7ebece5f3600813965645654199fea8bb497 Hiroaki-K4 <49no19@gmail.com> 1682466509 +0900	commit: Add script to prepare test data
+c73a7ebece5f3600813965645654199fea8bb497 eaa833c443e5b042dde337d0959214dcdd0b228f Hiroaki-K4 <49no19@gmail.com> 1682553194 +0900	commit: Update prepare_test_data func
+eaa833c443e5b042dde337d0959214dcdd0b228f 4c566d196665fe02fd64a58fc98024c13126f1a6 Hiroaki-K4 <49no19@gmail.com> 1682647773 +0900	commit: Update euler_angle_to_rot_mat func
+4c566d196665fe02fd64a58fc98024c13126f1a6 d9a29cde3182cbcbad5109ad46a751ad4e439489 Hiroaki-K4 <49no19@gmail.com> 1682729719 +0900	commit: Fix calculation about change euler to rot mat
+d9a29cde3182cbcbad5109ad46a751ad4e439489 f4bad6ee973a48a921719da404042bb423e22b27 Hiroaki-K4 <49no19@gmail.com> 1682745478 +0900	commit: Update test data creation
+f4bad6ee973a48a921719da404042bb423e22b27 a70a62aeabed1e6e1cad529d5ecc81710a994edc Hiroaki-K4 <49no19@gmail.com> 1682817759 +0900	commit: Add calculate_f_matrix_by_least_squares function
+a70a62aeabed1e6e1cad529d5ecc81710a994edc cabd9179a808ed7916d7a2be9376b439b5b1d824 Hiroaki-K4 <49no19@gmail.com> 1682818104 +0900	commit: Add V0_xi to taubin method
+cabd9179a808ed7916d7a2be9376b439b5b1d824 15e77ada81d0df683c4b8ae9529650ed96fb9541 Hiroaki-K4 <49no19@gmail.com> 1682984885 +0900	commit: Add epipolar lines
+15e77ada81d0df683c4b8ae9529650ed96fb9541 a6ac724c8e16e7898d6b408945b3703f761fdfee Hiroaki-K4 <49no19@gmail.com> 1683077243 +0900	commit: Refactor calculation of F-matrix
+a6ac724c8e16e7898d6b408945b3703f761fdfee b3c7b26feb265f8b5a189b8e4705237683c87923 Hiroaki-K4 <49no19@gmail.com> 1683078981 +0900	commit: Update taubin method
+b3c7b26feb265f8b5a189b8e4705237683c87923 b9de52ea4181a5a94f2db3b8233bb8b068a39590 Hiroaki-K4 <49no19@gmail.com> 1683090528 +0900	commit: Add FNS method about f-matrix
+b9de52ea4181a5a94f2db3b8233bb8b068a39590 4d2aae419ad42166b29f2e076fd96aa5c97bdb3b Hiroaki-K4 <49no19@gmail.com> 1683093046 +0900	commit: Add rank_postcorrection_method function
+4d2aae419ad42166b29f2e076fd96aa5c97bdb3b 33401d684e288b5b4a7d4d862799a6e6f21851c6 Hiroaki-K4 <49no19@gmail.com> 1683117587 +0900	commit: Fix README
+33401d684e288b5b4a7d4d862799a6e6f21851c6 be5e7ff69f2008c097dec856789ad1cdd640b125 Hiroaki-K4 <49no19@gmail.com> 1683176325 +0900	commit: Add f-matrix evaluation
+be5e7ff69f2008c097dec856789ad1cdd640b125 ae5c36beca1f25d54d915493e8a00b158cab5f06 Hiroaki-K4 <49no19@gmail.com> 1683267428 +0900	commit: Add simple triangulation
+ae5c36beca1f25d54d915493e8a00b158cab5f06 7ee3d44b0789d3d24f27cc298197ced72693974d Hiroaki-K4 <49no19@gmail.com> 1683340014 +0900	commit: Update simple triangulation
+7ee3d44b0789d3d24f27cc298197ced72693974d 9525de1c32a088bd4224234694fa90eea5c49acb Hiroaki-K4 <49no19@gmail.com> 1683347397 +0900	commit: Update simple triangulation
+9525de1c32a088bd4224234694fa90eea5c49acb c9b47201a39f1377a884e2db3d805f5a4dd7ef5b Hiroaki-K4 <49no19@gmail.com> 1683460160 +0900	commit: Add optimal correction of triangulation
+c9b47201a39f1377a884e2db3d805f5a4dd7ef5b 4f1f2181bbecd9b2db6ff8bfae0b3c9acb83e79c Hiroaki-K4 <49no19@gmail.com> 1683462381 +0900	commit: Draw the result of triangulation
+4f1f2181bbecd9b2db6ff8bfae0b3c9acb83e79c c0e3cf9fa7891d570819396b0edb72f176336f9b Hiroaki-K4 <49no19@gmail.com> 1683848291 +0900	commit: Update triangulation
+c0e3cf9fa7891d570819396b0edb72f176336f9b 7635395c2a82de02f31ac38fffb229bd9c0db4ff Hiroaki-K4 <49no19@gmail.com> 1684453541 +0900	commit: Add equirectangular_to_cubemap
+7635395c2a82de02f31ac38fffb229bd9c0db4ff bd2c5128ae0cf10d27daa25af4c97fc68b1c5a95 Hiroaki-K4 <49no19@gmail.com> 1684545887 +0900	commit: Add top image
+bd2c5128ae0cf10d27daa25af4c97fc68b1c5a95 fb426b18f911559f0377b2f8571a652910276f29 Hiroaki-K4 <49no19@gmail.com> 1684547525 +0900	commit: Create left and right image
+fb426b18f911559f0377b2f8571a652910276f29 59ae8b6965fc2bc33bf0933192871ac3ec3915e1 Hiroaki-K4 <49no19@gmail.com> 1684549356 +0900	commit: Create back and front image
+59ae8b6965fc2bc33bf0933192871ac3ec3915e1 f48194ad49c836834654155e3ec98d0c09f61f08 Hiroaki-K4 <49no19@gmail.com> 1684549986 +0900	commit: Create back and front image
+f48194ad49c836834654155e3ec98d0c09f61f08 f21ddc9ba9a11eef877975eca8cf4466c570ad31 Hiroaki-K4 <49no19@gmail.com> 1684550785 +0900	commit: Create cube map image
+f21ddc9ba9a11eef877975eca8cf4466c570ad31 fbe7c9d0d0c2110f4126dfd8dd665f92c98a3a0b Hiroaki-K4 <49no19@gmail.com> 1684551401 +0900	commit: Create cube map image
+fbe7c9d0d0c2110f4126dfd8dd665f92c98a3a0b 736151562fb71579b444a03bda8145eb947c07f5 Hiroaki-K4 <49no19@gmail.com> 1684562695 +0900	commit: Add README
+736151562fb71579b444a03bda8145eb947c07f5 20a209746720160e357f8d57dafe1f7f4a8e9896 Hiroaki-K4 <49no19@gmail.com> 1684562829 +0900	commit: Update images
+20a209746720160e357f8d57dafe1f7f4a8e9896 d7ce54f36b2a13961c650150ac5f02dcf117d080 Hiroaki-K4 <49no19@gmail.com> 1684563097 +0900	commit: Update README
+d7ce54f36b2a13961c650150ac5f02dcf117d080 d031c84d64a74981a26053152ae949eae0c00692 Hiroaki-K4 <49no19@gmail.com> 1684563128 +0900	commit: Update README
+d031c84d64a74981a26053152ae949eae0c00692 195ced1fe528a1c6bdabc1c584f434149d1c0588 Hiroaki-K4 <49no19@gmail.com> 1684568354 +0900	commit: Update README
+195ced1fe528a1c6bdabc1c584f434149d1c0588 b6a23dd95d26c5821e8ea7a5431c44e92ecd8922 Hiroaki-K4 <49no19@gmail.com> 1684629608 +0900	commit: Update README
+b6a23dd95d26c5821e8ea7a5431c44e92ecd8922 57de830a9aea278cc702fb490b8c3a97dfda0622 Hiroaki-K4 <49no19@gmail.com> 1684798974 +0900	commit: Split prepare_test_data func from calculate_f_matrix
+57de830a9aea278cc702fb490b8c3a97dfda0622 17e63681ce8ccf0d21dc04d0842c2e1a58e19157 Hiroaki-K4 <49no19@gmail.com> 1687049172 +0900	commit: Add equirectangular_to_sphere
+17e63681ce8ccf0d21dc04d0842c2e1a58e19157 5e86acfba56cad8aabd292086481a0a97f126afc Hiroaki-K4 <49no19@gmail.com> 1687052083 +0900	commit: Update README
+5e86acfba56cad8aabd292086481a0a97f126afc a1fa2295decf3b5af2093db553bc95c38ea484df Hiroaki-K4 <49no19@gmail.com> 1687390561 +0900	commit: Update README
+a1fa2295decf3b5af2093db553bc95c38ea484df 0f4129b14f48412e6a7bcc3d6da51ba29f8d6ce0 Hiroaki-K4 <49no19@gmail.com> 1687478897 +0900	commit: Update README
+0f4129b14f48412e6a7bcc3d6da51ba29f8d6ce0 ff83ae23383348536f829e5432ceb8fe26a78b84 Hiroaki-K4 <49no19@gmail.com> 1687572576 +0900	commit: Update README about fundamental matrix
+ff83ae23383348536f829e5432ceb8fe26a78b84 ff83ae23383348536f829e5432ceb8fe26a78b84 Hiroaki-K4 <49no19@gmail.com> 1687656285 +0900	reset: moving to HEAD
+ff83ae23383348536f829e5432ceb8fe26a78b84 d3abd66c75a984597140a9d73ad3f24954e61fb1 Hiroaki-K4 <49no19@gmail.com> 1687666813 +0900	commit: Update README about elliptic fitting
+d3abd66c75a984597140a9d73ad3f24954e61fb1 917f26e5021f7c0f291b9a5da9ea8c08133b5e38 Hiroaki-K4 <49no19@gmail.com> 1687669029 +0900	commit: Update README about elliptic fitting
+917f26e5021f7c0f291b9a5da9ea8c08133b5e38 a856c6ac601aee2768989dc3aa1e66ab037ea9b4 Hiroaki-K4 <49no19@gmail.com> 1687681754 +0900	commit: Update README
+a856c6ac601aee2768989dc3aa1e66ab037ea9b4 241d3c1f7b0148b5ac7a2412efd5fa602f25f3de Hiroaki-K4 <49no19@gmail.com> 1687736053 +0900	commit: Update README about fundamental matrix
+241d3c1f7b0148b5ac7a2412efd5fa602f25f3de 143a5dfd4113958d75d74b37dda5a61c255f4cd2 Hiroaki-K4 <49no19@gmail.com> 1687737556 +0900	commit: Add image to fundamental matrix
+143a5dfd4113958d75d74b37dda5a61c255f4cd2 85210cc015c8634caed67a95e432fae8a3b91900 Hiroaki-K4 <49no19@gmail.com> 1687758627 +0900	commit: Update README about fundamental matrix
+85210cc015c8634caed67a95e432fae8a3b91900 9eb4265ad3c6600956fb4e4a877eb785d3cdaf5f Hiroaki-K4 <49no19@gmail.com> 1687909339 +0900	commit: Add README to triangulation
+9eb4265ad3c6600956fb4e4a877eb785d3cdaf5f 46c21831eabd64d02d97966cab96c9d4cba55715 Hiroaki-K4 <49no19@gmail.com> 1688191627 +0900	commit: Update README about triangulation
+46c21831eabd64d02d97966cab96c9d4cba55715 fbb49def964ab7b0418fe3d595aaa7732fdc860f Hiroaki-K4 <49no19@gmail.com> 1688366418 +0900	commit: Update README about triangulation
+fbb49def964ab7b0418fe3d595aaa7732fdc860f 6c5e7c9afb8e6e289e2a779f7c5959301f970656 Hiroaki-K4 <49no19@gmail.com> 1688869678 +0900	commit: Update README about triangulation
+6c5e7c9afb8e6e289e2a779f7c5959301f970656 9429d6bca021a2fbbcd581471c6ed3175920aede Hiroaki-K4 <49no19@gmail.com> 1688877977 +0900	commit: Update README about triangulation
+9429d6bca021a2fbbcd581471c6ed3175920aede c150a2170b827b2f74318a1a89e33df9f74af1fc Hiroaki-K4 <49no19@gmail.com> 1688954751 +0900	commit: Update README
+c150a2170b827b2f74318a1a89e33df9f74af1fc bf6e9d807d399c47ac447e7255489d8193393fbe Hiroaki-K4 <49no19@gmail.com> 1689389447 +0900	commit: Update README
+bf6e9d807d399c47ac447e7255489d8193393fbe 3552b9428010fefbe5566dab3ffe1be2f2d53ddd Hiroaki-K4 <49no19@gmail.com> 1689389468 +0900	commit: Update README
+3552b9428010fefbe5566dab3ffe1be2f2d53ddd 8ccd7beea25df635e2378c982f3d8a1c966ba5da Hiroaki-K4 <49no19@gmail.com> 1689651607 +0900	commit: Update README
+8ccd7beea25df635e2378c982f3d8a1c966ba5da 11faa4311e1ffbb5ca8bc59791b892fc19dc0da7 Hiroaki-K4 <49no19@gmail.com> 1689723734 +0900	commit: Update the calculation of focal length
+11faa4311e1ffbb5ca8bc59791b892fc19dc0da7 9a71fd608ff99a04f81f87a7b970106a67771a9f Hiroaki-K4 <49no19@gmail.com> 1689810353 +0900	commit: Update calculation of focal length
+9a71fd608ff99a04f81f87a7b970106a67771a9f 9a71fd608ff99a04f81f87a7b970106a67771a9f Hiroaki-K4 <49no19@gmail.com> 1690176210 +0900	reset: moving to HEAD
+9a71fd608ff99a04f81f87a7b970106a67771a9f abd36f1ff0653ec6e37711fab27103733015922b Hiroaki-K4 <49no19@gmail.com> 1690176227 +0900	commit: Update README
+abd36f1ff0653ec6e37711fab27103733015922b bab6f676ce24a9758aecbb57cb555d72183132f6 Hiroaki-K4 <49no19@gmail.com> 1690505304 +0900	commit: Add projective transformation
+bab6f676ce24a9758aecbb57cb555d72183132f6 59b906fe847a4529decbf54ad39e48faf93f64e6 Hiroaki-K4 <49no19@gmail.com> 1690605933 +0900	commit: Fix format
+59b906fe847a4529decbf54ad39e48faf93f64e6 8c957b21f128da1054dbd550d6f9293a8c2f7ce9 Hiroaki-K4 <49no19@gmail.com> 1690786092 +0900	commit: Update weight iteration
+8c957b21f128da1054dbd550d6f9293a8c2f7ce9 c7098f7cc60dc0aad51b38f44b201f08f89b4656 Hiroaki-K4 <49no19@gmail.com> 1691299638 +0900	commit: Update projective transform
+c7098f7cc60dc0aad51b38f44b201f08f89b4656 9fe63690fb0558c5470bdf61ce50f237e4ff95af Hiroaki-K4 <49no19@gmail.com> 1691300418 +0900	commit: Update projective transform
+9fe63690fb0558c5470bdf61ce50f237e4ff95af 04c88826b043bb52ac4db464b73821c63cab7c48 Hiroaki-K4 <49no19@gmail.com> 1691301448 +0900	commit: Add evaluation about projective transform
+04c88826b043bb52ac4db464b73821c63cab7c48 784b74c66c7f136965e6cbf048ce07817335dbd6 Hiroaki-K4 <49no19@gmail.com> 1691368973 +0900	commit: Update README about projective transformation
+784b74c66c7f136965e6cbf048ce07817335dbd6 c433df38dec176c3c695f99b89f72b6e8715cff7 Hiroaki-K4 <49no19@gmail.com> 1691735795 +0900	commit: Update README about Projective transformation
+c433df38dec176c3c695f99b89f72b6e8715cff7 3e344aa351f0dc39a82e351a87785b530913ad14 Hiroaki-K4 <49no19@gmail.com> 1691812767 +0900	commit: Update projective transformation
+3e344aa351f0dc39a82e351a87785b530913ad14 3c3118e10b4a86a0048e420d1541bcf7e8620025 Hiroaki-K4 <49no19@gmail.com> 1691901567 +0900	commit: Update README
+3c3118e10b4a86a0048e420d1541bcf7e8620025 7e4d0a813a181db41de7aee0c75df4011e484389 Hiroaki-K4 <49no19@gmail.com> 1692229496 +0900	commit: Add planner triangulation
+7e4d0a813a181db41de7aee0c75df4011e484389 8eda790c6aab9a40bfbd0ed4a16eeb3e7ccf03d1 Hiroaki-K4 <49no19@gmail.com> 1692319446 +0900	commit: Update planar triangulation
+8eda790c6aab9a40bfbd0ed4a16eeb3e7ccf03d1 582e8f5ee6730dc482a9e26222fe5cd6d98df8e4 Hiroaki-K4 <49no19@gmail.com> 1692319518 +0900	commit: Update planar triangulation
+582e8f5ee6730dc482a9e26222fe5cd6d98df8e4 ce48ea6eb2549dc7adac1f81d1208a49536f9fa3 Hiroaki-K4 <49no19@gmail.com> 1692505143 +0900	commit: Update planar triangulation
+ce48ea6eb2549dc7adac1f81d1208a49536f9fa3 b0856c0244eb8d184638f69a15b5300b05865558 Hiroaki-K4 <49no19@gmail.com> 1692509823 +0900	commit: Update README about planar triangulation
+b0856c0244eb8d184638f69a15b5300b05865558 7a79a73810e739d6a76fb4793387b185da361799 Hiroaki-K4 <49no19@gmail.com> 1692575984 +0900	commit: Update README
+7a79a73810e739d6a76fb4793387b185da361799 2fec2e68c78b43bdd1c6d40b7ab5d46e509231ae Hiroaki-K4 <49no19@gmail.com> 1693871195 +0900	commit: Add homography decomposition
+2fec2e68c78b43bdd1c6d40b7ab5d46e509231ae 2e561c455f35cad5c4f84c56d7b543e4ed8954a7 Hiroaki-K4 <49no19@gmail.com> 1693957657 +0900	commit: Update homography decomposition
+2e561c455f35cad5c4f84c56d7b543e4ed8954a7 9400e4e72a2c605115192b70b7d88bcfb8a6bac2 Hiroaki-K4 <49no19@gmail.com> 1694045790 +0900	commit: Update homography decomposition
+9400e4e72a2c605115192b70b7d88bcfb8a6bac2 25f339ccea5d53d7b9c86dac1bbe58f0c9d7e105 Hiroaki-K4 <49no19@gmail.com> 1694134213 +0900	commit: Update README
+25f339ccea5d53d7b9c86dac1bbe58f0c9d7e105 d82b554d2db1769eb58a4d30c5ea77c2014e437a Hiroaki-K4 <49no19@gmail.com> 1694216196 +0900	commit: Update README about homography decomposition
+d82b554d2db1769eb58a4d30c5ea77c2014e437a 9d0835451ea0825dfb18316f9e361b58c0f5ee5b Hiroaki-K4 <49no19@gmail.com> 1694237972 +0900	commit: Update README about homography decomposition
+9d0835451ea0825dfb18316f9e361b58c0f5ee5b 241e2746863052e3a4eba1222eba08270b7774d0 Hiroaki-K4 <49no19@gmail.com> 1694239984 +0900	commit: Update README about homography decomposition
+241e2746863052e3a4eba1222eba08270b7774d0 4dc0a2d98f8cf2f33eb1dbd47679d7ba611a3f43 Hiroaki-K4 <49no19@gmail.com> 1694258283 +0900	commit: Update README
+4dc0a2d98f8cf2f33eb1dbd47679d7ba611a3f43 b8416649257e637c7eb92ccacd2544a8cfb9f1c6 Hiroaki-K4 <49no19@gmail.com> 1694830428 +0900	commit: Add prepare test data for ellipse analysis
+b8416649257e637c7eb92ccacd2544a8cfb9f1c6 4a4effec2a43afa93106b8fe746f4e4b37433406 Hiroaki-K4 <49no19@gmail.com> 1694916352 +0900	commit: Update calculate_ellipse_intersection
+4a4effec2a43afa93106b8fe746f4e4b37433406 b5c51baaaf23205796e47a93e83c68778a00c736 Hiroaki-K4 <49no19@gmail.com> 1694927967 +0900	commit: Update calculate_ellipse_intersection
+b5c51baaaf23205796e47a93e83c68778a00c736 1c91504c2442b0c973e1f2c5e92330a2c681ba90 Hiroaki-K4 <49no19@gmail.com> 1695012636 +0900	commit: Add calculate_two_straight_lines func
+1c91504c2442b0c973e1f2c5e92330a2c681ba90 0561b8d4ea72c26bfcc20af3fdde47cb4f5ee1dd Hiroaki-K4 <49no19@gmail.com> 1695012666 +0900	commit: Add calculate_two_straight_lines func
+0561b8d4ea72c26bfcc20af3fdde47cb4f5ee1dd ab740dd2bb180314e299e8cdc827ff93a8784cdc Hiroaki-K4 <49no19@gmail.com> 1695012741 +0900	commit: Add calculate_two_straight_lines func
+ab740dd2bb180314e299e8cdc827ff93a8784cdc 6edc5fcb5232664e5b4d5816deaacfb55432d67b Hiroaki-K4 <49no19@gmail.com> 1695080731 +0900	commit: Add draw line func
+6edc5fcb5232664e5b4d5816deaacfb55432d67b ea20b8d9d41ac9230c5e30d19376e402b8e86927 Hiroaki-K4 <49no19@gmail.com> 1695167112 +0900	commit: Add change_zero_sign func
+ea20b8d9d41ac9230c5e30d19376e402b8e86927 b7e290e5b6b1a557ede7f59b999ed2fac00755fc Hiroaki-K4 <49no19@gmail.com> 1695253685 +0900	commit: normalize_ellipse func
+b7e290e5b6b1a557ede7f59b999ed2fac00755fc 51ccc903177cba8d26a274a09a1a2cb53b12db7d Hiroaki-K4 <49no19@gmail.com> 1695343783 +0900	commit: Update ellipse_intersection
+51ccc903177cba8d26a274a09a1a2cb53b12db7d 3368a5b8f92289708ea5af90f85c6d57b4d44a05 Hiroaki-K4 <49no19@gmail.com> 1695520424 +0900	commit: Update calculate_ellipse_intersection
+3368a5b8f92289708ea5af90f85c6d57b4d44a05 5052b8ff7f2543f8d2aa1c9fb9b6ebbafd11c5ee Hiroaki-K4 <49no19@gmail.com> 1695521491 +0900	commit: Refactor calculate_ellipse_intersection
+5052b8ff7f2543f8d2aa1c9fb9b6ebbafd11c5ee d7b9dacf1d51e00f047080590e3b6fbcff624c7a Hiroaki-K4 <49no19@gmail.com> 1695532055 +0900	commit: Update README about ellipse analysis
+d7b9dacf1d51e00f047080590e3b6fbcff624c7a b1d35bbed9255f3b9c76aa8e034514637ba154fc Hiroaki-K4 <49no19@gmail.com> 1695599676 +0900	commit: Refactor ellipse intersection
+b1d35bbed9255f3b9c76aa8e034514637ba154fc 3b80bb6f7e37b578c9951d1c5cd4aeb4d7dd11bd Hiroaki-K4 <49no19@gmail.com> 1695602929 +0900	commit: Add get_quadratic_curve_about_perpendicular_line func
+3b80bb6f7e37b578c9951d1c5cd4aeb4d7dd11bd cf593b4672ca3f74370577330ece470e618950bc Hiroaki-K4 <49no19@gmail.com> 1695771755 +0900	commit: Update calculate_foot_of_perpendicular_line func
+cf593b4672ca3f74370577330ece470e618950bc 43abb9869c9a4efe38e57c4863546647bec39301 Hiroaki-K4 <49no19@gmail.com> 1695771763 +0900	commit: Update calculate_foot_of_perpendicular_line func
+43abb9869c9a4efe38e57c4863546647bec39301 adac62674e9a08eae58c8877c9748c68b39a2e61 Hiroaki-K4 <49no19@gmail.com> 1695947797 +0900	commit: Update README about foot_of_perpendicular_line
+adac62674e9a08eae58c8877c9748c68b39a2e61 738eaba5618716295213affd08ae3c1cab414ac2 Hiroaki-K4 <49no19@gmail.com> 1696553228 +0900	commit: Add reconstruct_support_plane.py
+738eaba5618716295213affd08ae3c1cab414ac2 ec7394bfed9d6fe6445549326479c1a5f048394d Hiroaki-K4 <49no19@gmail.com> 1696643506 +0900	commit: Update images of elliptic fitting
+ec7394bfed9d6fe6445549326479c1a5f048394d 7d33f94520998071e49f2b4852641188684a2cc1 Hiroaki-K4 <49no19@gmail.com> 1696731271 +0900	commit: Refactor prepare_test_data
+7d33f94520998071e49f2b4852641188684a2cc1 7d33f94520998071e49f2b4852641188684a2cc1 Hiroaki-K4 <49no19@gmail.com> 1696738321 +0900	checkout: moving from main to feature/1/add_ci
+7d33f94520998071e49f2b4852641188684a2cc1 679788e451eb42f198efbfbc8544a493f3273d8e Hiroaki-K4 <49no19@gmail.com> 1696738536 +0900	commit: Add action.yml
+679788e451eb42f198efbfbc8544a493f3273d8e 23c2f920aedd384257ee592fcdd82279608b4570 Hiroaki-K4 <49no19@gmail.com> 1696739747 +0900	commit: Add ci about elliptic_analysis
+23c2f920aedd384257ee592fcdd82279608b4570 f7dd30263169634f374718ee1e777460fd506139 Hiroaki-K4 <49no19@gmail.com> 1696739828 +0900	commit: Add ci about elliptic_analysis
+f7dd30263169634f374718ee1e777460fd506139 c1d1a2621f4cc31620a3ec954d5068e9b22c9345 Hiroaki-K4 <49no19@gmail.com> 1696739891 +0900	commit: Add ci about elliptic_analysis
+c1d1a2621f4cc31620a3ec954d5068e9b22c9345 33b2a0aa91afb00c8bc8ee725a30e600a4224168 Hiroaki-K4 <49no19@gmail.com> 1696740018 +0900	commit: Add ci about elliptic_analysis
+33b2a0aa91afb00c8bc8ee725a30e600a4224168 d8fff934b5e4faf7a7be73273c99aca208a79c96 Hiroaki-K4 <49no19@gmail.com> 1696740191 +0900	commit: Update ci
+d8fff934b5e4faf7a7be73273c99aca208a79c96 dca802deaa10713a552bf9f5cc1ae564eb061916 Hiroaki-K4 <49no19@gmail.com> 1696740282 +0900	commit: Update ci
+dca802deaa10713a552bf9f5cc1ae564eb061916 296b2891e232b28c97a81c07755a68b60e93149b Hiroaki-K4 <49no19@gmail.com> 1696740578 +0900	commit: Update ci
+296b2891e232b28c97a81c07755a68b60e93149b 64d9816dc27bdb69138fe0f807898112f2e1bf46 Hiroaki-K4 <49no19@gmail.com> 1696740630 +0900	commit: Update ci
+64d9816dc27bdb69138fe0f807898112f2e1bf46 51e95235ba7519baa0663a833ab6797fd762aa33 Hiroaki-K4 <49no19@gmail.com> 1696741276 +0900	commit: Update ci
+51e95235ba7519baa0663a833ab6797fd762aa33 68da2c6282a3df26551be889d80269405461032f Hiroaki-K4 <49no19@gmail.com> 1696743163 +0900	commit: Update ci
+68da2c6282a3df26551be889d80269405461032f 7b921ef75190dc142010dfaa5d2810aa6d125002 Hiroaki-K4 <49no19@gmail.com> 1696743415 +0900	commit: Update ci
+7b921ef75190dc142010dfaa5d2810aa6d125002 15903b58faccf9a09a68b7fa4e8af6e68deac342 Hiroaki-K4 <49no19@gmail.com> 1696743525 +0900	commit: Update ci
+15903b58faccf9a09a68b7fa4e8af6e68deac342 7d33f94520998071e49f2b4852641188684a2cc1 Hiroaki-K4 <49no19@gmail.com> 1696743969 +0900	checkout: moving from feature/1/add_ci to main
+7d33f94520998071e49f2b4852641188684a2cc1 959e80c22ce6b722e8512a61428a55d8eaab018e Hiroaki-K4 <49no19@gmail.com> 1696743974 +0900	pull: Fast-forward
+959e80c22ce6b722e8512a61428a55d8eaab018e 959e80c22ce6b722e8512a61428a55d8eaab018e Hiroaki-K4 <49no19@gmail.com> 1696744431 +0900	checkout: moving from main to feature/3/speedup_ci
+959e80c22ce6b722e8512a61428a55d8eaab018e 497b5e6f9737be22090d314c6f38bcadb5b77072 Hiroaki-K4 <49no19@gmail.com> 1696745026 +0900	commit: Update ci
+497b5e6f9737be22090d314c6f38bcadb5b77072 959e80c22ce6b722e8512a61428a55d8eaab018e Hiroaki-K4 <49no19@gmail.com> 1696745317 +0900	checkout: moving from feature/3/speedup_ci to main
+959e80c22ce6b722e8512a61428a55d8eaab018e cd4de15ab671b5035e7dd371f99bbe97155ea7a7 Hiroaki-K4 <49no19@gmail.com> 1696745319 +0900	pull: Fast-forward
+cd4de15ab671b5035e7dd371f99bbe97155ea7a7 4f5eaaebd5ef1475b84facf3ab923784f35299b0 Hiroaki-K4 <49no19@gmail.com> 1697067127 +0900	commit: Add plot func
+4f5eaaebd5ef1475b84facf3ab923784f35299b0 4f5eaaebd5ef1475b84facf3ab923784f35299b0 Hiroaki-K4 <49no19@gmail.com> 1697067241 +0900	checkout: moving from main to feature/5/plot_normal_vector_from_ellipse
+4f5eaaebd5ef1475b84facf3ab923784f35299b0 4f5eaaebd5ef1475b84facf3ab923784f35299b0 Hiroaki-K4 <49no19@gmail.com> 1697067261 +0900	checkout: moving from feature/5/plot_normal_vector_from_ellipse to main
+4f5eaaebd5ef1475b84facf3ab923784f35299b0 74675649e366297ae1539752d6eceaf8866cb5de Hiroaki-K4 <49no19@gmail.com> 1697067278 +0900	commit: Fix lint
+74675649e366297ae1539752d6eceaf8866cb5de 4f5eaaebd5ef1475b84facf3ab923784f35299b0 Hiroaki-K4 <49no19@gmail.com> 1697067288 +0900	checkout: moving from main to feature/5/plot_normal_vector_from_ellipse
+4f5eaaebd5ef1475b84facf3ab923784f35299b0 74675649e366297ae1539752d6eceaf8866cb5de Hiroaki-K4 <49no19@gmail.com> 1697067297 +0900	merge main: Fast-forward
+74675649e366297ae1539752d6eceaf8866cb5de 0eb130bd1d388ca55af85e133469b46fb4cedcdb Hiroaki-K4 <49no19@gmail.com> 1697158016 +0900	commit: Add convert_left_top_to_left_down func
+0eb130bd1d388ca55af85e133469b46fb4cedcdb a8b5f41b26aa5012d2d8968e6a27261d3bbf9b4e Hiroaki-K4 <49no19@gmail.com> 1697343601 +0900	commit: Update README
+a8b5f41b26aa5012d2d8968e6a27261d3bbf9b4e 74675649e366297ae1539752d6eceaf8866cb5de Hiroaki-K4 <49no19@gmail.com> 1697343863 +0900	checkout: moving from feature/5/plot_normal_vector_from_ellipse to main
+74675649e366297ae1539752d6eceaf8866cb5de db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 Hiroaki-K4 <49no19@gmail.com> 1697343874 +0900	pull: Fast-forward
+db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 Hiroaki-K4 <49no19@gmail.com> 1698363040 +0900	reset: moving to HEAD
+db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 Hiroaki-K4 <49no19@gmail.com> 1698363135 +0900	checkout: moving from main to feature/8/implement_optimal_correction
+db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 949ed4e4ce94c4056d1b38479e76da844f199dc7 Hiroaki-K4 <49no19@gmail.com> 1698363673 +0900	commit: Add multi_view_triangulation
+949ed4e4ce94c4056d1b38479e76da844f199dc7 94bbc3810220d8bdfe46e440e2192ad6499ced38 Hiroaki-K4 <49no19@gmail.com> 1698467540 +0900	commit: Fix prepare_test_data
+94bbc3810220d8bdfe46e440e2192ad6499ced38 ff02f0c96e9dd602065360a392e0e9507fce3120 Hiroaki-K4 <49no19@gmail.com> 1698468895 +0900	commit: Update optimal_correction_from_three_images
+ff02f0c96e9dd602065360a392e0e9507fce3120 db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 Hiroaki-K4 <49no19@gmail.com> 1698549441 +0900	checkout: moving from feature/8/implement_optimal_correction to main
+db416f0b91e9a8bbf5e5ce23260c74a32a088ad1 09d74c2ea55fdd66cff43a46cd777fcf80d5f627 Hiroaki-K4 <49no19@gmail.com> 1698549443 +0900	pull: Fast-forward
+09d74c2ea55fdd66cff43a46cd777fcf80d5f627 09d74c2ea55fdd66cff43a46cd777fcf80d5f627 Hiroaki-K4 <49no19@gmail.com> 1699225544 +0900	checkout: moving from main to feature/10/prepare_data_for_bundle_adjustment
+09d74c2ea55fdd66cff43a46cd777fcf80d5f627 493ce4ab1210af1ea3313dea2cd8b94f51114a8f Hiroaki-K4 <49no19@gmail.com> 1699231390 +0900	commit: Add oxford data
+493ce4ab1210af1ea3313dea2cd8b94f51114a8f 09d74c2ea55fdd66cff43a46cd777fcf80d5f627 Hiroaki-K4 <49no19@gmail.com> 1699312815 +0900	checkout: moving from feature/10/prepare_data_for_bundle_adjustment to main
+09d74c2ea55fdd66cff43a46cd777fcf80d5f627 45bf6682da576fd6ebd34d2883369a2d97f89d7c Hiroaki-K4 <49no19@gmail.com> 1699312826 +0900	pull: Fast-forward
+45bf6682da576fd6ebd34d2883369a2d97f89d7c 45bf6682da576fd6ebd34d2883369a2d97f89d7c Hiroaki-K4 <49no19@gmail.com> 1700521440 +0900	checkout: moving from main to feature/12/add_affine_camera_calibration
+45bf6682da576fd6ebd34d2883369a2d97f89d7c b7b11e9e23110fd40069f983ec96cc8d60938765 Hiroaki-K4 <49no19@gmail.com> 1700523665 +0900	commit: Add affine camera calibration
+b7b11e9e23110fd40069f983ec96cc8d60938765 2276cbc100a338b147ea666f36832d39c878431b Hiroaki-K4 <49no19@gmail.com> 1700886651 +0900	commit: Update calibrate_affine_camera func
+2276cbc100a338b147ea666f36832d39c878431b 25b4e3bed4aed1e727436c4756b27277c31c5962 Hiroaki-K4 <49no19@gmail.com> 1700973134 +0900	commit: Update calibrate_affine_camera
+25b4e3bed4aed1e727436c4756b27277c31c5962 1593751e127ab3859c72a27d1d7d81e7bf56ae4d Hiroaki-K4 <49no19@gmail.com> 1701042514 +0900	commit: Update calibrate_affine_camera
+1593751e127ab3859c72a27d1d7d81e7bf56ae4d 9daa25aef66ce5ea48560ef9beb715f006bdfe0d Hiroaki-K4 <49no19@gmail.com> 1701579931 +0900	commit: Update calibrate_weak_perspective_camera.py
+9daa25aef66ce5ea48560ef9beb715f006bdfe0d c4c3d3fae3d31f1386028ff81232f589d610beb0 Hiroaki-K4 <49no19@gmail.com> 1701992833 +0900	commit: Add convert_image_ceter func
+c4c3d3fae3d31f1386028ff81232f589d610beb0 492ff28466465f4b35204d69d492e4ac814efa8b Hiroaki-K4 <49no19@gmail.com> 1702100594 +0900	commit: Add draw_reconstructed_points func
+492ff28466465f4b35204d69d492e4ac814efa8b 20c869a14d579d15e4bf07a28160aee8f5428805 Hiroaki-K4 <49no19@gmail.com> 1702184079 +0900	commit: Update weak perpective calibration
+20c869a14d579d15e4bf07a28160aee8f5428805 69a4f4892f43e1fcf19b0fe37d98b7322613b469 Hiroaki-K4 <49no19@gmail.com> 1702184433 +0900	commit: Fix format
+69a4f4892f43e1fcf19b0fe37d98b7322613b469 45bf6682da576fd6ebd34d2883369a2d97f89d7c Hiroaki-K4 <49no19@gmail.com> 1702859626 +0900	checkout: moving from feature/12/add_affine_camera_calibration to main
+45bf6682da576fd6ebd34d2883369a2d97f89d7c a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 Hiroaki-K4 <49no19@gmail.com> 1702859629 +0900	pull: Fast-forward
+a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 Hiroaki-K4 <49no19@gmail.com> 1702859714 +0900	checkout: moving from main to feature/14/add_perspective_projection_camera_calibration
+a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 a5beca85c67ee9c82bca0ff399286c51db141285 Hiroaki-K4 <49no19@gmail.com> 1702860326 +0900	commit: Add perspective_projection_camera_calibration
+a5beca85c67ee9c82bca0ff399286c51db141285 4b260019da7f2907d2fa15edbe536054dae9a57d Hiroaki-K4 <49no19@gmail.com> 1703306884 +0900	commit: Update perspective camera calibration
+4b260019da7f2907d2fa15edbe536054dae9a57d 98d3eeec2eefe637476f1186a8c3cbec1ca9d10a Hiroaki-K4 <49no19@gmail.com> 1703394304 +0900	commit: Update perspective camera calibration
+98d3eeec2eefe637476f1186a8c3cbec1ca9d10a 4fa344177d12d05e0bcb1d4b0d27ccc8cc416a28 Hiroaki-K4 <49no19@gmail.com> 1703461604 +0900	commit: Update perspective camera calibration
+4fa344177d12d05e0bcb1d4b0d27ccc8cc416a28 4d18e934a60b9a4b35a3eadad6d5a012131242fb Hiroaki-K4 <49no19@gmail.com> 1703547976 +0900	commit: Update perspective camera calibration
+4d18e934a60b9a4b35a3eadad6d5a012131242fb ab16cb961531af139f9e19af66dbd8ecf46985b4 Hiroaki-K4 <49no19@gmail.com> 1703634562 +0900	commit: Update perspective camera calibration
+ab16cb961531af139f9e19af66dbd8ecf46985b4 cbece7295352b0dd18102fb2e31753e9ee9d6646 Hiroaki-K4 <49no19@gmail.com> 1703827169 +0900	commit: Update perspective camera calibration
+cbece7295352b0dd18102fb2e31753e9ee9d6646 e63da31de3172e55c25b20ff4684d9ef96d6e3ca Hiroaki-K4 <49no19@gmail.com> 1703829439 +0900	commit: Update README
+e63da31de3172e55c25b20ff4684d9ef96d6e3ca 87a4afc17f7901cab9d2a92234dc17ee34698812 Hiroaki-K4 <49no19@gmail.com> 1703901843 +0900	commit: Update README
+87a4afc17f7901cab9d2a92234dc17ee34698812 bf04ddbe06068633aecea56845e64da1c1497b86 Hiroaki-K4 <49no19@gmail.com> 1703912735 +0900	commit: Update README
+bf04ddbe06068633aecea56845e64da1c1497b86 d0b5c7f7751d3ebd14fad3d69a54735ce657f71d Hiroaki-K4 <49no19@gmail.com> 1704352648 +0900	commit: Update README
+d0b5c7f7751d3ebd14fad3d69a54735ce657f71d b2a17335a0b0f461fbc96c6cd1a69507ff4f6b73 Hiroaki-K4 <49no19@gmail.com> 1704352658 +0900	commit: Update README
+b2a17335a0b0f461fbc96c6cd1a69507ff4f6b73 03dbb1df6aa3456dfd5f32258c66b607c62d3369 Hiroaki-K4 <49no19@gmail.com> 1704353120 +0900	commit: Add ci
+03dbb1df6aa3456dfd5f32258c66b607c62d3369 a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 Hiroaki-K4 <49no19@gmail.com> 1704353349 +0900	checkout: moving from feature/14/add_perspective_projection_camera_calibration to main
+a8df9dfebd1aa8198e58ca5b36bd5584f2eedd10 9ffbee0fa1d325eaf96609f016a97c41278a0ee8 Hiroaki-K4 <49no19@gmail.com> 1704353351 +0900	pull: Fast-forward
+9ffbee0fa1d325eaf96609f016a97c41278a0ee8 9ffbee0fa1d325eaf96609f016a97c41278a0ee8 Hiroaki-K4 <49no19@gmail.com> 1704686326 +0900	checkout: moving from main to feature/16/implement_euclideanization
+9ffbee0fa1d325eaf96609f016a97c41278a0ee8 76684424b2f5893bdd2b77fed35722a55aebd613 Hiroaki-K4 <49no19@gmail.com> 1704687135 +0900	commit: Add euclideanize.py
+76684424b2f5893bdd2b77fed35722a55aebd613 628b57bb04f7abcf92ed8dea292e3f7b81da5233 Hiroaki-K4 <49no19@gmail.com> 1704757685 +0900	commit: Update euclideanize
+628b57bb04f7abcf92ed8dea292e3f7b81da5233 8fccbe351778caff6a7d3f006528e79784f6ffd9 Hiroaki-K4 <49no19@gmail.com> 1705126491 +0900	commit: Update euclideanization
+8fccbe351778caff6a7d3f006528e79784f6ffd9 02fe6640cbd630511364545a84f8a76937b60634 Hiroaki-K4 <49no19@gmail.com> 1705197840 +0900	commit: Update A matrix
+02fe6640cbd630511364545a84f8a76937b60634 a65d8efa770243aab088d7ccee509c0d96e35224 Hiroaki-K4 <49no19@gmail.com> 1705625168 +0900	commit: Update euclideanization
+a65d8efa770243aab088d7ccee509c0d96e35224 810b8e15a72bff438d056ef58f51ae7deace5006 Hiroaki-K4 <49no19@gmail.com> 1705727597 +0900	commit: Update README
+810b8e15a72bff438d056ef58f51ae7deace5006 90daf784021409db09a18e0ef407d2d8e7a31a44 Hiroaki-K4 <49no19@gmail.com> 1705817622 +0900	commit: Update README
+90daf784021409db09a18e0ef407d2d8e7a31a44 0e44c797c8f61da282863bcb67cb61fd33199689 Hiroaki-K4 <49no19@gmail.com> 1705883914 +0900	commit: Update README
+0e44c797c8f61da282863bcb67cb61fd33199689 ff9cd857d66a50a5ac2cd57f8e26fb5f96f5d40b Hiroaki-K4 <49no19@gmail.com> 1706053884 +0900	commit: Update README
+ff9cd857d66a50a5ac2cd57f8e26fb5f96f5d40b 3e62619469bbf4dd467308698ba7fe681ec16ad0 Hiroaki-K4 <49no19@gmail.com> 1706330617 +0900	commit: Update README
+3e62619469bbf4dd467308698ba7fe681ec16ad0 3a9edecf4a7084bbb33fee5b76557c088a4a353a Hiroaki-K4 <49no19@gmail.com> 1706331798 +0900	commit: Update README
+3a9edecf4a7084bbb33fee5b76557c088a4a353a e5d6b766c8d743798161c5aff5f960a5e7f221ae Hiroaki-K4 <49no19@gmail.com> 1706420302 +0900	commit: Add K correction
+e5d6b766c8d743798161c5aff5f960a5e7f221ae cadb9598270a11b477b88b1071b04e92c29f6536 Hiroaki-K4 <49no19@gmail.com> 1706489003 +0900	commit: Update README
+cadb9598270a11b477b88b1071b04e92c29f6536 ca8959bc8a8c6f69a1ca260b8d04a7719435ec2a Hiroaki-K4 <49no19@gmail.com> 1706572259 +0900	commit: Update README
+ca8959bc8a8c6f69a1ca260b8d04a7719435ec2a 57031c4e0656957069a3b09ce22e9cd63ae16932 Hiroaki-K4 <49no19@gmail.com> 1706833803 +0900	commit: Add calculation of H
+57031c4e0656957069a3b09ce22e9cd63ae16932 22ceb3a353f5c53c04d9a8ac6320b8422aa75633 Hiroaki-K4 <49no19@gmail.com> 1706934353 +0900	commit: Update README
+22ceb3a353f5c53c04d9a8ac6320b8422aa75633 f14d6aae3fa0dd009331cadef256c0a368810467 Hiroaki-K4 <49no19@gmail.com> 1707021245 +0900	commit: Update README
+f14d6aae3fa0dd009331cadef256c0a368810467 fa5b1f7b04127aeb5ede556219d9ae9347efa1d3 Hiroaki-K4 <49no19@gmail.com> 1707093733 +0900	commit: Add 3d reconstruction
+fa5b1f7b04127aeb5ede556219d9ae9347efa1d3 d7390aa48ee7f35af0146473e7447cf160d157c4 Hiroaki-K4 <49no19@gmail.com> 1707353916 +0900	commit: Add draw_reconstructed_3d_points func
+d7390aa48ee7f35af0146473e7447cf160d157c4 bac4d5adc222cd4d0a736e54d09585f2cf5a318c Hiroaki-K4 <49no19@gmail.com> 1707529550 +0900	commit: Update rotate_and_translate_original_points func
+bac4d5adc222cd4d0a736e54d09585f2cf5a318c 3efa55001955da2f06f295b76d37eb976a1bde71 Hiroaki-K4 <49no19@gmail.com> 1707542056 +0900	commit: Update README
+3efa55001955da2f06f295b76d37eb976a1bde71 4b468b504fdb16de36f10ad7a13ee79aa8f2c298 Hiroaki-K4 <49no19@gmail.com> 1707616803 +0900	commit: Update README
+4b468b504fdb16de36f10ad7a13ee79aa8f2c298 d373e3b5e70e59c58e8aafcdac07f22f5e28ccd3 Hiroaki-K4 <49no19@gmail.com> 1707700796 +0900	commit: Update README
+d373e3b5e70e59c58e8aafcdac07f22f5e28ccd3 9ffbee0fa1d325eaf96609f016a97c41278a0ee8 Hiroaki-K4 <49no19@gmail.com> 1707727454 +0900	checkout: moving from feature/16/implement_euclideanization to main
+9ffbee0fa1d325eaf96609f016a97c41278a0ee8 cb5fea266789e82d42635bf35451d69f52abc968 Hiroaki-K4 <49no19@gmail.com> 1707727456 +0900	pull: Fast-forward
+cb5fea266789e82d42635bf35451d69f52abc968 cb5fea266789e82d42635bf35451d69f52abc968 Hiroaki-K4 <49no19@gmail.com> 1708146282 +0900	checkout: moving from main to feature/19/prepare_dataset_for_bundle_adjustment
+cb5fea266789e82d42635bf35451d69f52abc968 30a5f89fd3ebc44d8b3946b7560809c745e24405 Hiroaki-K4 <49no19@gmail.com> 1708150049 +0900	commit: Add dataset for bundle adjustment
+30a5f89fd3ebc44d8b3946b7560809c745e24405 d289cff6b79f87772ac9173bdb3103be07d95e84 Hiroaki-K4 <49no19@gmail.com> 1708230017 +0900	commit: Add disassemble_camera_matrix.py
+d289cff6b79f87772ac9173bdb3103be07d95e84 93f440d8d8e16ad89027d9803b08337f99723a1a Hiroaki-K4 <49no19@gmail.com> 1708303062 +0900	commit: Update disassemble_camera_matrix
+93f440d8d8e16ad89027d9803b08337f99723a1a a3e56521a3992c19f34004b74345bf92aaf8893c Hiroaki-K4 <49no19@gmail.com> 1708304075 +0900	commit: Update README
+a3e56521a3992c19f34004b74345bf92aaf8893c aa4080fbf4f8ded826b62a7189aea9251c2eef91 Hiroaki-K4 <49no19@gmail.com> 1708386508 +0900	commit: Update README
+                                                                                                                                                       

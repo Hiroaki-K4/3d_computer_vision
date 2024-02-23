@@ -104,3 +104,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run test
       run: bash test.sh perspective_projection_camera_calibration
+
+  bundle_adjustment_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run test
+      run: bash test.sh bundle_adjustment

@@ -1,7 +1,11 @@
+import os
 import sys
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
+
+import euclideanize
 
 sys.path.append("../")
 from prepare_test_data_utils import prepare_test_data
@@ -75,13 +79,12 @@ def calculate_reprojection_error(motion_mat, shape_mat, img_pnts_list, f_0):
     return E
 
 
-def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0):
+def calibrate_perspective_camera_by_primary_method(img_pnts_list, f_0, error_thr):
     A = np.empty((len(img_pnts_list), len(img_pnts_list)))
     W = np.empty((3 * len(img_pnts_list), len(img_pnts_list[0])))
     Z = np.ones((len(img_pnts_list), len(img_pnts_list[0])))
-    E_thr = 0.05
     E = sys.float_info.max
-    while E > E_thr:
+    while E > error_thr:
         update_observation_matrix(W, Z, img_pnts_list, f_0)
 
         norm_W = normalize_each_column(W)
@@ -142,18 +145,77 @@ def draw_reconstructed_points(img_pnts_list, motion_mat, shape_mat, width, heigh
             )
 
         cam_name = "CAM" + str(frm_idx)
-        cv2.imshow(cam_name, cv2.resize(img, None, fx=0.5, fy=0.5))
+        resize_img = cv2.resize(img, None, fx=0.5, fy=0.5)
+        file_name = cam_name + ".png"
+        save_path = os.path.join("images", file_name)
+        cv2.imwrite(save_path, resize_img)
+        cv2.imshow(cam_name, resize_img)
 
     cv2.waitKey(0)
 
 
-def main(show_flag: bool):
+def rotate_and_translate_original_points(R, t, X_s):
+    moved_X = np.zeros(np.shape(X_s))
+    for col in range(X_s.shape[1]):
+        X = X_s[:, col]
+        moved_X[:, col] = np.dot(R.T, (X - t))
+
+    return moved_X
+
+
+def reconstruct_3d_position(motion_mat, shape_mat, H, K):
+    print("motion_mat: ", motion_mat.shape)
+    print("shape_mat: ", shape_mat.shape)
+    print("H: ", H.shape)
+    print("K: ", K.shape)
+    fix_X = np.dot(np.linalg.inv(H), shape_mat)
+    norm_X = fix_X / fix_X[3, :]
+    norm_X = norm_X[:3, :]
+    fix_P = np.dot(motion_mat, H)
+    moved_Xs = np.zeros((K.shape[0], 3, shape_mat.shape[1]))
+    for frm_idx in range(K.shape[0]):
+        P_k = fix_P[frm_idx * 3 : frm_idx * 3 + 3, :]
+        kp = np.dot(np.linalg.inv(K[frm_idx]), P_k)
+        A_k = kp[:, :3]
+        b_k = kp[:, 3]
+        s = np.cbrt(np.linalg.det(A_k))
+        A_k = A_k / s
+        b_k = b_k / s
+        U, S, Vh = np.linalg.svd(A_k)
+        R_k = np.dot(Vh.T, U.T)
+        t_k = -np.dot(R_k, b_k)
+        moved_X = rotate_and_translate_original_points(R_k, t_k, norm_X)
+        Z_s = moved_X[2, :]
+        sign_sum = np.sum(np.sign(Z_s))
+        if sign_sum <= 0:
+            moved_X = rotate_and_translate_original_points(R_k, -t_k, -norm_X)
+        moved_Xs[frm_idx, :, :] = moved_X
+
+    return moved_Xs
+
+
+def draw_reconstructed_3d_points(moved_Xs):
+    for i in range(moved_Xs.shape[0]):
+        ax = plt.figure().add_subplot(projection="3d")
+        title = "IMG " + str(i)
+        ax.set_title(title)
+        ax.set(xlabel="X", ylabel="Y", zlabel="Z")
+        for j in range(moved_Xs.shape[2]):
+            X = moved_Xs[i][0][j]
+            Y = moved_Xs[i][1][j]
+            Z = moved_Xs[i][2][j]
+            ax.scatter(X, Z, -Y, color="blue")
+
+    plt.show()
+
+
+def main(show_flag: bool, show_3d_points: bool):
     rot_euler_degrees = [
         [-10, -30, 0],
         [15, -15, 0],
         [0, 0, 0],
         [15, 15, 0],
-        [10, 30, 0],
+        [10, 45, 0],
     ]
     T_in_camera_coords = [[0, 0, 10], [0, 0, 7.5], [0, 0, 5], [0, 0, 7.5], [0, 0, 10]]
     f = 160
@@ -169,10 +231,14 @@ def main(show_flag: bool):
 
     f_0 = width
     motion_mat, shape_mat = calibrate_perspective_camera_by_primary_method(
-        img_pnts_list, f_0
+        img_pnts_list, f_0, 0.05
     )
-    print("motion_mat: ", motion_mat.shape)
-    print("shape_mat: ", shape_mat.shape)
+    H, K = euclideanize.euclideanize(motion_mat, shape_mat, f, f_0, [0.0, 0.0])
+    moved_Xs = reconstruct_3d_position(motion_mat, shape_mat, H, K)
+
+    if show_3d_points:
+        draw_reconstructed_3d_points(moved_Xs)
+
     if show_flag:
         draw_reconstructed_points(
             img_pnts_list, motion_mat, shape_mat, width, height, f_0
@@ -181,6 +247,9 @@ def main(show_flag: bool):
 
 if __name__ == "__main__":
     show_flag = True
+    show_3d_points = False
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False
-    main(show_flag)
+    if len(sys.argv) == 2 and sys.argv[1] == "Show3DPoints":
+        show_3d_points = True
+    main(show_flag, show_3d_points)
