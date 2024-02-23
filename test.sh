@@ -111,6 +111,13 @@ test_perspective_projection_camera_calibration() {
     cd ../
 }
 
+test_bundle_adjustment() {
+    cd bundle_adjustment
+    python3 disassemble_camera_matrix.py NotShow
+    check_result "disassemble_camera_matrix.py"
+    cd ../
+}
+
 python3 -m pip install -r requirements.txt
 
 if [ $# -eq 1 ]; then
@@ -140,6 +147,8 @@ if [ $# -eq 1 ]; then
         test_triangulation
     elif [ $1 = "perspective_projection_camera_calibration" ]; then
         test_perspective_projection_camera_calibration
+    elif [ $1 = "bundle_adjustment" ]; then
+        test_bundle_adjustment
     else
         echo "Argument is wrong"
         exit 1
@@ -159,4 +168,5 @@ else
     test_projective_transformation
     test_triangulation
     test_perspective_projection_camera_calibration
+    test_bundle_adjustment
 fi
