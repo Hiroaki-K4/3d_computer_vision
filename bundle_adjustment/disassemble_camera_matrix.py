@@ -64,7 +64,5 @@ if __name__ == "__main__":
     show_flag = True
     if len(sys.argv) == 2 and sys.argv[1] == "NotShow":
         show_flag = False
-    camera_matrix_file = (
-        "/home/hiroakik4/mypro2/3d_computer_vision/bundle_adjustment/dinosaur.json"
-    )
+    camera_matrix_file = "dinosaur.json"
     main(camera_matrix_file, show_flag)
