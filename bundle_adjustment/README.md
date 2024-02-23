@@ -56,7 +56,7 @@ $$
 Q=C^{-1}R^\intercal
 $$
 
-Transposing both sides, we get $Q^\intercal=R_k(C^\intercal)^{-1}$ and find $R_k$ as step6. $R_k$ caculated like this is the rotation matrix.
+Transposing both sides, we get $Q^\intercal=R_k(C^\intercal)^{-1}$ and find $R_k$ as step6. $R_k$ calculated like this is the rotation matrix.
 
 $$
 R_kR_k^\intercal=Q^\intercal C^\intercal CQ=Q^\intercal(QQ^\intercal)^{-1}Q=Q^\intercal(Q^\intercal)^{-1}Q^{-1}Q=I
@@ -72,12 +72,12 @@ python3 disassemble_camera_matrix.py
 
 <img src='ref_images/disassemble.png' width='600'>
 
-The oxford dinosaur datast is as follows.
+The oxford dinosaur dataset is as follows.
 
 <img src='ref_images/dinosaur.jpg' width='600'>
 
 <br></br>
 
-## Reference
+## References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Multi-view Data](https://www.robots.ox.ac.uk/~vgg/data/mview/)
