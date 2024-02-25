@@ -1,5 +1,9 @@
 # Bundle adjustment
 
+## Preparation
+
+<img src='ref_images/points_3d.png' width='600'>
+
 ## Appendix: Camera matrix decomposition
 We can calculate camera intrinsic parameter $K$, rotation $R$ and translation $t$ when $3\times 4$ camera matrix $P$ is given. The method is as follows.
 
