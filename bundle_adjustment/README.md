@@ -1,8 +1,35 @@
 # Bundle adjustment
 
-## Preparation
+# Preparation
+We need to prepare the dataset for bundle adjustment by following steps. We use the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/).
+
+## 1. Convert ppm images to jpg images.
+
+```bash
+python3 convert_ppm_to_jpg.py
+```
+
+## 2. Read camera matrix from matlab file and save it to json file.
+
+```bash
+python3 read_matlab_file.py
+```
+
+## 3. Disassemble camera to matrix to get camera intrinsic parameter, rotation matrix and translation matrix.
+
+```bash
+python3 disassemble_camera_matrix.py
+```
+
+## 4. Calculate initial 3D position of points by triangulation.
+
+```bash
+python3 calculate_3d_points_by_triangulation.py
+```
 
 <img src='ref_images/points_3d.png' width='600'>
+
+<br></br>
 
 ## Appendix: Camera matrix decomposition
 We can calculate camera intrinsic parameter $K$, rotation $R$ and translation $t$ when $3\times 4$ camera matrix $P$ is given. The method is as follows.
@@ -68,7 +95,7 @@ $$
 
 $R_k$ satisfies $detR_k > 0$. Because $detR_k$ satisfies $detR_K=detQ^\intercal detC^\intercal=detQdetC$. By adjusting the sign, $detQ>0$ holds true. And $detC>0$ holds true because the signs of the diagonal elements are chosen to be positive in the Cholesky decomposition.
 
-You can get camera intrinsic parameter $K$, rotation $R$ and translation $t$ by running below command. 3D positions obtained by decomposing camera parameters from the [oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/) are drawn as the below image.
+You can get camera intrinsic parameter $K$, rotation $R$ and translation $t$ by running below command. 3D positions obtained by decomposing camera parameters from the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/) are drawn as the below image.
 
 ```bash
 python3 disassemble_camera_matrix.py
@@ -76,7 +103,7 @@ python3 disassemble_camera_matrix.py
 
 <img src='ref_images/disassemble.png' width='600'>
 
-The oxford dinosaur dataset is as follows.
+The Oxford dinosaur dataset is as follows.
 
 <img src='ref_images/dinosaur.jpg' width='600'>
 
