@@ -115,6 +115,8 @@ test_bundle_adjustment() {
     cd bundle_adjustment
     python3 disassemble_camera_matrix.py NotShow
     check_result "disassemble_camera_matrix.py"
+    python3 calculate_3d_points_by_triangulation.py NotShow
+    check_result "calculate_3d_points_by_triangulation.py"
     cd ../
 }
 
