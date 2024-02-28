@@ -1,27 +1,63 @@
 # Bundle adjustment
+Bundle adjustment is a technique that calculates the 3D shapes of the scene, positions of each camera and the intrinsic parameters simultaneously to satisfy the perspective projection model of camera by using images taken with multiple cameras of a 3D scene. We fix one world coordinates and let the position of $k$-th camera $(k=1,...,M)$ be $t_k$. And, we suppose that the coordinates of each camera is rotated by $R_k$ with respect to the world coordinates and let the focal length be $f_k$ and the optical axis point be $(u_{0k},v_{0k})$.  
+We define the projection positionof $\alpha$-th point $(X_\alpha, Y_\alpha, Z_\alpha)$ on $k$-th image as $(x_{\alpha k}, y_{\alpha k})$. The relationship of the perspective projection is as follows.
 
-# Preparation
+$$
+\begin{pmatrix}
+x_{\alpha k}/f_0 \\
+y_{\alpha k}/f_0 \\
+1 \\
+\end{pmatrix}\simeq
+P_k
+\begin{pmatrix}
+X_\alpha \\
+Y_\alpha \\
+Z_\alpha \\
+1 \\
+\end{pmatrix} \tag{1}
+$$
+
+The camera matrix $P_k$ of $k$-th camera has following form.
+
+$$
+P_k=
+\begin{pmatrix}
+f_k & 0 & u_{0k} \\
+0 & f_k & v_{0k} \\
+0 & 0 & f_0 \\
+\end{pmatrix}
+\begin{pmatrix}
+R_k^\intercal & -R_k^\intercal t_k \\
+\end{pmatrix} \tag{2}
+$$
+
+
+
+<br></br>
+
+# Experiments
+## Prepare dataset
 We need to prepare the dataset for bundle adjustment by following steps. We use the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/).
 
-## 1. Convert ppm images to jpg images.
+### 1. Convert ppm images to jpg images.
 
 ```bash
 python3 convert_ppm_to_jpg.py
 ```
 
-## 2. Read camera matrix from matlab file and save it to json file.
+### 2. Read camera matrix from matlab file and save it to json file.
 
 ```bash
 python3 read_matlab_file.py
 ```
 
-## 3. Disassemble camera to matrix to get camera intrinsic parameter, rotation matrix and translation matrix.
+### 3. Disassemble camera to matrix to get camera intrinsic parameter, rotation matrix and translation matrix.
 
 ```bash
 python3 disassemble_camera_matrix.py
 ```
 
-## 4. Calculate initial 3D position of points by triangulation.
+### 4. Calculate initial 3D position of points by triangulation.
 
 ```bash
 python3 calculate_3d_points_by_triangulation.py
@@ -109,6 +145,6 @@ The Oxford dinosaur dataset is as follows.
 
 <br></br>
 
-## References
+# References
 - [3D Computer Vision Computation Handbook](https://www.morikita.co.jp/books/mid/081791)
 - [Multi-view Data](https://www.robots.ox.ac.uk/~vgg/data/mview/)
