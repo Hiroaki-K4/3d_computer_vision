@@ -64,6 +64,10 @@ $I_{\alpha k}$ is the visibility index, it is 1 when $\alpha$-th point appears i
 
 <br></br>
 
+# Algorithm of bundle adjustment
+We iterate for minimizing the reprojection error $E$ of Eq(5). That is, we give initial values to all unknown values and update them so that $E$  decrease with each iteration. Unknown values are each 3D position $X_\alpha=(X_\alpha, Y_\alpha, Z_\alpha)^\intercal$ and focal length $f_k$, optical axis points $(u_{0k}, v_{0k})$, translation $t_k$ and rotation $R_k(k=1,...,M)$ of each camera. The problem is updating rotation $R_k$. To deal with this, we calculate the transformation of $E$ by slightly rotating the camera by $\triangle w_k=(\triangle w_{k1}, \triangle w_{k2}, \triangle w_{k3})^\intercal$ around each axis. we represent the rate of change of $E$ for each as $\partial E / \partial w_{k1}, \partial E / \partial w_{k2}, \partial E / \partial w_{k3}$. There are $3N+9M$ update amounts: $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k(\alpha=1,...,N,k=1,...,M)$. But it is not possible to determine all of these.
+
+
 # Experiments
 ## Prepare dataset
 We need to prepare the dataset for bundle adjustment by following steps. We use the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/).
