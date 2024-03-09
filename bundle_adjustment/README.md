@@ -65,8 +65,65 @@ $I_{\alpha k}$ is the visibility index, it is 1 when $\alpha$-th point appears i
 <br></br>
 
 # Algorithm of bundle adjustment
-We iterate for minimizing the reprojection error $E$ of Eq(5). That is, we give initial values to all unknown values and update them so that $E$  decrease with each iteration. Unknown values are each 3D position $X_\alpha=(X_\alpha, Y_\alpha, Z_\alpha)^\intercal$ and focal length $f_k$, optical axis points $(u_{0k}, v_{0k})$, translation $t_k$ and rotation $R_k(k=1,...,M)$ of each camera. The problem is updating rotation $R_k$. To deal with this, we calculate the transformation of $E$ by slightly rotating the camera by $\triangle w_k=(\triangle w_{k1}, \triangle w_{k2}, \triangle w_{k3})^\intercal$ around each axis. we represent the rate of change of $E$ for each as $\partial E / \partial w_{k1}, \partial E / \partial w_{k2}, \partial E / \partial w_{k3}$. There are $3N+9M$ update amounts: $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k(\alpha=1,...,N,k=1,...,M)$. But it is not possible to determine all of these.
+We iterate for minimizing the reprojection error $E$ of Eq(5). That is, we give initial values to all unknown values and update them so that $E$  decrease with each iteration. Unknown values are each 3D position $X_\alpha=(X_\alpha, Y_\alpha, Z_\alpha)^\intercal$ and focal length $f_k$, optical axis points $(u_{0k}, v_{0k})$, translation $t_k$ and rotation $R_k(k=1,...,M)$ of each camera. The problem is updating rotation $R_k$. To deal with this, we calculate the transformation of $E$ by slightly rotating the camera by $\triangle w_k=(\triangle w_{k1}, \triangle w_{k2}, \triangle w_{k3})^\intercal$ around each axis. we represent the rate of change of $E$ for each as $\partial E / \partial w_{k1}, \partial E / \partial w_{k2}, \partial E / \partial w_{k3}$. There are $3N+9M$ update amounts: $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k(\alpha=1,...,N,k=1,...,M)$. However it is not possible to determine all of these. Because positions of cameras and 3D shapes are relative and we can't determine absolute positions. Thus, we can't also define the absolute scale. Because images don't have depth information, we don't know we whether the camera was moved significantly to capture a faraway scene, or if the camera was moved slightly to capture a nearby scene. Therefore, we normalize as follows.
 
+$$
+R_1=I, \quad t_1=0, \quad t_{22}=1 \tag{6}
+$$
+
+This means that we use the world coordinates based on first camera. About scale, we define the translation in the y-axis direction of second camera for first camera as $1$. If we normalize as Eq(6), unknown quantities are reduced by $7$ to $3M+9N-7$.  
+We add serial numbers to $3M+9N-7$ of unknown quantities $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k$ and write as $\triangle \xi_1, \triangle \xi_2, ..., \triangle \xi_{3N+9M-7}$. And we use the Levenberg Marquardt method for minimization. The whole method is as follows.
+
+## Alogorithm
+### 1. Set initial values of $X_\alpha, f_k, (u_{0k}, v_{0k}), t_k, R_k$ and calculate the reprojection error $E$. Then, we define $c$ as $0.0001$.
+
+### 2. Calculate 1st and 2nd order differential $\partial E/\partial \xi_k, \partial^2 E/\partial \xi_k \partial \xi_l(k,l=1,...,3N+9M-7)$.
+
+### 3. Calculate $\triangle xi_k(k=1,...,3N+9M-7)$ by solving following simultaneous linear equations.
+
+$$
+\begin{pmatrix}
+(1+c)\partial^2 E/\partial \xi_1^2 & \partial^2 E/\partial \xi_1\xi_2 & \partial^2 E/\partial \xi_1\xi_3 & ... \\
+\partial^2 E/\partial \xi_2\xi_1 & (1+c)\partial^2 E/\partial \xi_2^2 & \partial^2 E/\partial \xi_2\xi_3 & ... \\
+\partial^2 E/\partial \xi_3\xi_1 & \partial^2 E/\partial \xi_3\xi_2 & (1+c)\partial^2 E/\partial \xi_3^2 & ... \\
+... & ... & ... & ...
+\end{pmatrix}
+\begin{pmatrix}
+\triangle \xi_1 \\
+\triangle \xi_2 \\
+\triangle \xi_3 \\
+... \\
+\end{pmatrix} \\
+=-\begin{pmatrix}
+\partial E/\partial \xi_1 \\
+\partial E/\partial \xi_2 \\
+\partial E/\partial \xi_3 \\
+... \\
+\end{pmatrix} \tag{7}
+$$
+
+### 4. Update $X_\alpha, f_k, (u_{0k}, v_{0k}), t_k, R_k$ as follows.
+
+$$
+\tilde{X_\alpha} \leftarrow X_\alpha+\triangle X_\alpha, \quad \tilde{f_k} \leftarrow f_k + \triangle f_k, \\
+(\tilde{u_{0k}}, \tilde{v_{0k}})\leftarrow (u_{0k}+\triangle u_{0k}, v_{0k}+\triangle v_{0k}) \\
+\tilde{t_k} \leftarrow t_k + \triangle t_k, \quad \tilde{R_k} \leftarrow R(\triangle w_k) R_k \tag{8}
+$$
+
+$R(\triangle w_k)$ is a rotation matrix of rotation angle $|\triangle w_k|$ around rotatino axis $\triangle w_k$.
+
+### 5. Calculate the reprojection error $\tilde{E}$ for $\tilde{X_\alpha}, \tilde{f_k}, (\tilde{u_{0k}}, \tilde{v_{0k}}), \tilde{t_k}, \tilde{R_k}$. If $\tilde{E} > E$, set $c\leftarrow 10c$ and return step 3.
+
+### 6. Update unknown values as follows, if $|\tilde{E}-E|\leq\delta$, terminate. Otherwise, update $E$ and $c$ as $E\leftarrow \tilde{E},c\leftarrow c/10$ and return step 2.
+
+$$
+X_\alpha \leftarrow \tilde{X_\alpha}, \quad f_k \leftarrow \tilde{f_k}, \quad (u_{0k},v_{0k}) \leftarrow (\tilde{u_{0k}},\tilde{v_{0k}}), \quad t_k \leftarrow \tilde{t_k}, \quad R_k \leftarrow \tilde{R_k} \tag{9}
+$$
+
+### Explanation
+
+
+<br></br>
 
 # Experiments
 ## Prepare dataset
