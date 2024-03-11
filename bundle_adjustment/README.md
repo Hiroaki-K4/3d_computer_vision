@@ -72,7 +72,7 @@ R_1=I, \quad t_1=0, \quad t_{22}=1 \tag{6}
 $$
 
 This means that we use the world coordinates based on first camera. About scale, we define the translation in the y-axis direction of second camera for first camera as $1$. If we normalize as Eq(6), unknown quantities are reduced by $7$ to $3M+9N-7$.  
-We add serial numbers to $3M+9N-7$ of unknown quantities $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k$ and write as $\triangle \xi_1, \triangle \xi_2, ..., \triangle \xi_{3N+9M-7}$. And we use the Levenberg Marquardt method for minimization. The whole method is as follows.
+We add serial numbers to $3M+9N-7$ of unknown quantities $\triangle X_\alpha, \triangle f_k, (\triangle u_{0k}, \triangle v_{0k}), \triangle t_k, \triangle w_k$ and write as $\triangle \xi_1, \triangle \xi_2, ..., \triangle \xi_{3N+9M-7}$. And we use Levenberg Marquardt method for minimization. The whole method is as follows.
 
 ## Alogorithm
 ### 1. Set initial values of $X_\alpha, f_k, (u_{0k}, v_{0k}), t_k, R_k$ and calculate the reprojection error $E$. Then, we define $c$ as $0.0001$.
@@ -121,6 +121,21 @@ X_\alpha \leftarrow \tilde{X_\alpha}, \quad f_k \leftarrow \tilde{f_k}, \quad (u
 $$
 
 ### Explanation
+It is assumed that the initial value of step 1 is the solution follows normalization of Eq(6). In case that we use initial values $X_\alpha, t_k, R_k$ without considerating this, we rotate the world coordinates as $R_1$ is $I$, translate so that $t_1$ is at the origin and arrange the scale of $X_\alpha$ and $t_k$ as $t_{22}=1$. Specifically, we convert $X_\alpha, t_k, R_k$ as following $X_\alpha',t_k',R_k'$.
+
+$$
+X_\alpha'=\frac{1}{s}R_1^\intercal (X_\alpha-t1), \quad R_k'=R_1^\intercal R_k, \quad t_k'=\frac{1}{s}R_1^\intercal(t_k-t_1) \tag{10}
+$$
+
+We define $s$ and $j$ as $s=(j,R_1^\intercal(t_2-t_1)), j=(0,1,0)^\intercal$.  
+The purpose of bundle adjustment is to find the solution minimizing reprojection errror, so it is practical to stop iteration when reprojection error stops changing. For exmaple, if it ends when amount of change in reprojection error per point becomes less than or equal to $\epsilon$, then infinitesimal constant $\delta$ becomes $\delta=n\epsilon^2/f_0^2$. We define $n$ as $n=\sum_{\alpha=1}^N \sum_{k=1}^M I_{\alpha k}$ (number of visible points on the image). In practical terms, it is sufficient to reduce $\epsilon$ to $\epsilon=0.01$.
+
+<br></br>
+
+# Calculating the derivative
+To perform Levenberg Marquardt method, we need 1st and 2nd order derivatives for each variable of reprojection error of Eq(5). We show the principle of calculation and specific calculate method.
+
+## Gauss-Newton approximation
 
 
 <br></br>
