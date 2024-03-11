@@ -136,7 +136,25 @@ The purpose of bundle adjustment is to find the solution minimizing reprojection
 To perform Levenberg Marquardt method, we need 1st and 2nd order derivatives for each variable of reprojection error of Eq(5). We show the principle of calculation and specific calculate method.
 
 ## Gauss-Newton approximation
+We define $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ as follows.
 
+$$
+p_{\alpha k}=P_{k(11)}X_\alpha + P_{k(12)}Y_\alpha + P_{k(13)}Z_\alpha + P_{k(14)} \\
+q_{\alpha k}=P_{k(21)}X_\alpha + P_{k(22)}Y_\alpha + P_{k(23)}Z_\alpha + P_{k(24)} \\
+r_{\alpha k}=P_{k(31)}X_\alpha + P_{k(32)}Y_\alpha + P_{k(33)}Z_\alpha + P_{k(34)} \tag{11}
+$$
+
+We rewrite Eq(5) as follows.
+
+$$
+E=\sum_{\alpha=1}^N \sum_{k=1}^M I_{\alpha k} \Bigl( \Bigl( \frac{p_{\alpha k}}{r_{\alpha k}} - \frac{x_{\alpha k}}{f_0} \Bigr)^2 + \Bigl( \frac{q_{\alpha k}}{r_{\alpha k}} - \frac{y_{\alpha k}}{f_0} \Bigr)^2 \Bigr) \tag{12}
+$$
+
+This differential can be written as follows.
+
+$$
+\frac{\partial E}{\partial \xi_k}=2\sum_{\alpha=1}^N \sum_{k=1}^M \frac{I_{\alpha k}}{r^2_{\alpha k}} \Bigl( \Bigl( \frac{p_{\alpha k}}{r_{\alpha k}}-\frac{x_{\alpha k}}{f_0} \Bigr) \Bigl( r_{\alpha k}\frac{\partial p_{\alpha k}}{\partial \xi_k} - p_{\alpha k}\frac{\partial r_{\alpha k}}{\partial \xi_k} \Bigr) + \Bigl( \frac{q_{\alpha k}}{r_{\alpha k}}-\frac{y_{\alpha k}}{f_0} \Bigr) \Bigl( r_{\alpha k}\frac{\partial q_{\alpha k}}{\partial \xi_k} - q_{\alpha k}\frac{\partial r_{\alpha k}}{\partial \xi_k} \Bigr) \Bigr) \tag{13}
+$$
 
 <br></br>
 
