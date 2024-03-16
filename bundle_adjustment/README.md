@@ -293,7 +293,97 @@ Differentiating Eq(11) and substituting the above result, defferetiation with re
 <br></br>
 
 ### Differentiation with respect to optical axis point
+We represent the differentiation with respect to $u_{0\lambda}, v_{0\lambda}$ as the vector operator $\triangledown u_{0\lambda}=(\partial/\partial u_{0\lambda}, \partial/\partial v_{0\lambda})$, the differentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ is as follows.
 
+$$
+\triangledown u_{0\lambda}p_{\alpha k}=
+\begin{pmatrix}
+\delta_{k\lambda} r_{\alpha k}/f_0 \\
+0
+\end{pmatrix}, \quad
+\triangledown u_{0\lambda}q_{\alpha k}=
+\begin{pmatrix}
+0 \\
+\delta_{k\lambda} r_{\alpha k}/f_0
+\end{pmatrix}, \quad
+\triangledown u_{0\lambda}r_{\alpha k}=
+\begin{pmatrix}
+0 \\
+0
+\end{pmatrix} \tag{17}
+$$
+
+The derivation of the differential is as follows.
+
+Differentiating $P_k$ of Eq(3) with $u_{0k}$ gives the following.
+
+$$
+\begin{align*}
+\frac{\partial P_k}{\partial u_{0\lambda}}&=
+\delta_{k\lambda}
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{pmatrix}
+R_k^\intercal
+\begin{pmatrix}
+I & -t_k
+\end{pmatrix} \\
+&=\delta_{k\lambda}
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{pmatrix}
+K_k^{-1} (K_k R_k^\intercal
+\begin{pmatrix}
+I & -t_k
+\end{pmatrix}) \\
+&=\delta_{k\lambda}
+\begin{pmatrix}
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+0 & 0 & 0 \\
+\end{pmatrix}
+\frac{1}{f_k}
+\begin{pmatrix}
+1 & 0 & -u_{0k}/f_0 \\
+0 & 1 & -v_{0k}/f_0 \\
+0 & 0 & f_k/f_0 \\
+\end{pmatrix}P_k \\
+&=\frac{\delta_{k\lambda}}{f_0}
+\begin{pmatrix}
+P_{k(31)} & P_{k(32)} & P_{k(33)} & P_{k(33)} \\
+0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix}
+\end{align*}
+$$
+
+Similarly, differentiating with respect to $v_{0\lambda}$ gives the following.
+
+$$
+\frac{\partial P_k}{\partial u_{0\lambda}}=
+\delta_{k\lambda}
+\begin{pmatrix}
+0 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 0 & 0 \\
+\end{pmatrix}
+R_k^\intercal
+\begin{pmatrix}
+I & -t_k
+\end{pmatrix}=
+\frac{\delta_{k\lambda}}{f_0}
+\begin{pmatrix}
+0 & 0 & 0 & 0 \\
+P_{k(31)} & P_{k(32)} & P_{k(33)} & P_{k(33)} \\
+0 & 0 & 0 & 0 \\
+\end{pmatrix}
+$$
+
+Differentiating Eq(11) and substituting these, the defferentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ with respect to $u_{0\lambda}, v_{0\lambda}$ can be written as Eq(17).
 
 <br></br>
 
