@@ -215,7 +215,7 @@ Eq(15) is obtained by rewriting above equation.
 <br></br>
 
 ### Differentiation with respect to focal length
-The differentiation with respect to focal length $f_\lambda$ of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ as follows.
+The differentiations with respect to focal length $f_\lambda$ of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ are as follows.
 
 $$
 \frac{\partial p_{\alpha k}}{\partial f_\lambda}=\frac{\delta_{k\lambda}}{f_k}\Bigl( p_{\alpha k} - \frac{u_0}{f_0}r_{\alpha k} \Bigr), \quad
@@ -384,6 +384,103 @@ P_{k(31)} & P_{k(32)} & P_{k(33)} & P_{k(33)} \\
 $$
 
 Differentiating Eq(11) and substituting these, the defferentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ with respect to $u_{0\lambda}, v_{0\lambda}$ can be written as Eq(17).
+
+<br></br>
+
+### Differentiation with respect to translation
+We represent the differentiation with respect to $t_{\lambda 1}, t_{\lambda 2}, t_{\lambda 3}$ as the vector operator $\triangledown t_\lambda =(\partial / \partial t_{\lambda 1}, \partial / \partial t_{\lambda 2}, \partial / \partial t_{\lambda 3})^\intercal$, the differentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ as follows.
+
+$$
+\begin{align*}
+\triangledown t_\lambda p_{\alpha k}&=-\delta_{k\lambda}(f_k r_{k1} + u_0 r_{k3}), \\
+\triangledown t_\lambda q_{\alpha k}&=-\delta_{k\lambda}(f_k r_{k2} + v_0 r_{k3}), \\
+\triangledown t_\lambda r_{\alpha k}&=-\delta_{k\lambda} f_0 r_{k3} \tag{18}
+\end{align*}
+$$
+
+$r_{k1},r_{k2},r_{k3}$ are the 1st, 2nd, and 3rd columns of rotation $R_k$, they can be written as follows.
+
+$$
+r_{k1}=
+\begin{pmatrix}
+R_{k(11)} \\
+R_{k(21)} \\
+R_{k(31)} \\
+\end{pmatrix}, \quad
+r_{k2}=
+\begin{pmatrix}
+R_{k(12)} \\
+R_{k(22)} \\
+R_{k(32)} \\
+\end{pmatrix}, \quad
+r_{k3}=
+\begin{pmatrix}
+R_{k(13)} \\
+R_{k(23)} \\
+R_{k(33)} \\
+\end{pmatrix} \tag{19}
+$$
+
+The derivation of the differential is as follows. It is the fourth column of $P_k$ of Eq(3) that is related to the translation $t$., it can be written as follows.
+
+$$
+\begin{pmatrix}
+P_{k(14)} \\
+P_{k(24)} \\
+P_{k(34)} \\
+\end{pmatrix}
+=-K_k R_k^\intercal t_k \\
+=-\begin{pmatrix}
+(f_k R_{k(11)}+u_{0k} R_{k(13)})t_{k1} + (f_k R_{k(21)}+u_{0k} R_{k(23)})t_{k2} + (f_k R_{k(31)}+u_{0k} R_{k(33)})t_{k3} \\
+(f_k R_{k(12)}+v_{0k} R_{k(13)})t_{k1} + (f_k R_{k(22)}+v_{0k} R_{k(23)})t_{k2} + (f_k R_{k(32)}+v_{0k} R_{k(33)})t_{k3} \\
+f_0(R_{k(13)}t_{k1} + R_{k(23)}t_{k2} + R_{k(33)}t_{k3})
+\end{pmatrix}
+$$
+
+From this, below relationship holds true.
+
+$$
+\frac{\partial}{\partial t_{\lambda1}}
+\begin{pmatrix}
+P_{k(14)} \\
+P_{k(24)} \\
+P_{k(34)} \\
+\end{pmatrix}
+=-\delta_{k\lambda}
+\begin{pmatrix}
+f_k R_{k(11)} + u_{0k}R_{k(13)} \\
+f_k R_{k(12)} + v_{0k}R_{k(13)} \\
+f_0 R_{k(13)}
+\end{pmatrix}, \\
+
+\frac{\partial}{\partial t_{\lambda2}}
+\begin{pmatrix}
+P_{k(14)} \\
+P_{k(24)} \\
+P_{k(34)} \\
+\end{pmatrix}
+=-\delta_{k\lambda}
+\begin{pmatrix}
+f_k R_{k(21)} + u_{0k}R_{k(23)} \\
+f_k R_{k(22)} + v_{0k}R_{k(23)} \\
+f_0 R_{k(23)}
+\end{pmatrix}, \\
+
+\frac{\partial}{\partial t_{\lambda3}}
+\begin{pmatrix}
+P_{k(14)} \\
+P_{k(24)} \\
+P_{k(34)} \\
+\end{pmatrix}
+=-\delta_{k\lambda}
+\begin{pmatrix}
+f_k R_{k(31)} + u_{0k}R_{k(33)} \\
+f_k R_{k(32)} + v_{0k}R_{k(33)} \\
+f_0 R_{k(33)}
+\end{pmatrix}
+$$
+
+Differentiating Eq(11), substituting these terms, and using Eq(19), the differentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ with respect to $t_{\lambda 1}, t_{\lambda 2}, t_{\lambda 3}$ can be written as Eq(18).
 
 <br></br>
 
