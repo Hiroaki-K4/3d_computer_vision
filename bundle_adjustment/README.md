@@ -293,7 +293,7 @@ a\times =
 0 & -a_3 & a_2 \\
 a_3 & 0 & -a_1 \\
 -a_2 & a_1 & 0
-\end{pmatrix}
+\end{pmatrix} \tag{21}
 $$
 
 The appendix F has the derivation of the differential.
@@ -636,6 +636,30 @@ Differentiating Eq(11), substituting these terms, and using Eq(19), the differen
 <br></br>
 
 ## F. Derivation of the differentiation with respect to rotation
+When a small rotation $\triangle w_k=(\triangle w_{k1}, \triangle w_{k2}, \triangle w_{k3})^\intercal$ is applied to the rotation matrix $R_k$, the change in $R_k$ can be written as $\triangle R_k=\triangle w_k \times R_k$ in the first approximation(Appendix G). $\triangle w_k \times$ is the antisymmetric matrix like Eq(21). Therefore, the change of $P_k$ can be written as follows in the first approximation.
+
+$$
+\begin{align*}
+\triangle P_k&=K_k(\triangle w_k \times R_k)^\intercal
+\begin{pmatrix*}
+I & -t_k
+\end{pmatrix*} \\
+&=K_kR_k^\intercal
+\begin{pmatrix*}
+0 & \triangle w_{k3} & -\triangle w_{k2} & \triangle w_{k2}t_{k3}-\triangle w_{k3} t_{k2} \\
+-\triangle w_{k3} & 0 & \triangle w_{k1} & \triangle w_{k3}t_{k1}-\triangle w_{k1} t_{k3} \\
+\triangle w_{k2} & -\triangle w_{k1} & 0 & \triangle w_{k1}t_{k2}-\triangle w_{k2} t_{k1} \\
+\end{pmatrix*}
+\end{align*}
+$$
+
+We use $(w\times R)^\intercal = R^\intercal(w\times)^\intercal=-R^\intercal w\times$ and $(w\times)t=w\times t$. From this, $\partial P_k/\partial w_{\lambda 1}, \partial P_k/\partial w_{\lambda 2}, \partial P_k/\partial w_{\lambda 3}$ can be written as follows.
+
+$$
+
+$$
+
+## G.
 
 <br></br>
 
