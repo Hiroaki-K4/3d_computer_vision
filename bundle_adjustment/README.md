@@ -656,10 +656,78 @@ $$
 We use $(w\times R)^\intercal = R^\intercal(w\times)^\intercal=-R^\intercal w\times$ and $(w\times)t=w\times t$. From this, $\partial P_k/\partial w_{\lambda 1}, \partial P_k/\partial w_{\lambda 2}, \partial P_k/\partial w_{\lambda 3}$ can be written as follows.
 
 $$
+\frac{\partial P_k}{\partial w_{\lambda 1}}=\delta_{k\lambda}
+\begin{pmatrix*}
+0 & -f_k R_{k(31)} - u_{0k}R_{k(33)} & f_k R_{k(21)}+u_{0k}R_{k(23)} & f_k(t_{k2}R_{k(31)} -t_{k3} R_{k(21)}) + u_{0k}(t_{k2} R_{k(33)} - t_{k3}R_{k(23)}) \\
 
+0 & -f_k R_{k(32)} - v_{0k}R_{k(33)} & f_k R_{k(22)}+v_{0k}R_{k(23)} & f_k(t_{k2}R_{k(32)} -t_{k3} R_{k(22)}) + v_{0k}(t_{k2} R_{k(33)} - t_{k3}R_{k(23)}) \\
+
+0 & -f_0 R_{k(33)} & f_0 R_{k(23)} & f_0(t_{k2}R_{k(33)} -t_{k3} R_{k(23)}) \\
+\end{pmatrix*}, \\
+
+
+\frac{\partial P_k}{\partial w_{\lambda 2}}=\delta_{k\lambda}
+\begin{pmatrix*}
+f_k R_{k(31)} + u_{0k}R_{k(33)} & 0 & -f_k R_{k(11)}-u_{0k}R_{k(13)} & f_k(t_{k3}R_{k(11)} -t_{k1} R_{k(31)}) + u_{0k}(t_{k3} R_{k(13)} - t_{k1}R_{k(33)}) \\
+
+f_k R_{k(32)} + v_{0k}R_{k(33)} & 0 & -f_k R_{k(12)}-v_{0k}R_{k(13)} & f_k(t_{k3}R_{k(12)} -t_{k1} R_{k(32)}) + v_{0k}(t_{k3} R_{k(13)} - t_{k1}R_{k(33)}) \\
+
+f_0 R_{k(33)} & 0 & f_0 R_{k(13)} & f_k(t_{k3}R_{k(13)} -t_{k1} R_{k(33)}) \\
+\end{pmatrix*}, \\
+
+
+\frac{\partial P_k}{\partial w_{\lambda 3}}=\delta_{k\lambda}
+\begin{pmatrix*}
+-f_k R_{k(21)} - u_{0k}R_{k(23)} & f_k R_{k(11)}+u_{0k}R_{k(13)} & 0 & f_k(t_{k1}R_{k(21)} -t_{k2} R_{k(11)}) + u_{0k}(t_{k1} R_{k(23)} - t_{k2}R_{k(13)}) \\
+
+-f_k R_{k(22)} - v_{0k}R_{k(23)} & f_k R_{k(12)}+v_{0k}R_{k(13)} & 0 & f_k(t_{k1}R_{k(22)} -t_{k2} R_{k(12)}) + v_{0k}(t_{k1} R_{k(23)} - t_{k2}R_{k(13)}) \\
+
+-f_0 R_{k(23)} & f_0 R_{k(13)} & 0 & f_0(t_{k1}R_{k(23)}-t_{k2}R_{k(13)}) \\
+\end{pmatrix*}
 $$
 
-## G.
+Differentiating Eq(11), substituting these terms, the differentiation of $p_{\alpha k}, q_{\alpha k}, r_{\alpha k}$ with respect to $w_{\lambda1}, w_{\lambda 2}, w_{\lambda 3}$ can be written as Eq(20).
+
+<br></br>
+
+## G. Proof of $\triangle U=\triangle w \times U$
+If U is the orthogonal matrix, we write that minute change as $U+\triangle U$, $\triangle U$ can be written as follows with a certain tiny vector $\triangle w$.
+
+$$
+\triangle U=\triangle w \times U
+$$
+
+$(U+\triangle U)(U+\triangle U)^\intercal=I$ holds true because $U+\triangle U$ is the orthogonal matrix. Therefore, following equation holds true.
+
+$$
+\begin{align*}
+(U+\triangle U)(U+\triangle U)^\intercal&=UU^\intercal+U\triangle U^\intercal + \triangle U U^\intercal + \triangle U \triangle U^\intercal \\
+&=I+(\triangle UU^\intercal)^\intercal + \triangle UU^\intercal + \triangle U \triangle U^\intercal
+\end{align*}
+$$
+
+This is $I$ and ignore higher-order minite amounts, following equation holds true.
+
+$$
+(\triangle UU^\intercal)^\intercal+\triangle UU^\intercal=O
+$$
+
+$\triangle UU^\intercal$ can be written as follows with some infinitesimal constant $\triangle w_1, \triangle w_2, \triangle w_3$ because this means that $\triangle UU^\intercal$ is the antisymmetric matrix.
+
+$$
+\triangle UU^\intercal=
+\begin{pmatrix}
+0 & -\triangle w_3 & \triangle w_2 \\
+\triangle w_3 & 0 & -\triangle w_1 \\
+-\triangle w_2 & \triangle w_1 & 0
+\end{pmatrix}
+$$
+
+We let $\triangle w$ be the vector whose components are $\triangle w_1$, $\triangle w_2$, and $\triangle w_3$, and write the matrix of right side as $(\triangle w \times)$. By multiplying both sides by $U$ from the right, following equiation holds true.
+
+$$
+\triangle U=(\triangle w\times)U
+$$
 
 <br></br>
 
