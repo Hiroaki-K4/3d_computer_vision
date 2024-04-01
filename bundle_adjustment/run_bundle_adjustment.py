@@ -67,9 +67,18 @@ def calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0):
     return E
 
 
+def calculate_partial_derivative(K, R, t, points_3d):
+    # Order
+    # [[]]
+    print("ok")
+    # TODO Add partial derivative
+
+
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     E = calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0)
     print("E: ", E)
+    c = 0.0001
+    calculate_partial_derivative(K, R, t, points_3d)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
