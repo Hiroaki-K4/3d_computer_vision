@@ -29,6 +29,49 @@ def split_camera_params(camera_params):
     return K, R, t
 
 
+def calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0):
+    E = 0
+    for point_idx in range(len(points_2d)):
+        for camera_idx in range(K.shape[0]):
+            x = float(points_2d[point_idx][camera_idx * 2])
+            y = float(points_2d[point_idx][camera_idx * 2 + 1])
+            if x == -1 or y == -1:
+                continue
+            t_mat = np.zeros((3, 4))
+            t_mat[:, :3] = np.identity(3)
+            t_mat[:, 3] = t[camera_idx]
+            P = np.dot(np.dot(K[camera_idx], R[camera_idx].T), -t_mat)
+            X = points_3d["points_3d"][point_idx][0]
+            Y = points_3d["points_3d"][point_idx][1]
+            Z = points_3d["points_3d"][point_idx][2]
+            E += (
+                x / f_0
+                - (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
+                / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3])
+            ) ** 2 + (
+                y / f_0
+                - (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
+                / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3])
+            ) ** 2
+            print(
+                x,
+                (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
+                / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
+            )
+            print(
+                y,
+                (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
+                / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
+            )
+
+    return E
+
+
+def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
+    E = calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0)
+    print("E: ", E)
+
+
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
     with open(camera_parameters_file) as f:
         camera_params = json.load(f)
@@ -42,6 +85,7 @@ def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file)
 
     K, R, t = split_camera_params(camera_params)
     R, t = normalize_camera_params(R, t)
+    run_bundle_adjustment(K, R, t, points_2d, points_3d, 1)
 
 
 if __name__ == "__main__":
