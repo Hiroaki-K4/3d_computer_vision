@@ -29,18 +29,15 @@ def split_camera_params(camera_params):
     return K, R, t
 
 
-def calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0):
+def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
     E = 0
     for point_idx in range(len(points_2d)):
-        for camera_idx in range(K.shape[0]):
+        for camera_idx in range(Ps.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
             y = float(points_2d[point_idx][camera_idx * 2 + 1])
             if x == -1 or y == -1:
                 continue
-            t_mat = np.zeros((3, 4))
-            t_mat[:, :3] = np.identity(3)
-            t_mat[:, 3] = t[camera_idx]
-            P = np.dot(np.dot(K[camera_idx], R[camera_idx].T), -t_mat)
+            P = Ps[camera_idx]
             X = points_3d["points_3d"][point_idx][0]
             Y = points_3d["points_3d"][point_idx][1]
             Z = points_3d["points_3d"][point_idx][2]
@@ -67,10 +64,26 @@ def calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0):
     return E
 
 
-def calculate_3d_position_derivative(K, R, t, points_3d, points_2d):
-    pritn("ok")
+def calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d):
+    # TODO Calculate p, q, r
+    print()
 
-def calculate_first_order_derivative(K, R, t, points_3d, points_2d):
+
+def calculate_3d_position_derivative(Ps, points_3d, points_2d):
+    deriv = 0
+    for point_idx in range(len(points_2d)):
+        for camera_idx in range(Ps.shape[0]):
+            x = float(points_2d[point_idx][camera_idx * 2])
+            y = float(points_2d[point_idx][camera_idx * 2 + 1])
+            if x == -1 or y == -1:
+                continue
+            P = Ps[camera_idx]
+            pos_3d = points_3d["points_3d"][point_idx]
+            calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d)
+            input()
+
+
+def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d):
     # N: number of points, M: number of images
     # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
     # Number of derivatives: 3N+9M-7
@@ -79,14 +92,26 @@ def calculate_first_order_derivative(K, R, t, points_3d, points_2d):
     deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
     first_deriv = np.zeros(deriv_num)
     print(first_deriv.shape)
-    calculate_3d_position_derivative(K, R, t, points_3d, points_2d)
+    calculate_3d_position_derivative(P, points_3d, points_2d)
+
+
+def calculate_camera_matrix(K, R, t):
+    P = np.zeros((K.shape[0], 3, 4))
+    for camera_idx in range(K.shape[0]):
+        t_mat = np.zeros((3, 4))
+        t_mat[:, :3] = np.identity(3)
+        t_mat[:, 3] = t[camera_idx]
+        P[camera_idx] = np.dot(np.dot(K[camera_idx], R[camera_idx].T), -t_mat)
+
+    return P
 
 
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
-    E = calculate_reprojection_error(K, R, t, points_2d, points_3d, f_0)
+    P = calculate_camera_matrix(K, R, t)
+    E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
     print("E: ", E)
     c = 0.0001
-    calculate_first_order_derivative(K, R, t, points_3d, points_2d)
+    calculate_first_order_derivative(K, R, t, P, points_3d, points_2d)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
