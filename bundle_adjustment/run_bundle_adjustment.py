@@ -3,6 +3,8 @@ import json
 
 import numpy as np
 
+import calculate_derivative as deriv
+
 
 def normalize_camera_params(R, t):
     norm_R = np.zeros(R.shape)
@@ -65,22 +67,14 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
 
 
 def calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d):
-    # TODO Calculate p, q, r
-    print()
+    X = pos_3d[0]
+    Y = pos_3d[1]
+    Z = pos_3d[2]
+    p = P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3]
+    q = P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3]
+    r = P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]
 
-
-def calculate_3d_position_derivative(Ps, points_3d, points_2d):
-    deriv = 0
-    for point_idx in range(len(points_2d)):
-        for camera_idx in range(Ps.shape[0]):
-            x = float(points_2d[point_idx][camera_idx * 2])
-            y = float(points_2d[point_idx][camera_idx * 2 + 1])
-            if x == -1 or y == -1:
-                continue
-            P = Ps[camera_idx]
-            pos_3d = points_3d["points_3d"][point_idx]
-            calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d)
-            input()
+    return p, q, r
 
 
 def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d):
@@ -90,9 +84,11 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d):
     # -7: R1=I, t1=0, t22=1
 
     deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
-    first_deriv = np.zeros(deriv_num)
-    print(first_deriv.shape)
-    calculate_3d_position_derivative(P, points_3d, points_2d)
+    first_deriv = np.zeros((deriv_num, 3))
+    deriv.calculate_3d_position_derivative(P, points_2d, first_deriv)
+    print(first_deriv)
+    input()
+    deriv.calculate_focal_length_derivative(P, K, first_deriv)
 
 
 def calculate_camera_matrix(K, R, t):
