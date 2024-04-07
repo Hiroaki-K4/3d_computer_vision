@@ -66,27 +66,16 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
     return E
 
 
-def calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d):
-    X = pos_3d[0]
-    Y = pos_3d[1]
-    Z = pos_3d[2]
-    p = P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3]
-    q = P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3]
-    r = P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]
-
-    return p, q, r
-
-
-def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d):
+def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0):
     # N: number of points, M: number of images
     # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
     # Number of derivatives: 3N+9M-7
     # -7: R1=I, t1=0, t22=1
 
     deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
-    first_deriv = np.zeros((deriv_num, 3))
-    deriv.calculate_3d_position_derivative(P, points_2d, first_deriv)
-    print(first_deriv)
+    first_deriv = np.zeros(deriv_num)
+    deriv.calculate_3d_position_derivative(P, points_2d, points_3d, first_deriv, f_0)
+    print("first_deriv: ", first_deriv)
     input()
     deriv.calculate_focal_length_derivative(P, K, first_deriv)
 
@@ -107,7 +96,7 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
     print("E: ", E)
     c = 0.0001
-    calculate_first_order_derivative(K, R, t, P, points_3d, points_2d)
+    calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
@@ -123,7 +112,8 @@ def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file)
 
     K, R, t = split_camera_params(camera_params)
     R, t = normalize_camera_params(R, t)
-    run_bundle_adjustment(K, R, t, points_2d, points_3d, 1)
+    f_0 = 400
+    run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0)
 
 
 if __name__ == "__main__":
