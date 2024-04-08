@@ -16,7 +16,7 @@ def calculate_3d_coordinate_derivative(p, q, r, p_deriv, q_deriv, r_deriv, x, y,
     return deriv
 
 
-def calculate_3d_position_derivative(Ps, points_2d, points_3d, first_deriv, f_0):
+def calculate_3d_position_derivative(Ps, points_2d, points_3d, f_0, first_deriv):
     for point_idx in range(len(points_2d)):
         x_deriv_sum = 0
         y_deriv_sum = 0
@@ -60,6 +60,14 @@ def calculate_3d_position_derivative(Ps, points_2d, points_3d, first_deriv, f_0)
         first_deriv[3 * point_idx + 2] = z_deriv_sum
 
 
-def calculate_focal_length_derivative(P, K, first_deriv):
+def calculate_focal_length_derivative(Ps, K, points_3d, f_0, first_deriv):
     # TODO Add derivative of focal length
-    print()
+    for camera_idx in range(Ps.shape[0]):
+        P = Ps[camera_idx]
+        points = points_3d["points_3d"]
+        for point_idx in range(len(points)):
+            p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                P, points_3d["points_3d"][point_idx]
+            )
+            print(p, q, r)
+            input()
