@@ -76,7 +76,7 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0):
     first_deriv = np.zeros(deriv_num)
     deriv.calculate_3d_position_derivative(P, points_2d, points_3d, f_0, first_deriv)
     print("first_deriv: ", first_deriv)
-    deriv.calculate_focal_length_derivative(P, K, points_3d, f_0, first_deriv)
+    deriv.calculate_focal_length_derivative(P, K, points_2d, points_3d, f_0, first_deriv)
 
 
 def calculate_camera_matrix(K, R, t):
