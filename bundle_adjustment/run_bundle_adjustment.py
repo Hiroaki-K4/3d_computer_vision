@@ -31,6 +31,16 @@ def split_camera_params(camera_params):
     return K, R, t
 
 
+def decrease_parameters(K):
+    for i in range(K.shape[0]):
+        K[i][0][1] = 0
+        f_avg = (K[i][0][0] + K[i][1][1]) / 2
+        K[i][0][0] = f_avg
+        K[i][1][1] = f_avg
+
+    return K
+
+
 def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
     E = 0
     for point_idx in range(len(points_2d)):
@@ -74,9 +84,29 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0):
 
     deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
     first_deriv = np.zeros(deriv_num)
+
     deriv.calculate_3d_position_derivative(P, points_2d, points_3d, f_0, first_deriv)
     print("first_deriv: ", first_deriv)
-    deriv.calculate_focal_length_derivative(P, K, points_2d, points_3d, f_0, first_deriv)
+
+    start_pos = 3 * len(points_3d["points_3d"])
+    deriv.calculate_focal_length_derivative(
+        P, K, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0]
+    deriv.calculate_optical_axis_point_derivative(
+        P, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 3
+    deriv.calculate_translation_derivative(
+        P, K, R, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4
+    deriv.calculate_rotation_derivative(
+        P, K, R, t, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
 
 
 def calculate_camera_matrix(K, R, t):
@@ -110,6 +140,7 @@ def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file)
         points_3d = json.load(f)
 
     K, R, t = split_camera_params(camera_params)
+    K = decrease_parameters(K)
     R, t = normalize_camera_params(R, t)
     f_0 = 400
     run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0)

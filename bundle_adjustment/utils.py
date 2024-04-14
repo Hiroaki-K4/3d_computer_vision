@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d):
     X = pos_3d[0]
     Y = pos_3d[1]
@@ -7,3 +10,11 @@ def calculate_rows_of_dot_between_camera_mat_and_3d_position(P, pos_3d):
     r = P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]
 
     return p, q, r
+
+
+def calculate_antisymmetric_matrix(vec):
+    antisym_mat = np.array(
+        [[0, -vec[2], vec[1]], [vec[2], 0, -vec[0]], [-vec[1], vec[0], 0]]
+    )
+
+    return antisym_mat
