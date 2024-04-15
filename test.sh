@@ -117,6 +117,10 @@ test_bundle_adjustment() {
     check_result "disassemble_camera_matrix.py"
     python3 calculate_3d_points_by_triangulation.py NotShow
     check_result "calculate_3d_points_by_triangulation.py"
+    python3 disassemble_camera_matrix.py NotShow
+    check_result "disassemble_camera_matrix.py"
+    python3 run_bundle_adjustment.py
+    check_result "run_bundle_adjustment.py"
     cd ../
 }
 
