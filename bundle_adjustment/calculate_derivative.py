@@ -6,7 +6,9 @@ from utils import (
 )
 
 
-def calculate_3d_coordinate_derivative(p, q, r, p_deriv, q_deriv, r_deriv, x, y, f_0):
+def calculate_derivative_of_reprojection_error(
+    p, q, r, p_deriv, q_deriv, r_deriv, x, y, f_0
+):
     deriv = (
         2
         / r**2
@@ -38,7 +40,7 @@ def calculate_3d_position_derivative(Ps, points_2d, points_3d, f_0, first_deriv)
             p_deriv_X = P[0][0]
             q_deriv_X = P[1][0]
             r_deriv_X = P[2][0]
-            x_deriv_sum += calculate_3d_coordinate_derivative(
+            x_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_X, q_deriv_X, r_deriv_X, x, y, f_0
             )
 
@@ -46,7 +48,7 @@ def calculate_3d_position_derivative(Ps, points_2d, points_3d, f_0, first_deriv)
             p_deriv_Y = P[0][1]
             q_deriv_Y = P[1][1]
             r_deriv_Y = P[2][1]
-            y_deriv_sum += calculate_3d_coordinate_derivative(
+            y_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_Y, q_deriv_Y, r_deriv_Y, x, y, f_0
             )
 
@@ -54,7 +56,7 @@ def calculate_3d_position_derivative(Ps, points_2d, points_3d, f_0, first_deriv)
             p_deriv_Z = P[0][2]
             q_deriv_Z = P[1][2]
             r_deriv_Z = P[2][2]
-            z_deriv_sum += calculate_3d_coordinate_derivative(
+            z_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_Z, q_deriv_Z, r_deriv_Z, x, y, f_0
             )
 
@@ -86,7 +88,7 @@ def calculate_focal_length_derivative(
             p_deriv = (p - u / f_0 * r) / f
             q_deriv = (q - v / f_0 * r) / f
             r_deriv = 0
-            deriv_sum += calculate_3d_coordinate_derivative(
+            deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv, q_deriv, r_deriv, x, y, f_0
             )
         first_deriv[start_pos + camera_idx] = deriv_sum
@@ -113,14 +115,14 @@ def calculate_optical_axis_point_derivative(
             p_deriv_u = r / f_0
             q_deriv_u = 0
             r_deriv_u = 0
-            u_deriv_sum += calculate_3d_coordinate_derivative(
+            u_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_u, q_deriv_u, r_deriv_u, x, y, f_0
             )
 
             p_deriv_v = 0
             q_deriv_v = r / f_0
             r_deriv_v = 0
-            v_deriv_sum += calculate_3d_coordinate_derivative(
+            v_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_v, q_deriv_v, r_deriv_v, x, y, f_0
             )
 
@@ -164,21 +166,21 @@ def calculate_translation_derivative(
             p_deriv_t1 = p_derivs[0]
             q_deriv_t1 = q_derivs[0]
             r_deriv_t1 = r_derivs[0]
-            t1_deriv_sum += calculate_3d_coordinate_derivative(
+            t1_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_t1, q_deriv_t1, r_deriv_t1, x, y, f_0
             )
 
             p_deriv_t2 = p_derivs[1]
             q_deriv_t2 = q_derivs[1]
             r_deriv_t2 = r_derivs[1]
-            t2_deriv_sum += calculate_3d_coordinate_derivative(
+            t2_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_t2, q_deriv_t2, r_deriv_t2, x, y, f_0
             )
 
             p_deriv_t3 = p_derivs[2]
             q_deriv_t3 = q_derivs[2]
             r_deriv_t3 = r_derivs[2]
-            t3_deriv_sum += calculate_3d_coordinate_derivative(
+            t3_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_t3, q_deriv_t3, r_deriv_t3, x, y, f_0
             )
 
@@ -236,21 +238,21 @@ def calculate_rotation_derivative(
             p_deriv_w1 = p_derivs[0]
             q_deriv_w1 = q_derivs[0]
             r_deriv_w1 = r_derivs[0]
-            w1_deriv_sum += calculate_3d_coordinate_derivative(
+            w1_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_w1, q_deriv_w1, r_deriv_w1, x, y, f_0
             )
 
             p_deriv_w2 = p_derivs[1]
             q_deriv_w2 = q_derivs[1]
             r_deriv_w2 = r_derivs[1]
-            w2_deriv_sum += calculate_3d_coordinate_derivative(
+            w2_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_w2, q_deriv_w2, r_deriv_w2, x, y, f_0
             )
 
             p_deriv_w3 = p_derivs[2]
             q_deriv_w3 = q_derivs[2]
             r_deriv_w3 = r_derivs[2]
-            w3_deriv_sum += calculate_3d_coordinate_derivative(
+            w3_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_w3, q_deriv_w3, r_deriv_w3, x, y, f_0
             )
 
