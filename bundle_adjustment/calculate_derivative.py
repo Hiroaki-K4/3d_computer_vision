@@ -21,6 +21,21 @@ def calculate_derivative_of_reprojection_error(
     return deriv
 
 
+def calculate_second_derivative_of_reprojection_error(
+    p, q, r, p_deriv_0, q_deriv_0, r_deriv_0, p_deriv_1, q_deriv_1, r_deriv_1, x, y, f_0
+):
+    deriv = (
+        2
+        / r**4
+        * (
+            (r * p_deriv_0 - p * r_deriv_0) * (r * p_deriv_1 - p * r_deriv_1)
+            + (r * q_deriv_0 - q * r_deriv_0) * (r * q_deriv_1 - q * r_deriv_1)
+        )
+    )
+
+    return deriv
+
+
 def calculate_3d_position_derivative(Ps, points_2d, points_3d, f_0, first_deriv):
     for point_idx in range(len(points_2d)):
         x_deriv_sum = 0

@@ -148,6 +148,20 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
             if row > col:
                 continue
 
+            print(row, col)
+            if (row >= point_3d_range[0] and row <= point_3d_range[1]) and (
+                col >= point_3d_range[0] and col <= point_3d_range[1]
+            ):
+                print("case1")
+            elif row > point_3d_range[1] and col > point_3d_range[1]:
+                print("case2")
+            else:
+                print("case3")
+            # TODO Add each pattern process
+            input()
+
+    return H
+
 
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     P = calculate_camera_matrix(K, R, t)
