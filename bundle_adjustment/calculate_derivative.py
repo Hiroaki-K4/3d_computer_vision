@@ -71,6 +71,58 @@ def calculate_focal_length_derivative(K, p, q, r, f_0):
     return p_deriv, q_deriv, r_deriv
 
 
+def calculate_optical_axis_point_u_derivative(r, f_0):
+    p_deriv = r / f_0
+    q_deriv = 0
+    r_deriv = 0
+
+    return p_deriv, q_deriv, r_deriv
+
+
+def calculate_optical_axis_point_v_derivative(r, f_0):
+    p_deriv = 0
+    q_deriv = r / f_0
+    r_deriv = 0
+
+    return p_deriv, q_deriv, r_deriv
+
+
+def calculate_translation_derivative(K, R, f_0):
+    f = K[0][0]
+    u = K[0][2]
+    v = K[1][2]
+    r1 = np.array([R[0][0], R[1][0], R[2][0]])
+    r2 = np.array([R[0][1], R[1][1], R[2][1]])
+    r3 = np.array([R[0][2], R[1][2], R[2][2]])
+
+    p_derivs = -(np.dot(f, r1) + np.dot(u, r3))
+    q_derivs = -(np.dot(f, r2) + np.dot(v, r3))
+    r_derivs = -f_0 * r3
+
+    return p_derivs, q_derivs, r_derivs
+
+
+def calculate_rotation_derivative(K, R, t, f_0, points, point_idx):
+    f = K[0][0]
+    u = K[0][2]
+    v = K[1][2]
+    r1 = np.array([R[0][0], R[1][0], R[2][0]])
+    r2 = np.array([R[0][1], R[1][1], R[2][1]])
+    r3 = np.array([R[0][2], R[1][2], R[2][2]])
+
+    p_derivs = np.dot(
+        calculate_antisymmetric_matrix(np.dot(f, r1) + np.dot(u, r3)),
+        (points[point_idx] - t),
+    )
+    q_derivs = np.dot(
+        calculate_antisymmetric_matrix(np.dot(f, r2) + np.dot(v, r3)),
+        (points[point_idx] - t),
+    )
+    r_derivs = np.dot(calculate_antisymmetric_matrix(f_0 * r3), (points[point_idx] - t))
+
+    return p_derivs, q_derivs, r_derivs
+
+
 def calculate_3d_position_derivative_of_reprojection_error(
     Ps, points_2d, points_3d, f_0, first_deriv
 ):
@@ -156,17 +208,16 @@ def calculate_optical_axis_point_derivative_of_reprojection_error(
                 P, points_3d["points_3d"][point_idx]
             )
 
-            # TODO: Create new function
-            p_deriv_u = r / f_0
-            q_deriv_u = 0
-            r_deriv_u = 0
+            p_deriv_u, q_deriv_u, r_deriv_u = calculate_optical_axis_point_u_derivative(
+                r, f_0
+            )
             u_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_u, q_deriv_u, r_deriv_u, x, y, f_0
             )
 
-            p_deriv_v = 0
-            q_deriv_v = r / f_0
-            r_deriv_v = 0
+            p_deriv_v, q_deriv_v, r_deriv_v = calculate_optical_axis_point_v_derivative(
+                r, f_0
+            )
             v_deriv_sum += calculate_derivative_of_reprojection_error(
                 p, q, r, p_deriv_v, q_deriv_v, r_deriv_v, x, y, f_0
             )
@@ -197,16 +248,7 @@ def calculate_translation_derivative_of_reprojection_error(
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
                 P, points_3d["points_3d"][point_idx]
             )
-            f = K[0][0]
-            u = K[0][2]
-            v = K[1][2]
-            r1 = np.array([R[0][0], R[1][0], R[2][0]])
-            r2 = np.array([R[0][1], R[1][1], R[2][1]])
-            r3 = np.array([R[0][2], R[1][2], R[2][2]])
-
-            p_derivs = -(np.dot(f, r1) + np.dot(u, r3))
-            q_derivs = -(np.dot(f, r2) + np.dot(v, r3))
-            r_derivs = -f_0 * r3
+            p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
 
             p_deriv_t1 = p_derivs[0]
             q_deriv_t1 = q_derivs[0]
@@ -261,23 +303,8 @@ def calculate_rotation_derivative_of_reprojection_error(
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
                 P, points_3d["points_3d"][point_idx]
             )
-            f = K[0][0]
-            u = K[0][2]
-            v = K[1][2]
-            r1 = np.array([R[0][0], R[1][0], R[2][0]])
-            r2 = np.array([R[0][1], R[1][1], R[2][1]])
-            r3 = np.array([R[0][2], R[1][2], R[2][2]])
-
-            p_derivs = np.dot(
-                calculate_antisymmetric_matrix(np.dot(f, r1) + np.dot(u, r3)),
-                (points[point_idx] - t),
-            )
-            q_derivs = np.dot(
-                calculate_antisymmetric_matrix(np.dot(f, r2) + np.dot(v, r3)),
-                (points[point_idx] - t),
-            )
-            r_derivs = np.dot(
-                calculate_antisymmetric_matrix(f_0 * r3), (points[point_idx] - t)
+            p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+                K, R, t, f_0, points, point_idx
             )
 
             p_deriv_w1 = p_derivs[0]
