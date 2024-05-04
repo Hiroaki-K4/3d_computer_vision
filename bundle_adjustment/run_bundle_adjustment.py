@@ -145,6 +145,7 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
     print(translation_range)
     print(rotation_range)
 
+    second_deriv = 0
     for row in range(deriv_num):
         for col in range(deriv_num):
             if row > col:
@@ -155,10 +156,25 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
                 col >= point_3d_range[0] and col <= point_3d_range[1]
             ):
                 # Case1: When two values are related points
-                print("case1")
+                print("case1", row, col)
+                if abs(row - col) >= 3:
+                    continue
+                second_deriv = deriv.calculate_second_derivative_about_point(
+                    row, col, P, points_2d, points_3d
+                )
+                if row == col:
+                    H[row][col] = (1 + c) * second_deriv
+                else:
+                    H[row][col] = second_deriv
+                print("deriv: ", second_deriv)
+                input()
             elif row > point_3d_range[1] and col > point_3d_range[1]:
                 # Case2: When two values are related images
                 print("case2")
+                # deriv = deriv.calculate_second_derivative_about_point(
+                #     row, P, points_2d, points_3d, f_0
+                # )
+                # H[row][col] = (1 + c) * deriv
             else:
                 # Case3: When one value is related to a point and the other is a value related to an image
                 print("case3")

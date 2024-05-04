@@ -22,7 +22,7 @@ def calculate_derivative_of_reprojection_error(
 
 
 def calculate_second_derivative_of_reprojection_error(
-    p, q, r, p_deriv_0, q_deriv_0, r_deriv_0, p_deriv_1, q_deriv_1, r_deriv_1, x, y, f_0
+    p, q, r, p_deriv_0, q_deriv_0, r_deriv_0, p_deriv_1, q_deriv_1, r_deriv_1
 ):
     deriv = (
         2
@@ -331,3 +331,64 @@ def calculate_rotation_derivative_of_reprojection_error(
         first_deriv[start_pos + (camera_idx - 1) * 3] = w1_deriv_sum
         first_deriv[start_pos + (camera_idx - 1) * 3 + 1] = w2_deriv_sum
         first_deriv[start_pos + (camera_idx - 1) * 3 + 2] = w3_deriv_sum
+
+
+def calculate_second_derivative_about_point(
+    point_idx_0, point_idx_1, Ps, points_2d, points_3d
+):
+    deriv = 0
+    point_idx = int(point_idx_0 / 3)
+    for camera_idx in range(Ps.shape[0]):
+        x = float(points_2d[point_idx][camera_idx * 2])
+        y = float(points_2d[point_idx][camera_idx * 2 + 1])
+        if x == -1 or y == -1:
+            continue
+        P = Ps[camera_idx]
+        p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+            P, points_3d["points_3d"][point_idx]
+        )
+
+        if point_idx_0 % 3 == 0:
+            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_x_derivative(P)
+        elif point_idx_0 % 3 == 1:
+            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_y_derivative(P)
+        elif point_idx_0 % 3 == 2:
+            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_z_derivative(P)
+        if point_idx_1 % 3 == 0:
+            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_x_derivative(P)
+        elif point_idx_1 % 3 == 1:
+            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_y_derivative(P)
+        elif point_idx_1 % 3 == 2:
+            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_z_derivative(P)
+
+        deriv += calculate_second_derivative_of_reprojection_error(
+            p, q, r, p_deriv_0, q_deriv_0, r_deriv_0, p_deriv_1, q_deriv_1, r_deriv_1
+        )
+
+    return deriv
+
+
+# def calculate_second_derivative_about_image(point_idx, Ps, points_2d, points_3d):
+#     deriv = 0
+#     for camera_idx in range(Ps.shape[0]):
+#         x = float(points_2d[point_idx][camera_idx * 2])
+#         y = float(points_2d[point_idx][camera_idx * 2 + 1])
+#         if x == -1 or y == -1:
+#             continue
+#         P = Ps[camera_idx]
+#         p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+#             P, points_3d["points_3d"][point_idx]
+#         )
+
+#         if point_idx % 3 == 0:
+#             p_deriv, q_deriv, r_deriv = calculate_3d_position_x_derivative(P)
+#         elif point_idx % 3 == 1:
+#             p_deriv, q_deriv, r_deriv = calculate_3d_position_y_derivative(P)
+#         elif point_idx % 3 == 2:
+#             p_deriv, q_deriv, r_deriv = calculate_3d_position_z_derivative(P)
+
+#         deriv += calculate_second_derivative_of_reprojection_error(
+#             p, q, r, p_deriv, q_deriv, r_deriv, p_deriv, q_deriv, r_deriv
+#         )
+
+#     return deriv
