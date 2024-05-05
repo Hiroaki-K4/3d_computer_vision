@@ -151,37 +151,46 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
             if row > col:
                 continue
 
-            print(row, col)
+            # print(row, col)
             if (row >= point_3d_range[0] and row <= point_3d_range[1]) and (
                 col >= point_3d_range[0] and col <= point_3d_range[1]
             ):
                 # Case1: When two values are related points
-                print("case1", row, col)
                 if abs(row - col) >= 3:
                     continue
                 second_deriv = deriv.calculate_second_derivative_about_point(
                     row, col, P, points_2d, points_3d
                 )
-                if row == col:
-                    H[row][col] = (1 + c) * second_deriv
-                else:
-                    H[row][col] = second_deriv
-                print("deriv: ", second_deriv)
-                input()
             elif row > point_3d_range[1] and col > point_3d_range[1]:
                 # Case2: When two values are related images
-                print("case2")
-                # deriv = deriv.calculate_second_derivative_about_point(
-                #     row, P, points_2d, points_3d, f_0
-                # )
-                # H[row][col] = (1 + c) * deriv
+                # print("case2: ", row, col)
+                # if abs(row - col) >= 3:
+                # continue
+                second_deriv = deriv.calculate_second_derivative_about_image(
+                    row,
+                    col,
+                    P,
+                    points_2d,
+                    points_3d,
+                    f_0,
+                    focal_length_range,
+                    optimal_axis_point_range,
+                    translation_range,
+                    rotation_range,
+                )
             else:
                 # Case3: When one value is related to a point and the other is a value related to an image
-                print("case3")
+                # print("case3")
+                pass
+
+            if row == col:
+                H[row][col] = (1 + c) * second_deriv
+            else:
+                H[row][col] = second_deriv
 
             # TODO Add each pattern process
 
-            input()
+            # input()
 
     return H
 
