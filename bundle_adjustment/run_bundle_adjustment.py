@@ -2,6 +2,7 @@ import csv
 import json
 
 import numpy as np
+from tqdm import tqdm
 
 import calculate_derivative as deriv
 
@@ -62,51 +63,8 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
                 - (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
                 / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3])
             ) ** 2
-            # print(
-            #     x,
-            #     (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
-            #     / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
-            # )
-            # print(
-            #     y,
-            #     (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
-            #     / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
-            # )
 
     return E
-
-
-def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0):
-    # N: number of points, M: number of images
-    # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
-    # Number of derivatives: 3N+9M-7
-    # -7: R1=I, t1=0, t22=1
-
-    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
-    first_deriv = np.zeros(deriv_num)
-
-    deriv.calculate_3d_position_derivative(P, points_2d, points_3d, f_0, first_deriv)
-    print("first_deriv: ", first_deriv)
-
-    start_pos = 3 * len(points_3d["points_3d"])
-    deriv.calculate_focal_length_derivative(
-        P, K, points_2d, points_3d, f_0, first_deriv, start_pos
-    )
-
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0]
-    deriv.calculate_optical_axis_point_derivative(
-        P, points_2d, points_3d, f_0, first_deriv, start_pos
-    )
-
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 3
-    deriv.calculate_translation_derivative(
-        P, K, R, points_2d, points_3d, f_0, first_deriv, start_pos
-    )
-
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4
-    deriv.calculate_rotation_derivative(
-        P, K, R, t, points_2d, points_3d, f_0, first_deriv, start_pos
-    )
 
 
 def calculate_camera_matrix(K, R, t):
@@ -120,12 +78,183 @@ def calculate_camera_matrix(K, R, t):
     return P
 
 
+def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deriv_num):
+    first_deriv = np.zeros(deriv_num)
+
+    deriv.calculate_3d_position_derivative_of_reprojection_error(
+        P, points_2d, points_3d, f_0, first_deriv
+    )
+    print("first_deriv: ", first_deriv)
+
+    start_pos = 3 * len(points_3d["points_3d"])
+    deriv.calculate_focal_length_derivative_of_reprojection_error(
+        P, K, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0]
+    deriv.calculate_optical_axis_point_derivative_of_reprojection_error(
+        P, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 3
+    deriv.calculate_translation_derivative_of_reprojection_error(
+        P, K, R, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4
+    deriv.calculate_rotation_derivative_of_reprojection_error(
+        P, K, R, t, points_2d, points_3d, f_0, first_deriv, start_pos
+    )
+
+    return first_deriv
+
+
+def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num):
+    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
+    H = np.zeros((deriv_num, deriv_num))
+    point_3d_range = [0, 3 * len(points_3d["points_3d"]) - 1]
+    focal_length_range = [
+        3 * len(points_3d["points_3d"]),
+        3 * len(points_3d["points_3d"]) + K.shape[0] - 1,
+    ]
+    optimal_axis_point_range = [
+        3 * len(points_3d["points_3d"]) + K.shape[0],
+        3 * len(points_3d["points_3d"]) + K.shape[0] * 3 - 1,
+    ]
+    translation_range = [
+        3 * len(points_3d["points_3d"]) + K.shape[0] * 3,
+        3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 5,
+    ]
+    rotation_range = [
+        3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4,
+        3 * len(points_3d["points_3d"]) + K.shape[0] * 9 - 8,
+    ]
+    skip_idx = [
+        translation_range[0],
+        translation_range[0] + 1,
+        translation_range[0] + 2,
+        translation_range[0] + 4,
+        rotation_range[0],
+        rotation_range[0] + 1,
+        rotation_range[0] + 2,
+    ]
+    print(point_3d_range)
+    print(focal_length_range)
+    print(optimal_axis_point_range)
+    print(translation_range)
+    print(rotation_range)
+
+    target_types = [
+        "focal",
+        "opt1",
+        "opt2",
+        "trans1",
+        "trans2",
+        "trans3",
+        "rot1",
+        "rot2",
+        "rot3",
+    ]
+    second_deriv = 0
+    for row in tqdm(range(deriv_num)):
+        for col in range(deriv_num):
+            if row > col:
+                H[row][col] = H[col][row]
+                continue
+            if row in skip_idx or col in skip_idx:
+                continue
+
+            if (row >= point_3d_range[0] and row <= point_3d_range[1]) and (
+                col >= point_3d_range[0] and col <= point_3d_range[1]
+            ):
+                # Case1: When two values are related points
+                if abs(row - col) >= 3:
+                    continue
+                second_deriv = deriv.calculate_second_derivative_about_point(
+                    row, col, P, points_2d, points_3d
+                )
+            elif row > point_3d_range[1] and col > point_3d_range[1]:
+                # Case2: When two values are related images
+                second_deriv = deriv.calculate_second_derivative_about_image(
+                    row,
+                    col,
+                    P,
+                    K,
+                    R,
+                    t,
+                    points_2d,
+                    points_3d,
+                    f_0,
+                    focal_length_range,
+                    optimal_axis_point_range,
+                    translation_range,
+                    rotation_range,
+                    target_types,
+                )
+            else:
+                # Case3: When one value is related to a point and the other is a value related to an image
+                if row >= point_3d_range[0] and row <= point_3d_range[1]:
+                    second_deriv = (
+                        deriv.calculate_second_derivative_about_point_and_image(
+                            row,
+                            col,
+                            P,
+                            K,
+                            R,
+                            t,
+                            points_2d,
+                            points_3d,
+                            f_0,
+                            focal_length_range,
+                            optimal_axis_point_range,
+                            translation_range,
+                            rotation_range,
+                            target_types,
+                        )
+                    )
+                elif col >= point_3d_range[0] and col <= point_3d_range[1]:
+                    second_deriv = (
+                        deriv.calculate_second_derivative_about_point_and_image(
+                            col,
+                            row,
+                            P,
+                            K,
+                            R,
+                            t,
+                            points_2d,
+                            points_3d,
+                            f_0,
+                            focal_length_range,
+                            optimal_axis_point_range,
+                            translation_range,
+                            rotation_range,
+                            target_types,
+                        )
+                    )
+
+            if row == col:
+                H[row][col] = (1 + c) * second_deriv
+            else:
+                H[row][col] = second_deriv
+
+    return H
+
+
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     P = calculate_camera_matrix(K, R, t)
     E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
     print("E: ", E)
     c = 0.0001
-    calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0)
+    # N: number of points, M: number of images
+    # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
+    # Number of derivatives: 3N+9M-7
+    # -7: R1=I, t1=0, t22=1
+    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
+    first_deriv = calculate_first_order_derivative(
+        K, R, t, P, points_3d, points_2d, f_0, deriv_num
+    )
+    H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
+    print("H: ", H)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
