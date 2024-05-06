@@ -112,7 +112,6 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deri
 def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num):
     deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
     H = np.zeros((deriv_num, deriv_num))
-    print(H.shape)
     point_3d_range = [0, 3 * len(points_3d["points_3d"]) - 1]
     focal_length_range = [
         3 * len(points_3d["points_3d"]),
@@ -160,6 +159,7 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
     for row in tqdm(range(deriv_num)):
         for col in range(deriv_num):
             if row > col:
+                H[row][col] = H[col][row]
                 continue
             if row in skip_idx or col in skip_idx:
                 continue
@@ -255,7 +255,6 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     )
     H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
     print("H: ", H)
-    input()
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
