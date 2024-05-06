@@ -333,6 +333,15 @@ def calculate_rotation_derivative_of_reprojection_error(
         first_deriv[start_pos + (camera_idx - 1) * 3 + 2] = w3_deriv_sum
 
 
+def extract_3d_position_derivatie(point_idx, P):
+    if point_idx % 3 == 0:
+        return calculate_3d_position_x_derivative(P)
+    elif point_idx % 3 == 1:
+        return calculate_3d_position_y_derivative(P)
+    elif point_idx % 3 == 2:
+        return calculate_3d_position_z_derivative(P)
+
+
 def calculate_second_derivative_about_point(
     point_idx_0, point_idx_1, Ps, points_2d, points_3d
 ):
@@ -348,18 +357,8 @@ def calculate_second_derivative_about_point(
             P, points_3d["points_3d"][point_idx]
         )
 
-        if point_idx_0 % 3 == 0:
-            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_x_derivative(P)
-        elif point_idx_0 % 3 == 1:
-            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_y_derivative(P)
-        elif point_idx_0 % 3 == 2:
-            p_deriv_0, q_deriv_0, r_deriv_0 = calculate_3d_position_z_derivative(P)
-        if point_idx_1 % 3 == 0:
-            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_x_derivative(P)
-        elif point_idx_1 % 3 == 1:
-            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_y_derivative(P)
-        elif point_idx_1 % 3 == 2:
-            p_deriv_1, q_deriv_1, r_deriv_1 = calculate_3d_position_z_derivative(P)
+        p_deriv_0, q_deriv_0, r_deriv_0 = extract_3d_position_derivatie(point_idx_0, P)
+        p_deriv_1, q_deriv_1, r_deriv_1 = extract_3d_position_derivatie(point_idx_1, P)
 
         deriv += calculate_second_derivative_of_reprojection_error(
             p, q, r, p_deriv_0, q_deriv_0, r_deriv_0, p_deriv_1, q_deriv_1, r_deriv_1
@@ -410,8 +409,6 @@ def extract_camera_idx(
 
 
 def extract_derivative(
-    point_idx,
-    camera_idx,
     target_type,
     target_types,
     K,
@@ -424,8 +421,6 @@ def extract_derivative(
     points,
     point_3d_idx,
 ):
-    print(target_type)
-    # input()
     if target_type == target_types[0]:
         # Derivative of focal length
         return calculate_focal_length_derivative(K, p, q, r, f_0)
@@ -481,18 +476,8 @@ def calculate_second_derivative_about_image(
     optimal_axis_point_range,
     translation_range,
     rotation_range,
+    target_types,
 ):
-    target_types = [
-        "focal",
-        "opt1",
-        "opt2",
-        "trans1",
-        "trans2",
-        "trans3",
-        "rot1",
-        "rot2",
-        "rot3",
-    ]
     camera_idx_0, target_type_0 = extract_camera_idx(
         point_idx_0,
         focal_length_range,
@@ -529,8 +514,6 @@ def calculate_second_derivative_about_image(
             P, points_3d["points_3d"][point_idx]
         )
         p_deriv_0, q_deriv_0, r_deriv_0 = extract_derivative(
-            point_idx_0,
-            camera_idx_0,
             target_type_0,
             target_types,
             K,
@@ -544,8 +527,6 @@ def calculate_second_derivative_about_image(
             point_idx,
         )
         p_deriv_1, q_deriv_1, r_deriv_1 = extract_derivative(
-            point_idx_1,
-            camera_idx_1,
             target_type_1,
             target_types,
             K,
@@ -563,3 +544,75 @@ def calculate_second_derivative_about_image(
         )
 
     return deriv
+
+
+def calculate_second_derivative_about_point_and_image(
+    point_idx_point,
+    point_idx_image,
+    Ps,
+    Ks,
+    Rs,
+    ts,
+    points_2d,
+    points_3d,
+    f_0,
+    focal_length_range,
+    optimal_axis_point_range,
+    translation_range,
+    rotation_range,
+    target_types,
+):
+    point_idx = int(point_idx_point / 3)
+    camera_idx, target_type = extract_camera_idx(
+        point_idx_image,
+        focal_length_range,
+        optimal_axis_point_range,
+        translation_range,
+        rotation_range,
+        target_types,
+    )
+    x = float(points_2d[point_idx][camera_idx * 2])
+    y = float(points_2d[point_idx][camera_idx * 2 + 1])
+    if x == -1 or y == -1:
+        return 0
+    P = Ps[camera_idx]
+    p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+        P, points_3d["points_3d"][point_idx]
+    )
+
+    # Calculate point derivative
+    p_deriv_point, q_deriv_point, r_deriv_point = extract_3d_position_derivatie(
+        point_idx_point, P
+    )
+
+    points = points_3d["points_3d"]
+    P = Ps[camera_idx]
+    K = Ks[camera_idx]
+    R = Rs[camera_idx]
+    t = ts[camera_idx]
+    # Calculate image derivative
+    p_deriv_image, q_deriv_image, r_deriv_image = extract_derivative(
+        target_type,
+        target_types,
+        K,
+        R,
+        t,
+        p,
+        q,
+        r,
+        f_0,
+        points,
+        point_idx,
+    )
+
+    return calculate_second_derivative_of_reprojection_error(
+        p,
+        q,
+        r,
+        p_deriv_point,
+        q_deriv_point,
+        r_deriv_point,
+        p_deriv_image,
+        q_deriv_image,
+        r_deriv_image,
+    )

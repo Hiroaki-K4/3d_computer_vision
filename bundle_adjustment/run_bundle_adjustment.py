@@ -2,6 +2,7 @@ import csv
 import json
 
 import numpy as np
+from tqdm import tqdm
 
 import calculate_derivative as deriv
 
@@ -129,19 +130,40 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
         3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4,
         3 * len(points_3d["points_3d"]) + K.shape[0] * 9 - 8,
     ]
+    skip_idx = [
+        translation_range[0],
+        translation_range[0] + 1,
+        translation_range[0] + 2,
+        translation_range[0] + 4,
+        rotation_range[0],
+        rotation_range[0] + 1,
+        rotation_range[0] + 2,
+    ]
     print(point_3d_range)
     print(focal_length_range)
     print(optimal_axis_point_range)
     print(translation_range)
     print(rotation_range)
 
+    target_types = [
+        "focal",
+        "opt1",
+        "opt2",
+        "trans1",
+        "trans2",
+        "trans3",
+        "rot1",
+        "rot2",
+        "rot3",
+    ]
     second_deriv = 0
-    for row in range(deriv_num):
+    for row in tqdm(range(deriv_num)):
         for col in range(deriv_num):
             if row > col:
                 continue
+            if row in skip_idx or col in skip_idx:
+                continue
 
-            # print(row, col)
             if (row >= point_3d_range[0] and row <= point_3d_range[1]) and (
                 col >= point_3d_range[0] and col <= point_3d_range[1]
             ):
@@ -167,26 +189,48 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
                     optimal_axis_point_range,
                     translation_range,
                     rotation_range,
+                    target_types,
                 )
             else:
                 # Case3: When one value is related to a point and the other is a value related to an image
-                # second_deriv = deriv.calculate_second_derivative_about_point_and_image(
-                #     row,
-                #     col,
-                #     P,
-                #     K,
-                #     R,
-                #     t,
-                #     points_2d,
-                #     points_3d,
-                #     f_0,
-                #     focal_length_range,
-                #     optimal_axis_point_range,
-                #     translation_range,
-                #     rotation_range,
-                # )
-                # print("case3 second_deriv: ", second_deriv)
-                pass
+                if row >= point_3d_range[0] and row <= point_3d_range[1]:
+                    second_deriv = (
+                        deriv.calculate_second_derivative_about_point_and_image(
+                            row,
+                            col,
+                            P,
+                            K,
+                            R,
+                            t,
+                            points_2d,
+                            points_3d,
+                            f_0,
+                            focal_length_range,
+                            optimal_axis_point_range,
+                            translation_range,
+                            rotation_range,
+                            target_types,
+                        )
+                    )
+                elif col >= point_3d_range[0] and col <= point_3d_range[1]:
+                    second_deriv = (
+                        deriv.calculate_second_derivative_about_point_and_image(
+                            col,
+                            row,
+                            P,
+                            K,
+                            R,
+                            t,
+                            points_2d,
+                            points_3d,
+                            f_0,
+                            focal_length_range,
+                            optimal_axis_point_range,
+                            translation_range,
+                            rotation_range,
+                            target_types,
+                        )
+                    )
 
             if row == col:
                 H[row][col] = (1 + c) * second_deriv
@@ -210,6 +254,8 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
         K, R, t, P, points_3d, points_2d, f_0, deriv_num
     )
     H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
+    print("H: ", H)
+    input()
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
