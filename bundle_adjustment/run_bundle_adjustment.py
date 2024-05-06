@@ -62,16 +62,6 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
                 - (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
                 / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3])
             ) ** 2
-            # print(
-            #     x,
-            #     (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
-            #     / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
-            # )
-            # print(
-            #     y,
-            #     (P[1][0] * X + P[1][1] * Y + P[1][2] * Z + P[1][3])
-            #     / (P[2][0] * X + P[2][1] * Y + P[2][2] * Z + P[2][3]),
-            # )
 
     return E
 
@@ -163,13 +153,13 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
                 )
             elif row > point_3d_range[1] and col > point_3d_range[1]:
                 # Case2: When two values are related images
-                # print("case2: ", row, col)
-                # if abs(row - col) >= 3:
-                # continue
                 second_deriv = deriv.calculate_second_derivative_about_image(
                     row,
                     col,
                     P,
+                    K,
+                    R,
+                    t,
                     points_2d,
                     points_3d,
                     f_0,
@@ -180,17 +170,28 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
                 )
             else:
                 # Case3: When one value is related to a point and the other is a value related to an image
-                # print("case3")
+                # second_deriv = deriv.calculate_second_derivative_about_point_and_image(
+                #     row,
+                #     col,
+                #     P,
+                #     K,
+                #     R,
+                #     t,
+                #     points_2d,
+                #     points_3d,
+                #     f_0,
+                #     focal_length_range,
+                #     optimal_axis_point_range,
+                #     translation_range,
+                #     rotation_range,
+                # )
+                # print("case3 second_deriv: ", second_deriv)
                 pass
 
             if row == col:
                 H[row][col] = (1 + c) * second_deriv
             else:
                 H[row][col] = second_deriv
-
-            # TODO Add each pattern process
-
-            # input()
 
     return H
 
