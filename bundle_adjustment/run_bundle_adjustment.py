@@ -240,6 +240,11 @@ def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_nu
     return H
 
 
+def update_camera_parameters(K, R, t, change_amount):
+    print("ok")
+    # TODO Implement this function
+
+
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     P = calculate_camera_matrix(K, R, t)
     E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
@@ -255,6 +260,10 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     )
     H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
     print("H: ", H)
+    print("Calculate the amount of change...")
+    # change_amount = -np.dot(np.linalg.pinv(H), first_deriv)
+    # print("change_amount: ", change_amount)
+    # update_camera_parameters(K, R, t, change_amount)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
