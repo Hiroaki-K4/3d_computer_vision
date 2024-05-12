@@ -258,9 +258,10 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     first_deriv = calculate_first_order_derivative(
         K, R, t, P, points_3d, points_2d, f_0, deriv_num
     )
-    H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
-    print("H: ", H)
-    print("Calculate the amount of change...")
+    # H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
+    E = deriv.calculate_points_hesssian_matrix(P, points_3d, points_2d)
+    # print("H: ", H)
+    # print("Calculate the amount of change...")
     # change_amount = -np.dot(np.linalg.pinv(H), first_deriv)
     # print("change_amount: ", change_amount)
     # update_camera_parameters(K, R, t, change_amount)
