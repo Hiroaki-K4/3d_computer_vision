@@ -405,6 +405,15 @@ def calculate_points_hesssian_matrix(Ps, points_3d, points_2d):
     return Es
 
 
+def calculate_points_images_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num):
+    Fs = np.zeros((len(points_3d["points_3d"]), 3, 9 * K.shape[0] - 7))
+    print(Fs.shape)
+    for point_idx in range(len(points_3d["points_3d"])):
+        F = np.zeros((3, 3))
+    # TODO: Implement calculate_points_images_hesssian_matrix func
+    input()
+
+
 def extract_camera_idx(
     point_idx,
     focal_length_range,
