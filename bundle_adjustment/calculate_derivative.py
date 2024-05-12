@@ -367,6 +367,44 @@ def calculate_second_derivative_about_point(
     return deriv
 
 
+def calculate_points_hesssian_matrix(Ps, points_3d, points_2d):
+    Es = np.zeros((len(points_3d["points_3d"]), 3, 3))
+    for point_idx in range(len(points_3d["points_3d"])):
+        E = np.zeros((3, 3))
+        for camera_idx in range(Ps.shape[0]):
+            x = float(points_2d[point_idx][camera_idx * 2])
+            y = float(points_2d[point_idx][camera_idx * 2 + 1])
+            if x == -1 or y == -1:
+                continue
+            P = Ps[camera_idx]
+            p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                P, points_3d["points_3d"][point_idx]
+            )
+            p_deriv_x, q_deriv_x, r_deriv_x = calculate_3d_position_x_derivative(P)
+            p_deriv_y, q_deriv_y, r_deriv_y = calculate_3d_position_y_derivative(P)
+            p_deriv_z, q_deriv_z, r_deriv_z = calculate_3d_position_z_derivative(P)
+            p_derivs = [p_deriv_x, p_deriv_y, p_deriv_z]
+            q_derivs = [q_deriv_x, q_deriv_y, q_deriv_z]
+            r_derivs = [r_deriv_x, r_deriv_y, r_deriv_z]
+            for row in range(3):
+                for col in range(3):
+                    E[row][col] += calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs[row],
+                        q_derivs[row],
+                        r_derivs[row],
+                        p_derivs[col],
+                        q_derivs[col],
+                        r_derivs[col],
+                    )
+
+        Es[point_idx] = E
+
+    return Es
+
+
 def extract_camera_idx(
     point_idx,
     focal_length_range,
