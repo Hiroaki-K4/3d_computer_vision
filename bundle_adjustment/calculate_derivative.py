@@ -367,7 +367,7 @@ def calculate_second_derivative_about_point(
     return deriv
 
 
-def calculate_points_hesssian_matrix(Ps, points_3d, points_2d):
+def calculate_points_hesssian_matrix(Ps, points_3d, points_2d, c):
     Es = np.zeros((len(points_3d["points_3d"]), 3, 3))
     for point_idx in range(len(points_3d["points_3d"])):
         E = np.zeros((3, 3))
@@ -388,7 +388,13 @@ def calculate_points_hesssian_matrix(Ps, points_3d, points_2d):
             r_derivs = [r_deriv_x, r_deriv_y, r_deriv_z]
             for row in range(3):
                 for col in range(3):
-                    E[row][col] += calculate_second_derivative_of_reprojection_error(
+                    if row == col:
+                        coeff = 1 + c
+                    else:
+                        coeff = 1
+                    E[row][
+                        col
+                    ] += coeff * calculate_second_derivative_of_reprojection_error(
                         p,
                         q,
                         r,
@@ -405,11 +411,8 @@ def calculate_points_hesssian_matrix(Ps, points_3d, points_2d):
     return Es
 
 
-def calculate_points_images_hesssian_matrix(
-    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c, deriv_num
-):
+def calculate_points_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0):
     Fs = np.zeros((len(points_3d["points_3d"]), 3, 9 * Ks.shape[0] - 7))
-    print(Fs.shape)
     for point_idx in range(len(points_3d["points_3d"])):
         F = np.zeros((3, 9 * Ks.shape[0] - 7))
         for idx in range(3):
@@ -440,8 +443,7 @@ def calculate_points_images_hesssian_matrix(
                 p_derivs_point = [p_deriv_x, p_deriv_y, p_deriv_z]
                 q_derivs_point = [q_deriv_x, q_deriv_y, q_deriv_z]
                 r_derivs_point = [r_deriv_x, r_deriv_y, r_deriv_z]
-                # for idx in range(3):
-                # focal 1
+                # focal length f
                 (
                     p_deriv_focal,
                     q_deriv_focal,
@@ -614,6 +616,113 @@ def calculate_points_images_hesssian_matrix(
         Fs[point_idx] = F
 
     return Fs
+
+
+def calculate_second_derivative_of_camera_param(
+    idx, K, R, t, p, q, r, f_0, points, point_idx
+):
+    if idx == 0:
+        return calculate_focal_length_derivative(K, p, q, r, f_0)
+    elif idx == 1:
+        return calculate_optical_axis_point_u_derivative(r, f_0)
+    elif idx == 2:
+        return calculate_optical_axis_point_v_derivative(r, f_0)
+    elif idx == 3:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[0], q_derivs[0], r_derivs[0]
+    elif idx == 4:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[1], q_derivs[1], r_derivs[1]
+    elif idx == 5:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[2], q_derivs[2], r_derivs[2]
+    elif idx == 6:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[0], q_derivs[0], r_derivs[0]
+    elif idx == 7:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[1], q_derivs[1], r_derivs[1]
+    elif idx == 8:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[2], q_derivs[2], r_derivs[2]
+
+
+def delete_fixed_elems(mat, idx_list, axis):
+    deleted_mat = np.copy(mat)
+    for idx in idx_list:
+        deleted_mat = np.delete(deleted_mat, idx, axis)
+
+    return deleted_mat
+
+
+def calculate_images_hesssian_matrix(
+    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c, deriv_num
+):
+    G = np.zeros((9 * Ks.shape[0], 9 * Ks.shape[0]))
+    points = points_3d["points_3d"]
+    for camera_idx_0 in range(Ps.shape[0]):
+        for camera_idx_1 in range(Ps.shape[0]):
+            if camera_idx_0 != camera_idx_1:
+                continue
+            P = Ps[camera_idx_0]
+            K = Ks[camera_idx_0]
+            R = Rs[camera_idx_0]
+            t = ts[camera_idx_0]
+            for i in range(9):
+                for j in range(9):
+                    deriv_sum = 0
+                    for point_idx in range(len(points_3d["points_3d"])):
+                        x = float(points_2d[point_idx][camera_idx_0 * 2])
+                        y = float(points_2d[point_idx][camera_idx_0 * 2 + 1])
+                        if x == -1 or y == -1:
+                            continue
+                        (
+                            p,
+                            q,
+                            r,
+                        ) = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                            P, points_3d["points_3d"][point_idx]
+                        )
+                        (
+                            p_deriv_0,
+                            q_deriv_0,
+                            r_deriv_0,
+                        ) = calculate_second_derivative_of_camera_param(
+                            i, K, R, t, p, q, r, f_0, points, point_idx
+                        )
+                        (
+                            p_deriv_1,
+                            q_deriv_1,
+                            r_deriv_1,
+                        ) = calculate_second_derivative_of_camera_param(
+                            j, K, R, t, p, q, r, f_0, points, point_idx
+                        )
+                        G[camera_idx_0 * 9 + i][
+                            camera_idx_1 * 9 + j
+                        ] += calculate_second_derivative_of_reprojection_error(
+                            p,
+                            q,
+                            r,
+                            p_deriv_0,
+                            q_deriv_0,
+                            r_deriv_0,
+                            p_deriv_1,
+                            q_deriv_1,
+                            r_deriv_1,
+                        )
+
+    # Delete t00,t01,t02,w00,w01,w02,t12
+    delete_idx = [3, 4, 5, 6, 7, 8, 14]
+    G = delete_fixed_elems(G, delete_idx, 0)
+    G = delete_fixed_elems(G, delete_idx, 1)
+
+    return G
 
 
 def extract_camera_idx(
