@@ -264,7 +264,7 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
         K, R, t, P, points_3d, points_2d, f_0
     )
     G = deriv.calculate_images_hesssian_matrix(
-        K, R, t, P, points_3d, points_2d, f_0, c, deriv_num
+        K, R, t, P, points_3d, points_2d, f_0, c
     )
     print(G)
     print(G.shape)

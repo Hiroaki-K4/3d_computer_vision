@@ -300,6 +300,12 @@ The appendix F has the derivation of the differential.
 
 <br></br>
 
+# Efficient solution of simultaneous linear equations
+Eq(7) is the simulataneous linear equations for $3N+9M-7$ unknowns, the matrix on the left side is $(3N+9M-7)\times (3N+9M-7)$. As $N$ and $M$ increase, the amount of calculation increases significantly. There is a method to solve this problem.
+
+
+<br></br>
+
 # Experiments
 ## Prepare dataset
 We need to prepare the dataset for bundle adjustment by following steps. We use the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/).

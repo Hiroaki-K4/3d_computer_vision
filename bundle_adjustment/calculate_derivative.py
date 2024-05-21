@@ -662,7 +662,7 @@ def delete_fixed_elems(mat, idx_list, axis):
 
 
 def calculate_images_hesssian_matrix(
-    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c, deriv_num
+    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c
 ):
     G = np.zeros((9 * Ks.shape[0], 9 * Ks.shape[0]))
     points = points_3d["points_3d"]
@@ -676,7 +676,6 @@ def calculate_images_hesssian_matrix(
             t = ts[camera_idx_0]
             for i in range(9):
                 for j in range(9):
-                    deriv_sum = 0
                     for point_idx in range(len(points_3d["points_3d"])):
                         x = float(points_2d[point_idx][camera_idx_0 * 2])
                         y = float(points_2d[point_idx][camera_idx_0 * 2 + 1])
@@ -721,6 +720,12 @@ def calculate_images_hesssian_matrix(
     delete_idx = [3, 4, 5, 6, 7, 8, 14]
     G = delete_fixed_elems(G, delete_idx, 0)
     G = delete_fixed_elems(G, delete_idx, 1)
+
+    # Diagonal elements are multiplied by (1+c).
+    for row in range(G.shape[0]):
+        for col in range(G.shape[1]):
+            if row == col:
+                G[row][col] = (1 + c) * G[row][col]
 
     return G
 
