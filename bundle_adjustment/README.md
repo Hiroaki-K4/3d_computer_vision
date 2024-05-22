@@ -301,8 +301,26 @@ The appendix F has the derivation of the differential.
 <br></br>
 
 # Efficient solution of simultaneous linear equations
-Eq(7) is the simulataneous linear equations for $3N+9M-7$ unknowns, the matrix on the left side is $(3N+9M-7)\times (3N+9M-7)$. As $N$ and $M$ increase, the amount of calculation increases significantly. There is a method to solve this problem.
+Eq(7) is the simulataneous linear equations for $3N+9M-7$ unknowns, the matrix on the left side is $(3N+9M-7)\times (3N+9M-7)$. As $N$ and $M$ increase, the amount of calculation increases significantly. There is a method to solve this problem. Unknowns of Eq(7) consists of the part of 3D position and the part of camera parameter, it has the following form.
 
+$$
+\begin{pmatrix}
+E_1^{(c)} & ... & ... & F_1 \\
+... & ... & ... & ... \\
+... & ... & E_N^{(c)} & F_N \\
+F_1^\intercal & ... & F_N^\intercal & G^{(c)}
+\end{pmatrix}
+\begin{pmatrix}
+\triangle \xi_P \\
+\triangle \xi_F
+\end{pmatrix}
+=-\begin{pmatrix}
+d_P \\
+d_F
+\end{pmatrix} \tag{22}
+$$
+
+$\xi_P$ is $3N$ dimention vector with respect to 3D position of points of $\triangle \xi$ and $\xi_F$ is $9M-7$ dimention vetor with respect to camera parameters. $d_P$ and $d_F$ are the parts of $3N$ and $9M-7$ dimention with respect to vector on the right side of Eq(7).
 
 <br></br>
 
