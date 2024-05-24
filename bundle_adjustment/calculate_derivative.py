@@ -367,6 +367,369 @@ def calculate_second_derivative_about_point(
     return deriv
 
 
+def calculate_points_hesssian_matrix(Ps, points_3d, points_2d, c):
+    Es = np.zeros((len(points_3d["points_3d"]), 3, 3))
+    for point_idx in range(len(points_3d["points_3d"])):
+        E = np.zeros((3, 3))
+        for camera_idx in range(Ps.shape[0]):
+            x = float(points_2d[point_idx][camera_idx * 2])
+            y = float(points_2d[point_idx][camera_idx * 2 + 1])
+            if x == -1 or y == -1:
+                continue
+            P = Ps[camera_idx]
+            p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                P, points_3d["points_3d"][point_idx]
+            )
+            p_deriv_x, q_deriv_x, r_deriv_x = calculate_3d_position_x_derivative(P)
+            p_deriv_y, q_deriv_y, r_deriv_y = calculate_3d_position_y_derivative(P)
+            p_deriv_z, q_deriv_z, r_deriv_z = calculate_3d_position_z_derivative(P)
+            p_derivs = [p_deriv_x, p_deriv_y, p_deriv_z]
+            q_derivs = [q_deriv_x, q_deriv_y, q_deriv_z]
+            r_derivs = [r_deriv_x, r_deriv_y, r_deriv_z]
+            for row in range(3):
+                for col in range(3):
+                    if row == col:
+                        coeff = 1 + c
+                    else:
+                        coeff = 1
+                    E[row][
+                        col
+                    ] += coeff * calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs[row],
+                        q_derivs[row],
+                        r_derivs[row],
+                        p_derivs[col],
+                        q_derivs[col],
+                        r_derivs[col],
+                    )
+
+        Es[point_idx] = E
+
+    return Es
+
+
+def calculate_points_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0):
+    Fs = np.zeros((len(points_3d["points_3d"]), 3, 9 * Ks.shape[0] - 7))
+    for point_idx in range(len(points_3d["points_3d"])):
+        F = np.zeros((3, 9 * Ks.shape[0] - 7))
+        for idx in range(3):
+            col_idx = 0
+            for camera_idx in range(Ps.shape[0]):
+                x = float(points_2d[point_idx][camera_idx * 2])
+                y = float(points_2d[point_idx][camera_idx * 2 + 1])
+                if x == -1 or y == -1:
+                    if camera_idx == 0:
+                        col_idx += 3
+                    elif camera_idx == 1:
+                        col_idx += 8
+                    else:
+                        col_idx += 9
+                    continue
+
+                P = Ps[camera_idx]
+                K = Ks[camera_idx]
+                R = Rs[camera_idx]
+                t = ts[camera_idx]
+                points = points_3d["points_3d"]
+                p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                    P, points_3d["points_3d"][point_idx]
+                )
+                p_deriv_x, q_deriv_x, r_deriv_x = calculate_3d_position_x_derivative(P)
+                p_deriv_y, q_deriv_y, r_deriv_y = calculate_3d_position_y_derivative(P)
+                p_deriv_z, q_deriv_z, r_deriv_z = calculate_3d_position_z_derivative(P)
+                p_derivs_point = [p_deriv_x, p_deriv_y, p_deriv_z]
+                q_derivs_point = [q_deriv_x, q_deriv_y, q_deriv_z]
+                r_derivs_point = [r_deriv_x, r_deriv_y, r_deriv_z]
+                # focal length f
+                (
+                    p_deriv_focal,
+                    q_deriv_focal,
+                    r_deriv_focal,
+                ) = calculate_focal_length_derivative(K, p, q, r, f_0)
+                F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                    p,
+                    q,
+                    r,
+                    p_derivs_point[idx],
+                    q_derivs_point[idx],
+                    r_derivs_point[idx],
+                    p_deriv_focal,
+                    q_deriv_focal,
+                    r_deriv_focal,
+                )
+                col_idx += 1
+                # optical u
+                (
+                    p_deriv_u,
+                    q_deriv_u,
+                    r_deriv_u,
+                ) = calculate_optical_axis_point_u_derivative(r, f_0)
+                F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                    p,
+                    q,
+                    r,
+                    p_derivs_point[idx],
+                    q_derivs_point[idx],
+                    r_derivs_point[idx],
+                    p_deriv_u,
+                    q_deriv_u,
+                    r_deriv_u,
+                )
+                col_idx += 1
+                # optical v
+                (
+                    p_deriv_v,
+                    q_deriv_v,
+                    r_deriv_v,
+                ) = calculate_optical_axis_point_v_derivative(r, f_0)
+                F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                    p,
+                    q,
+                    r,
+                    p_derivs_point[idx],
+                    q_derivs_point[idx],
+                    r_derivs_point[idx],
+                    p_deriv_v,
+                    q_deriv_v,
+                    r_deriv_v,
+                )
+                col_idx += 1
+
+                if camera_idx != 0:
+                    (
+                        p_derivs_t,
+                        q_derivs_t,
+                        r_derivs_t,
+                    ) = calculate_translation_derivative(K, R, f_0)
+                    # trans x
+                    # p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+                    p_deriv_t1 = p_derivs_t[0]
+                    q_deriv_t1 = q_derivs_t[0]
+                    r_deriv_t1 = r_derivs_t[0]
+                    F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs_point[idx],
+                        q_derivs_point[idx],
+                        r_derivs_point[idx],
+                        p_deriv_t1,
+                        q_deriv_t1,
+                        r_deriv_t1,
+                    )
+                    col_idx += 1
+
+                    # trans y
+                    p_deriv_t2 = p_derivs_t[1]
+                    q_deriv_t2 = q_derivs_t[1]
+                    r_deriv_t2 = r_derivs_t[1]
+                    F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs_point[idx],
+                        q_derivs_point[idx],
+                        r_derivs_point[idx],
+                        p_deriv_t2,
+                        q_deriv_t2,
+                        r_deriv_t2,
+                    )
+                    col_idx += 1
+
+                    if camera_idx != 1:
+                        # trans z
+                        p_deriv_t3 = p_derivs_t[2]
+                        q_deriv_t3 = q_derivs_t[2]
+                        r_deriv_t3 = r_derivs_t[2]
+                        F[idx][
+                            col_idx
+                        ] = calculate_second_derivative_of_reprojection_error(
+                            p,
+                            q,
+                            r,
+                            p_derivs_point[idx],
+                            q_derivs_point[idx],
+                            r_derivs_point[idx],
+                            p_deriv_t3,
+                            q_deriv_t3,
+                            r_deriv_t3,
+                        )
+                        col_idx += 1
+
+                    p_derivs_r, q_derivs_r, r_derivs_r = calculate_rotation_derivative(
+                        K, R, t, f_0, points, point_idx
+                    )
+                    # rotation w1
+                    p_deriv_w1 = p_derivs_r[0]
+                    q_deriv_w1 = q_derivs_r[0]
+                    r_deriv_w1 = r_derivs_r[0]
+                    F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs_point[idx],
+                        q_derivs_point[idx],
+                        r_derivs_point[idx],
+                        p_deriv_w1,
+                        q_deriv_w1,
+                        r_deriv_w1,
+                    )
+                    col_idx += 1
+
+                    # rotation w2
+                    p_deriv_w2 = p_derivs_r[1]
+                    q_deriv_w2 = q_derivs_r[1]
+                    r_deriv_w2 = r_derivs_r[1]
+                    F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs_point[idx],
+                        q_derivs_point[idx],
+                        r_derivs_point[idx],
+                        p_deriv_w2,
+                        q_deriv_w2,
+                        r_deriv_w2,
+                    )
+                    col_idx += 1
+
+                    # rotation w3
+                    p_deriv_w3 = p_derivs_r[2]
+                    q_deriv_w3 = q_derivs_r[2]
+                    r_deriv_w3 = r_derivs_r[2]
+                    F[idx][col_idx] = calculate_second_derivative_of_reprojection_error(
+                        p,
+                        q,
+                        r,
+                        p_derivs_point[idx],
+                        q_derivs_point[idx],
+                        r_derivs_point[idx],
+                        p_deriv_w3,
+                        q_deriv_w3,
+                        r_deriv_w3,
+                    )
+                    col_idx += 1
+
+        Fs[point_idx] = F
+
+    return Fs
+
+
+def calculate_second_derivative_of_camera_param(
+    idx, K, R, t, p, q, r, f_0, points, point_idx
+):
+    if idx == 0:
+        return calculate_focal_length_derivative(K, p, q, r, f_0)
+    elif idx == 1:
+        return calculate_optical_axis_point_u_derivative(r, f_0)
+    elif idx == 2:
+        return calculate_optical_axis_point_v_derivative(r, f_0)
+    elif idx == 3:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[0], q_derivs[0], r_derivs[0]
+    elif idx == 4:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[1], q_derivs[1], r_derivs[1]
+    elif idx == 5:
+        p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
+        return p_derivs[2], q_derivs[2], r_derivs[2]
+    elif idx == 6:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[0], q_derivs[0], r_derivs[0]
+    elif idx == 7:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[1], q_derivs[1], r_derivs[1]
+    elif idx == 8:
+        p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
+            K, R, t, f_0, points, point_idx
+        )
+        return p_derivs[2], q_derivs[2], r_derivs[2]
+
+
+def delete_fixed_elems(mat, idx_list, axis):
+    deleted_mat = np.copy(mat)
+    for idx in idx_list:
+        deleted_mat = np.delete(deleted_mat, idx, axis)
+
+    return deleted_mat
+
+
+def calculate_images_hesssian_matrix(
+    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c
+):
+    G = np.zeros((9 * Ks.shape[0], 9 * Ks.shape[0]))
+    points = points_3d["points_3d"]
+    for camera_idx_0 in range(Ps.shape[0]):
+        for camera_idx_1 in range(Ps.shape[0]):
+            if camera_idx_0 != camera_idx_1:
+                continue
+            P = Ps[camera_idx_0]
+            K = Ks[camera_idx_0]
+            R = Rs[camera_idx_0]
+            t = ts[camera_idx_0]
+            for i in range(9):
+                for j in range(9):
+                    for point_idx in range(len(points_3d["points_3d"])):
+                        x = float(points_2d[point_idx][camera_idx_0 * 2])
+                        y = float(points_2d[point_idx][camera_idx_0 * 2 + 1])
+                        if x == -1 or y == -1:
+                            continue
+                        (
+                            p,
+                            q,
+                            r,
+                        ) = calculate_rows_of_dot_between_camera_mat_and_3d_position(
+                            P, points_3d["points_3d"][point_idx]
+                        )
+                        (
+                            p_deriv_0,
+                            q_deriv_0,
+                            r_deriv_0,
+                        ) = calculate_second_derivative_of_camera_param(
+                            i, K, R, t, p, q, r, f_0, points, point_idx
+                        )
+                        (
+                            p_deriv_1,
+                            q_deriv_1,
+                            r_deriv_1,
+                        ) = calculate_second_derivative_of_camera_param(
+                            j, K, R, t, p, q, r, f_0, points, point_idx
+                        )
+                        G[camera_idx_0 * 9 + i][
+                            camera_idx_1 * 9 + j
+                        ] += calculate_second_derivative_of_reprojection_error(
+                            p,
+                            q,
+                            r,
+                            p_deriv_0,
+                            q_deriv_0,
+                            r_deriv_0,
+                            p_deriv_1,
+                            q_deriv_1,
+                            r_deriv_1,
+                        )
+
+    # Delete t00,t01,t02,w00,w01,w02,t12
+    delete_idx = [3, 4, 5, 6, 7, 8, 14]
+    G = delete_fixed_elems(G, delete_idx, 0)
+    G = delete_fixed_elems(G, delete_idx, 1)
+
+    # Diagonal elements are multiplied by (1+c).
+    for row in range(G.shape[0]):
+        for col in range(G.shape[1]):
+            if row == col:
+                G[row][col] = (1 + c) * G[row][col]
+
+    return G
+
+
 def extract_camera_idx(
     point_idx,
     focal_length_range,
