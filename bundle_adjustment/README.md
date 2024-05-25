@@ -305,9 +305,9 @@ Eq(7) is the simulataneous linear equations for $3N+9M-7$ unknowns, the matrix o
 
 $$
 \begin{pmatrix}
-E_1^{(c)} & ... & ... & F_1 \\
-... & ... & ... & ... \\
-... & ... & E_N^{(c)} & F_N \\
+E_1^{(c)} & & & F_1 \\
+& ... & & ... \\
+& & E_N^{(c)} & F_N \\
 F_1^\intercal & ... & F_N^\intercal & G^{(c)}
 \end{pmatrix}
 \begin{pmatrix}
@@ -351,6 +351,85 @@ $$
 -E_\alpha^{(c)-1}(F_\alpha\triangle\xi_F+\triangledown x_\alpha E) \tag{25}
 $$
 
+If you solve Eq(7) as is, the amount of calculation is about $(3N+9M-7)^3$. On the other hand, If you solve above equations, the amount of calculation is almost $(9M-7)^3$. This is a significant efficiency improvement when $N$(number of points) is very large and $M$(number of images) is small. Above procedure can be obtained as follows.  
+Eq(22) can be decomposed into the following two equations.
+
+$$
+\begin{pmatrix}
+E_1^{(c)} & & \\
+& ... & \\
+& & E_N^{(c)}
+\end{pmatrix}\triangle \xi_P+
+\begin{pmatrix}
+F_1 \\
+... \\
+F_N
+\end{pmatrix} \triangle \xi_F=-d_P \tag{26}
+$$
+
+$$
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}\triangle \xi_P+G^{(c)}\triangle \xi_F=-d_F \tag{27}
+$$
+
+First, we solve Eq(26) for $\triangle \xi_P$. If we note that $d_P$ is a vector of $\triangledown x_\alpha E$ arranged vertically over $\alpha=1,...,N$, the solution can be written as follows.
+
+$$
+\begin{align*}
+\triangle \xi_P&=-
+\begin{pmatrix}
+E_1^{(c)-1} & & \\
+& ... & \\
+& & E_N^{(c)-1}
+\end{pmatrix}
+\begin{pmatrix}
+F_1 \\
+... \\
+F_N
+\end{pmatrix}
+\triangle \xi_F -
+\begin{pmatrix}
+E_1^{(c)-1} & & \\
+& ... & \\
+& & E_N^{(c)-1}
+\end{pmatrix}d_P \\
+&=-\begin{pmatrix}
+E_1^{(c)-1}F_1 \\
+... \\
+E_N^{(c)-1}F_N
+\end{pmatrix}\triangle \xi_F-
+\begin{pmatrix}
+E_1^{(c)-1}\triangledown x_1E \\
+... \\
+E_N^{(c)-1}\triangledown x_NE
+\end{pmatrix} \tag{28}
+\end{align*}
+$$
+
+Substituting this into Eq(27) gives the following.
+
+$$
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}
+\begin{pmatrix}
+E_1^{(c)-1}F_1 \\
+... \\
+E_N^{(c)-1}F_N
+\end{pmatrix}\triangle \xi_F-
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}
+\begin{pmatrix}
+E_1^{(c)-1}\triangledown x_1E \\
+... \\
+E_N^{(c)-1}\triangledown x_NE
+\end{pmatrix}
++ G^{(c)} \triangle \xi_F=-d_F \tag{29}
+$$
+
+If we rewrite this, we get Eq(24). Therefore, the part correspoding to each $x_\alpha$ of Eq(28) can be written as Eq(25).
 
 <br></br>
 
