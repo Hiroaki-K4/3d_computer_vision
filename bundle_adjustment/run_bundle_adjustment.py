@@ -259,7 +259,13 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
         K, R, t, P, points_3d, points_2d, f_0, deriv_num
     )
     # H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
-    E = deriv.calculate_points_hesssian_matrix(P, points_3d, points_2d)
+    E = deriv.calculate_points_hesssian_matrix(P, points_3d, points_2d, c)
+    F = deriv.calculate_points_images_hesssian_matrix(
+        K, R, t, P, points_3d, points_2d, f_0
+    )
+    G = deriv.calculate_images_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c)
+    print(G)
+    print(G.shape)
     # print("H: ", H)
     # print("Calculate the amount of change...")
     # change_amount = -np.dot(np.linalg.pinv(H), first_deriv)

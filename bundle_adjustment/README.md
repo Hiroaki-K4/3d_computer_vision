@@ -300,6 +300,139 @@ The appendix F has the derivation of the differential.
 
 <br></br>
 
+# Efficient solution of simultaneous linear equations
+Eq(7) is the simulataneous linear equations for $3N+9M-7$ unknowns, the matrix on the left side is $(3N+9M-7)\times (3N+9M-7)$. As $N$ and $M$ increase, the amount of calculation increases significantly. There is a method to solve this problem. Unknowns of Eq(7) consists of the part of 3D position and the part of camera parameter, it has the following form.
+
+$$
+\begin{pmatrix}
+E_1^{(c)} & & & F_1 \\
+& ... & & ... \\
+& & E_N^{(c)} & F_N \\
+F_1^\intercal & ... & F_N^\intercal & G^{(c)}
+\end{pmatrix}
+\begin{pmatrix}
+\triangle \xi_P \\
+\triangle \xi_F
+\end{pmatrix}
+=-\begin{pmatrix}
+d_P \\
+d_F
+\end{pmatrix} \tag{22}
+$$
+
+$\xi_P$ is $3N$ dimention vector with respect to 3D position of points of $\triangle \xi$ and $\xi_F$ is $9M-7$ dimention vetor with respect to camera parameters. $d_P$ and $d_F$ are the parts of $3N$ and $9M-7$ dimention with respect to vector on the right side of Eq(7). $E_\alpha^{(c)}(\alpha=1,...,N)$ is $3\times 3$ matrix with second derivative of reprojection error with respect to the position $(X_\alpha, Y_\alpha, Z_\alpha)$ placed. The $(c)$ on the right shoulder represents that diagonal elements are multiplied by $1+c$. Each $F_\alpha$ is $3\times (9M-7)$ matrix that second derivatives of $E$ with respect to the position $(X_\alpha, Y_\alpha, Z_\alpha)$ of $\alpha$-th point and the camera parameter of the frame in which $\alpha$-th is shown. On the other hand, $G^{(c)}$ is $(9M-7)\times (9M-7)$ matrix that it is the second derivative of $E$ between camera parameters, the diagonal elements are multiplied by $1+c$. Eq(22) can be solved as follows.
+
+## Algorithms
+### 1. Let $\triangledown x_\alpha E$ be set for each $\alpha$ as follows.
+
+$$
+\triangledown x_\alpha E=
+\begin{pmatrix}
+\partial E/\partial X_\alpha \\
+\partial E/\partial Y_\alpha \\
+\partial E/\partial Z_\alpha \\ \tag{23}
+\end{pmatrix}
+$$
+
+### 2. Solve $9M-7$ dimentional simultaneous linear equations for $\triangle \xi_F$
+
+$$
+\Bigl(G^{(c)}-\sum_{\alpha=1}^N F_\alpha^\intercal E_\alpha^{(c)-1}F_\alpha \Bigr)\triangle \xi_F = \sum_{\alpha=1}^N F_\alpha^\intercal E_{x_\alpha}^{(c)-1} \triangledown x_\alpha E - d_F \tag{24}
+$$
+
+### 3. Calculate $\triangle X_\alpha, \triangle Y_\alpha, \triangle Z_\alpha$ with respect to $\alpha$-th point as follows
+
+$$
+\begin{pmatrix}
+\triangle X_\alpha \\
+\triangle Y_\alpha \\
+\triangle Z_\alpha \\
+\end{pmatrix}=
+-E_\alpha^{(c)-1}(F_\alpha\triangle\xi_F+\triangledown x_\alpha E) \tag{25}
+$$
+
+If you solve Eq(7) as is, the amount of calculation is about $(3N+9M-7)^3$. On the other hand, If you solve above equations, the amount of calculation is almost $(9M-7)^3$. This is a significant efficiency improvement when $N$(number of points) is very large and $M$(number of images) is small. Above procedure can be obtained as follows.  
+Eq(22) can be decomposed into the following two equations.
+
+$$
+\begin{pmatrix}
+E_1^{(c)} & & \\
+& ... & \\
+& & E_N^{(c)}
+\end{pmatrix}\triangle \xi_P+
+\begin{pmatrix}
+F_1 \\
+... \\
+F_N
+\end{pmatrix} \triangle \xi_F=-d_P \tag{26}
+$$
+
+$$
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}\triangle \xi_P+G^{(c)}\triangle \xi_F=-d_F \tag{27}
+$$
+
+First, we solve Eq(26) for $\triangle \xi_P$. If we note that $d_P$ is a vector of $\triangledown x_\alpha E$ arranged vertically over $\alpha=1,...,N$, the solution can be written as follows.
+
+$$
+\begin{align*}
+\triangle \xi_P&=-
+\begin{pmatrix}
+E_1^{(c)-1} & & \\
+& ... & \\
+& & E_N^{(c)-1}
+\end{pmatrix}
+\begin{pmatrix}
+F_1 \\
+... \\
+F_N
+\end{pmatrix}
+\triangle \xi_F -
+\begin{pmatrix}
+E_1^{(c)-1} & & \\
+& ... & \\
+& & E_N^{(c)-1}
+\end{pmatrix}d_P \\
+&=-\begin{pmatrix}
+E_1^{(c)-1}F_1 \\
+... \\
+E_N^{(c)-1}F_N
+\end{pmatrix}\triangle \xi_F-
+\begin{pmatrix}
+E_1^{(c)-1}\triangledown x_1E \\
+... \\
+E_N^{(c)-1}\triangledown x_NE
+\end{pmatrix} \tag{28}
+\end{align*}
+$$
+
+Substituting this into Eq(27) gives the following.
+
+$$
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}
+\begin{pmatrix}
+E_1^{(c)-1}F_1 \\
+... \\
+E_N^{(c)-1}F_N
+\end{pmatrix}\triangle \xi_F-
+\begin{pmatrix}
+F_1^\intercal & ... & F_N^\intercal
+\end{pmatrix}
+\begin{pmatrix}
+E_1^{(c)-1}\triangledown x_1E \\
+... \\
+E_N^{(c)-1}\triangledown x_NE
+\end{pmatrix}
++ G^{(c)} \triangle \xi_F=-d_F \tag{29}
+$$
+
+If we rewrite this, we get Eq(24). Therefore, the part correspoding to each $x_\alpha$ of Eq(28) can be written as Eq(25).
+
+<br></br>
+
 # Experiments
 ## Prepare dataset
 We need to prepare the dataset for bundle adjustment by following steps. We use the [Oxford dinosaur dataset](https://www.robots.ox.ac.uk/~vgg/data/mview/).
