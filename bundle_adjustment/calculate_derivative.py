@@ -661,9 +661,7 @@ def delete_fixed_elems(mat, idx_list, axis):
     return deleted_mat
 
 
-def calculate_images_hesssian_matrix(
-    Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c
-):
+def calculate_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c):
     G = np.zeros((9 * Ks.shape[0], 9 * Ks.shape[0]))
     points = points_3d["points_3d"]
     for camera_idx_0 in range(Ps.shape[0]):
