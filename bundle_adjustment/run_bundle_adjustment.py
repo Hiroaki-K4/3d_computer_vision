@@ -51,9 +51,9 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
             if x == -1 or y == -1:
                 continue
             P = Ps[camera_idx]
-            X = points_3d["points_3d"][point_idx][0]
-            Y = points_3d["points_3d"][point_idx][1]
-            Z = points_3d["points_3d"][point_idx][2]
+            X = points_3d[point_idx][0]
+            Y = points_3d[point_idx][1]
+            Z = points_3d[point_idx][2]
             E += (
                 x / f_0
                 - (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
@@ -68,12 +68,13 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
 
 
 def calculate_camera_matrix(K, R, t):
+    # P = K*R.T(I -t)
     P = np.zeros((K.shape[0], 3, 4))
     for camera_idx in range(K.shape[0]):
         t_mat = np.zeros((3, 4))
         t_mat[:, :3] = np.identity(3)
-        t_mat[:, 3] = t[camera_idx]
-        P[camera_idx] = np.dot(np.dot(K[camera_idx], R[camera_idx].T), -t_mat)
+        t_mat[:, 3] = -t[camera_idx]
+        P[camera_idx] = np.dot(np.dot(K[camera_idx], R[camera_idx].T), t_mat)
 
     return P
 
@@ -86,22 +87,22 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deri
     )
     print("first_deriv: ", first_deriv)
 
-    start_pos = 3 * len(points_3d["points_3d"])
+    start_pos = 3 * points_3d.shape[0]
     deriv.calculate_focal_length_derivative_of_reprojection_error(
         P, K, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0]
+    start_pos = 3 * points_3d.shape[0] + K.shape[0]
     deriv.calculate_optical_axis_point_derivative_of_reprojection_error(
         P, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 3
+    start_pos = 3 * points_3d.shape[0] + K.shape[0] * 3
     deriv.calculate_translation_derivative_of_reprojection_error(
         P, K, R, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4
+    start_pos = 3 * points_3d.shape[0] + K.shape[0] * 6 - 4
     deriv.calculate_rotation_derivative_of_reprojection_error(
         P, K, R, t, points_2d, points_3d, f_0, first_deriv, start_pos
     )
@@ -139,22 +140,38 @@ def solve_linear_equations(Es, Fs, G, first_deriv):
     return xi_P, xi_F
 
 
+def update_parameters(xi_P, xi_F, points_3d, K, R, t):
+    # Update 3d positions of points
+    for idx in range(points_3d.shape[0]):
+        print("Before: ", points_3d[idx])
+        points_3d[idx][0] += xi_P[idx * 3]
+        points_3d[idx][1] += xi_P[idx * 3 + 1]
+        points_3d[idx][2] += xi_P[idx * 3 + 2]
+        print("After: ", points_3d[idx])
+        # input()
+
+    # Update camera parameters
+    # for idx in range(K.shape[0]):
+
+    return points_3d
+
+
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     P = calculate_camera_matrix(K, R, t)
-    E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
-    print("E: ", E)
-    c = 0.0001
+    points_3d = np.array(points_3d["points_3d"])
+    repro_error = calculate_reprojection_error(P, points_2d, points_3d, f_0)
+    print("Reprojection error: ", repro_error)
     # N: number of points, M: number of images
     # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
     # Number of derivatives: 3N+9M-7
     # -7: R1=I, t1=0, t22=1
-    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
+    deriv_num = 3 * points_3d.shape[0] + 9 * K.shape[0] - 7
+    c = 0.0001
+
     first_deriv = calculate_first_order_derivative(
         K, R, t, P, points_3d, points_2d, f_0, deriv_num
     )
-    print(
-        "We are preparing for solving simulataneous linear equations. Please wait a moment."
-    )
+    print("We are calculating the change amount of parameters. Please wait a moment.")
     E = deriv.calculate_points_hesssian_matrix(P, points_3d, points_2d, c)
     F = deriv.calculate_points_images_hesssian_matrix(
         K, R, t, P, points_3d, points_2d, f_0
@@ -163,9 +180,12 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     print(G)
     print(G.shape)
     xi_P, xi_F = solve_linear_equations(E, F, G, first_deriv)
+    print(xi_P)
+    input()
     print("xi_P.shape", xi_P.shape)
     print("xi_F.shape", xi_F.shape)
-    # TODO Update parameters
+    # input()
+    update_parameters(xi_P, xi_F, points_3d, K, R, t)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
