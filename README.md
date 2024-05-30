@@ -2,7 +2,7 @@
 This repository is an experiment in understanding and experimenting with 3D computer vision.  
 Let's enjoy 3D computer vision.
 
-## Related Articles of mine
+## Related articles I wrote
 - [Implementing Self-Calibration for Perspective Camera](https://medium.com/@hirok4/implementing-self-calibration-for-perspective-camera-6f624be04e0f)
 - [Convert Equirectangular Image to Cubemap Image](https://medium.com/@hirok4/convert-equirectangular-image-to-cubemap-image-b8f015be0744)
 - [Python Implementation of Ellipse Fitting](https://medium.com/@hirok4/python-implementation-of-ellipse-fitting-e8801dbb16a8)
@@ -25,7 +25,7 @@ Let's enjoy 3D computer vision.
 
 <br></br>
 
-## [Fundamental matrix](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/fundamental_matrix)
+## [Fundamental Matrix](https://github.com/Hiroaki-K4/3d_computer_vision/tree/main/fundamental_matrix)
 
 <img src='fundamental_matrix/images/pair1.png' width='300'><img src='fundamental_matrix/images/pair2.png' width='300'>
 
