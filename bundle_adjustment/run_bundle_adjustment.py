@@ -85,7 +85,6 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deri
     deriv.calculate_3d_position_derivative_of_reprojection_error(
         P, points_2d, points_3d, f_0, first_deriv
     )
-    print("first_deriv: ", first_deriv)
 
     start_pos = 3 * points_3d.shape[0]
     deriv.calculate_focal_length_derivative_of_reprojection_error(
@@ -143,17 +142,100 @@ def solve_linear_equations(Es, Fs, G, first_deriv):
 def update_parameters(xi_P, xi_F, points_3d, K, R, t):
     # Update 3d positions of points
     for idx in range(points_3d.shape[0]):
-        print("Before: ", points_3d[idx])
         points_3d[idx][0] += xi_P[idx * 3]
         points_3d[idx][1] += xi_P[idx * 3 + 1]
         points_3d[idx][2] += xi_P[idx * 3 + 2]
-        print("After: ", points_3d[idx])
-        # input()
 
     # Update camera parameters
-    # for idx in range(K.shape[0]):
+    for idx in range(K.shape[0]):
+        if idx == 0:
+            f_change = xi_F[0]
+            u_change = xi_F[1]
+            v_change = xi_F[2]
+            w0_change = 0
+            w1_change = 0
+            w2_change = 0
+            t0_change = 0
+            t1_change = 0
+            t2_change = 0
+        elif idx == 1:
+            f_change = xi_F[idx * 9 - 6]
+            u_change = xi_F[idx * 9 + 1 - 6]
+            v_change = xi_F[idx * 9 + 2 - 6]
+            w0_change = xi_F[idx * 9 + 3 - 6]
+            w1_change = xi_F[idx * 9 + 4 - 6]
+            w2_change = xi_F[idx * 9 + 5 - 6]
+            t0_change = xi_F[idx * 9 + 6 - 6]
+            t1_change = xi_F[idx * 9 + 7 - 6]
+            t2_change = 0
+        else:
+            f_change = xi_F[idx * 9 - 7]
+            u_change = xi_F[idx * 9 + 1 - 7]
+            v_change = xi_F[idx * 9 + 2 - 7]
+            w0_change = xi_F[idx * 9 + 3 - 7]
+            w1_change = xi_F[idx * 9 + 4 - 7]
+            w2_change = xi_F[idx * 9 + 5 - 7]
+            t0_change = xi_F[idx * 9 + 6 - 7]
+            t1_change = xi_F[idx * 9 + 7 - 7]
+            t2_change = xi_F[idx * 9 + 8 - 7]
 
-    return points_3d
+        print("K before: ", K[idx])
+        K[idx][0][0] += f_change
+        K[idx][1][1] += f_change
+        K[idx][0][2] += u_change
+        K[idx][1][2] += v_change
+        print("K after: ", K[idx])
+
+        w = np.array([w0_change, w1_change, w2_change])
+        w_amount = np.linalg.norm(w)
+        if w_amount > 0:
+            unit_w = w / w_amount
+            print("w_amount: ", w_amount, np.cos(w_amount))
+            # input()
+            # TODO Fix numpy error
+            print(
+                "part: ",
+                unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                + unit_w[1] * np.sin(unit_w),
+            )
+            R_change = np.array(
+                [
+                    [
+                        np.cos(w_amount) + unit_w[0] ** 2 * (1 - np.cos(w_amount)),
+                        unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
+                        - unit_w[2] * np.sin(w_amount),
+                        unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                        + unit_w[1] * np.sin(unit_w),
+                    ]
+                    # [
+                    #     unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
+                    #     + unit_w[2] * np.sin(w_amount),
+                    #     np.cos(w_amount) + unit_w[1] ** 2 * (1 - np.cos(w_amount)),
+                    #     unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                    #     - unit_w[0] * np.sin(w_amount),
+                    # ],
+                    # [
+                    #     unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                    #     - unit_w[1] * np.sin(w_amount),
+                    #     unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                    #     + unit_w[0] * np.sin(w_amount),
+                    #     np.cos(w_amount) + unit_w[2] ** 2 * (1 - np.cos(w_amount)),
+                    # ],
+                ]
+            )
+            print("R before: ", R[idx])
+            R[idx] = np.dot(R_change, R[idx])
+            print("R after: ", R[idx])
+
+        print("t before: ", t[idx])
+        t[idx][0] += t0_change
+        t[idx][1] += t1_change
+        t[idx][2] += t2_change
+        print("t after: ", t[idx])
+
+        input()
+
+    return points_3d, K, R, t
 
 
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
@@ -177,15 +259,22 @@ def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
         K, R, t, P, points_3d, points_2d, f_0
     )
     G = deriv.calculate_images_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c)
-    print(G)
+    print("first_deriv: ", first_deriv)
+    print("E: ", E)
+    print("F: ", F)
+    print("G: ", G)
     print(G.shape)
     xi_P, xi_F = solve_linear_equations(E, F, G, first_deriv)
-    print(xi_P)
-    input()
+    print("xi_P: ", xi_P)
+    print("xi_F", xi_F)
+    # input()
     print("xi_P.shape", xi_P.shape)
     print("xi_F.shape", xi_F.shape)
     # input()
-    update_parameters(xi_P, xi_F, points_3d, K, R, t)
+    points_3d, K, R, t = update_parameters(xi_P, xi_F, points_3d, K, R, t)
+    P = calculate_camera_matrix(K, R, t)
+    repro_error = calculate_reprojection_error(P, points_2d, points_3d, f_0)
+    print("Reprojection error2: ", repro_error)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
