@@ -190,14 +190,6 @@ def update_parameters(xi_P, xi_F, points_3d, K, R, t):
         w_amount = np.linalg.norm(w)
         if w_amount > 0:
             unit_w = w / w_amount
-            print("w_amount: ", w_amount, np.cos(w_amount))
-            # input()
-            # TODO Fix numpy error
-            print(
-                "part: ",
-                unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
-                + unit_w[1] * np.sin(unit_w),
-            )
             R_change = np.array(
                 [
                     [
@@ -205,22 +197,22 @@ def update_parameters(xi_P, xi_F, points_3d, K, R, t):
                         unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
                         - unit_w[2] * np.sin(w_amount),
                         unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
-                        + unit_w[1] * np.sin(unit_w),
-                    ]
-                    # [
-                    #     unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
-                    #     + unit_w[2] * np.sin(w_amount),
-                    #     np.cos(w_amount) + unit_w[1] ** 2 * (1 - np.cos(w_amount)),
-                    #     unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
-                    #     - unit_w[0] * np.sin(w_amount),
-                    # ],
-                    # [
-                    #     unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
-                    #     - unit_w[1] * np.sin(w_amount),
-                    #     unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
-                    #     + unit_w[0] * np.sin(w_amount),
-                    #     np.cos(w_amount) + unit_w[2] ** 2 * (1 - np.cos(w_amount)),
-                    # ],
+                        + unit_w[1] * np.sin(w_amount),
+                    ],
+                    [
+                        unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
+                        + unit_w[2] * np.sin(w_amount),
+                        np.cos(w_amount) + unit_w[1] ** 2 * (1 - np.cos(w_amount)),
+                        unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                        - unit_w[0] * np.sin(w_amount),
+                    ],
+                    [
+                        unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                        - unit_w[1] * np.sin(w_amount),
+                        unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                        + unit_w[0] * np.sin(w_amount),
+                        np.cos(w_amount) + unit_w[2] ** 2 * (1 - np.cos(w_amount)),
+                    ],
                 ]
             )
             print("R before: ", R[idx])
@@ -232,8 +224,6 @@ def update_parameters(xi_P, xi_F, points_3d, K, R, t):
         t[idx][1] += t1_change
         t[idx][2] += t2_change
         print("t after: ", t[idx])
-
-        input()
 
     return points_3d, K, R, t
 
@@ -290,7 +280,7 @@ def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file)
 
     K, R, t = split_camera_params(camera_params)
     K = decrease_parameters(K)
-    R, t = normalize_camera_params(R, t)
+    # R, t = normalize_camera_params(R, t)
     f_0 = 400
     run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0)
 
