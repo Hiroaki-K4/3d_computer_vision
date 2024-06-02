@@ -51,9 +51,9 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
             if x == -1 or y == -1:
                 continue
             P = Ps[camera_idx]
-            X = points_3d["points_3d"][point_idx][0]
-            Y = points_3d["points_3d"][point_idx][1]
-            Z = points_3d["points_3d"][point_idx][2]
+            X = points_3d[point_idx][0]
+            Y = points_3d[point_idx][1]
+            Z = points_3d[point_idx][2]
             E += (
                 x / f_0
                 - (P[0][0] * X + P[0][1] * Y + P[0][2] * Z + P[0][3])
@@ -68,12 +68,13 @@ def calculate_reprojection_error(Ps, points_2d, points_3d, f_0):
 
 
 def calculate_camera_matrix(K, R, t):
+    # P = K*R.T(I -t)
     P = np.zeros((K.shape[0], 3, 4))
     for camera_idx in range(K.shape[0]):
         t_mat = np.zeros((3, 4))
         t_mat[:, :3] = np.identity(3)
-        t_mat[:, 3] = t[camera_idx]
-        P[camera_idx] = np.dot(np.dot(K[camera_idx], R[camera_idx].T), -t_mat)
+        t_mat[:, 3] = -t[camera_idx]
+        P[camera_idx] = np.dot(np.dot(K[camera_idx], R[camera_idx].T), t_mat)
 
     return P
 
@@ -84,24 +85,23 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deri
     deriv.calculate_3d_position_derivative_of_reprojection_error(
         P, points_2d, points_3d, f_0, first_deriv
     )
-    print("first_deriv: ", first_deriv)
 
-    start_pos = 3 * len(points_3d["points_3d"])
+    start_pos = 3 * points_3d.shape[0]
     deriv.calculate_focal_length_derivative_of_reprojection_error(
         P, K, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0]
+    start_pos = 3 * points_3d.shape[0] + K.shape[0]
     deriv.calculate_optical_axis_point_derivative_of_reprojection_error(
         P, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 3
+    start_pos = 3 * points_3d.shape[0] + K.shape[0] * 3
     deriv.calculate_translation_derivative_of_reprojection_error(
         P, K, R, points_2d, points_3d, f_0, first_deriv, start_pos
     )
 
-    start_pos = 3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4
+    start_pos = 3 * points_3d.shape[0] + K.shape[0] * 6 - 4
     deriv.calculate_rotation_derivative_of_reprojection_error(
         P, K, R, t, points_2d, points_3d, f_0, first_deriv, start_pos
     )
@@ -109,168 +109,162 @@ def calculate_first_order_derivative(K, R, t, P, points_3d, points_2d, f_0, deri
     return first_deriv
 
 
-def calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num):
-    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
-    H = np.zeros((deriv_num, deriv_num))
-    point_3d_range = [0, 3 * len(points_3d["points_3d"]) - 1]
-    focal_length_range = [
-        3 * len(points_3d["points_3d"]),
-        3 * len(points_3d["points_3d"]) + K.shape[0] - 1,
-    ]
-    optimal_axis_point_range = [
-        3 * len(points_3d["points_3d"]) + K.shape[0],
-        3 * len(points_3d["points_3d"]) + K.shape[0] * 3 - 1,
-    ]
-    translation_range = [
-        3 * len(points_3d["points_3d"]) + K.shape[0] * 3,
-        3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 5,
-    ]
-    rotation_range = [
-        3 * len(points_3d["points_3d"]) + K.shape[0] * 6 - 4,
-        3 * len(points_3d["points_3d"]) + K.shape[0] * 9 - 8,
-    ]
-    skip_idx = [
-        translation_range[0],
-        translation_range[0] + 1,
-        translation_range[0] + 2,
-        translation_range[0] + 4,
-        rotation_range[0],
-        rotation_range[0] + 1,
-        rotation_range[0] + 2,
-    ]
-    print(point_3d_range)
-    print(focal_length_range)
-    print(optimal_axis_point_range)
-    print(translation_range)
-    print(rotation_range)
+def solve_linear_equations(Es, Fs, G, first_deriv):
+    # Solve the amount of change regarding points
+    left_side_sum = 0
+    right_side_sum = 0
+    for point_idx in range(Es.shape[0]):
+        E = Es[point_idx]
+        F = Fs[point_idx]
+        left_side_sum += np.dot(np.dot(F.T, np.linalg.inv(E)), F)
+        point_first_deriv = first_deriv[3 * point_idx : 3 * point_idx + 3]
+        right_side_sum += np.dot(np.dot(F.T, np.linalg.inv(E)), point_first_deriv)
 
-    target_types = [
-        "focal",
-        "opt1",
-        "opt2",
-        "trans1",
-        "trans2",
-        "trans3",
-        "rot1",
-        "rot2",
-        "rot3",
-    ]
-    second_deriv = 0
-    for row in tqdm(range(deriv_num)):
-        for col in range(deriv_num):
-            if row > col:
-                H[row][col] = H[col][row]
-                continue
-            if row in skip_idx or col in skip_idx:
-                continue
+    xi_F = np.dot(
+        np.linalg.inv(G - left_side_sum),
+        right_side_sum - first_deriv[Es.shape[0] * 3 :],
+    )
 
-            if (row >= point_3d_range[0] and row <= point_3d_range[1]) and (
-                col >= point_3d_range[0] and col <= point_3d_range[1]
-            ):
-                # Case1: When two values are related points
-                if abs(row - col) >= 3:
-                    continue
-                second_deriv = deriv.calculate_second_derivative_about_point(
-                    row, col, P, points_2d, points_3d
-                )
-            elif row > point_3d_range[1] and col > point_3d_range[1]:
-                # Case2: When two values are related images
-                second_deriv = deriv.calculate_second_derivative_about_image(
-                    row,
-                    col,
-                    P,
-                    K,
-                    R,
-                    t,
-                    points_2d,
-                    points_3d,
-                    f_0,
-                    focal_length_range,
-                    optimal_axis_point_range,
-                    translation_range,
-                    rotation_range,
-                    target_types,
-                )
-            else:
-                # Case3: When one value is related to a point and the other is a value related to an image
-                if row >= point_3d_range[0] and row <= point_3d_range[1]:
-                    second_deriv = (
-                        deriv.calculate_second_derivative_about_point_and_image(
-                            row,
-                            col,
-                            P,
-                            K,
-                            R,
-                            t,
-                            points_2d,
-                            points_3d,
-                            f_0,
-                            focal_length_range,
-                            optimal_axis_point_range,
-                            translation_range,
-                            rotation_range,
-                            target_types,
-                        )
-                    )
-                elif col >= point_3d_range[0] and col <= point_3d_range[1]:
-                    second_deriv = (
-                        deriv.calculate_second_derivative_about_point_and_image(
-                            col,
-                            row,
-                            P,
-                            K,
-                            R,
-                            t,
-                            points_2d,
-                            points_3d,
-                            f_0,
-                            focal_length_range,
-                            optimal_axis_point_range,
-                            translation_range,
-                            rotation_range,
-                            target_types,
-                        )
-                    )
+    # Solve the amount of change regarding images
+    xi_P = np.zeros(Es.shape[0] * 3)
+    for point_idx in range(Es.shape[0]):
+        E = Es[point_idx]
+        F = Fs[point_idx]
+        point_first_deriv = first_deriv[3 * point_idx : 3 * point_idx + 3]
+        change_amount = -np.dot(np.linalg.inv(E), (np.dot(F, xi_F) + point_first_deriv))
+        xi_P[point_idx * 3] = change_amount[0]
+        xi_P[point_idx * 3 + 1] = change_amount[1]
+        xi_P[point_idx * 3 + 2] = change_amount[2]
 
-            if row == col:
-                H[row][col] = (1 + c) * second_deriv
-            else:
-                H[row][col] = second_deriv
-
-    return H
+    return xi_P, xi_F
 
 
-def update_camera_parameters(K, R, t, change_amount):
-    print("ok")
-    # TODO Implement this function
+def update_parameters(xi_P, xi_F, points_3d, K, R, t):
+    # Update 3d positions of points
+    for idx in range(points_3d.shape[0]):
+        points_3d[idx][0] += xi_P[idx * 3]
+        points_3d[idx][1] += xi_P[idx * 3 + 1]
+        points_3d[idx][2] += xi_P[idx * 3 + 2]
+
+    # Update camera parameters
+    for idx in range(K.shape[0]):
+        if idx == 0:
+            f_change = xi_F[0]
+            u_change = xi_F[1]
+            v_change = xi_F[2]
+            w0_change = 0
+            w1_change = 0
+            w2_change = 0
+            t0_change = 0
+            t1_change = 0
+            t2_change = 0
+        elif idx == 1:
+            f_change = xi_F[idx * 9 - 6]
+            u_change = xi_F[idx * 9 + 1 - 6]
+            v_change = xi_F[idx * 9 + 2 - 6]
+            w0_change = xi_F[idx * 9 + 3 - 6]
+            w1_change = xi_F[idx * 9 + 4 - 6]
+            w2_change = xi_F[idx * 9 + 5 - 6]
+            t0_change = xi_F[idx * 9 + 6 - 6]
+            t1_change = xi_F[idx * 9 + 7 - 6]
+            t2_change = 0
+        else:
+            f_change = xi_F[idx * 9 - 7]
+            u_change = xi_F[idx * 9 + 1 - 7]
+            v_change = xi_F[idx * 9 + 2 - 7]
+            w0_change = xi_F[idx * 9 + 3 - 7]
+            w1_change = xi_F[idx * 9 + 4 - 7]
+            w2_change = xi_F[idx * 9 + 5 - 7]
+            t0_change = xi_F[idx * 9 + 6 - 7]
+            t1_change = xi_F[idx * 9 + 7 - 7]
+            t2_change = xi_F[idx * 9 + 8 - 7]
+
+        print("K before: ", K[idx])
+        K[idx][0][0] += f_change
+        K[idx][1][1] += f_change
+        K[idx][0][2] += u_change
+        K[idx][1][2] += v_change
+        print("K after: ", K[idx])
+
+        w = np.array([w0_change, w1_change, w2_change])
+        w_amount = np.linalg.norm(w)
+        if w_amount > 0:
+            unit_w = w / w_amount
+            R_change = np.array(
+                [
+                    [
+                        np.cos(w_amount) + unit_w[0] ** 2 * (1 - np.cos(w_amount)),
+                        unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
+                        - unit_w[2] * np.sin(w_amount),
+                        unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                        + unit_w[1] * np.sin(w_amount),
+                    ],
+                    [
+                        unit_w[0] * unit_w[1] * (1 - np.cos(w_amount))
+                        + unit_w[2] * np.sin(w_amount),
+                        np.cos(w_amount) + unit_w[1] ** 2 * (1 - np.cos(w_amount)),
+                        unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                        - unit_w[0] * np.sin(w_amount),
+                    ],
+                    [
+                        unit_w[0] * unit_w[2] * (1 - np.cos(w_amount))
+                        - unit_w[1] * np.sin(w_amount),
+                        unit_w[1] * unit_w[2] * (1 - np.cos(w_amount))
+                        + unit_w[0] * np.sin(w_amount),
+                        np.cos(w_amount) + unit_w[2] ** 2 * (1 - np.cos(w_amount)),
+                    ],
+                ]
+            )
+            print("R before: ", R[idx])
+            R[idx] = np.dot(R_change, R[idx])
+            print("R after: ", R[idx])
+
+        print("t before: ", t[idx])
+        t[idx][0] += t0_change
+        t[idx][1] += t1_change
+        t[idx][2] += t2_change
+        print("t after: ", t[idx])
+
+    return points_3d, K, R, t
 
 
 def run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0):
     P = calculate_camera_matrix(K, R, t)
-    E = calculate_reprojection_error(P, points_2d, points_3d, f_0)
-    print("E: ", E)
-    c = 0.0001
+    points_3d = np.array(points_3d["points_3d"])
+    repro_error = calculate_reprojection_error(P, points_2d, points_3d, f_0)
+    print("Reprojection error: ", repro_error)
     # N: number of points, M: number of images
     # Order: 3D position(3N), focal length(M), optical axis point(2M), translation(3M), rotation(3M)
     # Number of derivatives: 3N+9M-7
     # -7: R1=I, t1=0, t22=1
-    deriv_num = 3 * len(points_3d["points_3d"]) + 9 * K.shape[0] - 7
+    deriv_num = 3 * points_3d.shape[0] + 9 * K.shape[0] - 7
+    c = 0.0001
+
     first_deriv = calculate_first_order_derivative(
         K, R, t, P, points_3d, points_2d, f_0, deriv_num
     )
-    # H = calculate_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c, deriv_num)
+    print("We are calculating the change amount of parameters. Please wait a moment.")
     E = deriv.calculate_points_hesssian_matrix(P, points_3d, points_2d, c)
     F = deriv.calculate_points_images_hesssian_matrix(
         K, R, t, P, points_3d, points_2d, f_0
     )
     G = deriv.calculate_images_hesssian_matrix(K, R, t, P, points_3d, points_2d, f_0, c)
-    print(G)
+    print("first_deriv: ", first_deriv)
+    print("E: ", E)
+    print("F: ", F)
+    print("G: ", G)
     print(G.shape)
-    # print("H: ", H)
-    # print("Calculate the amount of change...")
-    # change_amount = -np.dot(np.linalg.pinv(H), first_deriv)
-    # print("change_amount: ", change_amount)
-    # update_camera_parameters(K, R, t, change_amount)
+    xi_P, xi_F = solve_linear_equations(E, F, G, first_deriv)
+    print("xi_P: ", xi_P)
+    print("xi_F", xi_F)
+    # input()
+    print("xi_P.shape", xi_P.shape)
+    print("xi_F.shape", xi_F.shape)
+    # input()
+    points_3d, K, R, t = update_parameters(xi_P, xi_F, points_3d, K, R, t)
+    P = calculate_camera_matrix(K, R, t)
+    repro_error = calculate_reprojection_error(P, points_2d, points_3d, f_0)
+    print("Reprojection error2: ", repro_error)
 
 
 def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file):
@@ -286,7 +280,7 @@ def main(camera_parameters_file, tracked_2d_points_file, tracked_3d_points_file)
 
     K, R, t = split_camera_params(camera_params)
     K = decrease_parameters(K)
-    R, t = normalize_camera_params(R, t)
+    # R, t = normalize_camera_params(R, t)
     f_0 = 400
     run_bundle_adjustment(K, R, t, points_2d, points_3d, f_0)
 

@@ -137,7 +137,7 @@ def calculate_3d_position_derivative_of_reprojection_error(
                 continue
             P = Ps[camera_idx]
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
 
             # Differential with respect to 3D position X
@@ -170,15 +170,14 @@ def calculate_focal_length_derivative_of_reprojection_error(
         deriv_sum = 0
         P = Ps[camera_idx]
         K = Ks[camera_idx]
-        points = points_3d["points_3d"]
-        for point_idx in range(len(points)):
+        for point_idx in range(points_3d.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
             y = float(points_2d[point_idx][camera_idx * 2 + 1])
             if x == -1 or y == -1:
                 continue
 
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
             p_deriv, q_deriv, r_deriv = calculate_focal_length_derivative(
                 K, p, q, r, f_0
@@ -197,15 +196,14 @@ def calculate_optical_axis_point_derivative_of_reprojection_error(
         u_deriv_sum = 0
         v_deriv_sum = 0
         P = Ps[camera_idx]
-        points = points_3d["points_3d"]
-        for point_idx in range(len(points)):
+        for point_idx in range(points_3d.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
             y = float(points_2d[point_idx][camera_idx * 2 + 1])
             if x == -1 or y == -1:
                 continue
 
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
 
             p_deriv_u, q_deriv_u, r_deriv_u = calculate_optical_axis_point_u_derivative(
@@ -238,15 +236,14 @@ def calculate_translation_derivative_of_reprojection_error(
         P = Ps[camera_idx]
         K = Ks[camera_idx]
         R = Rs[camera_idx]
-        points = points_3d["points_3d"]
-        for point_idx in range(len(points)):
+        for point_idx in range(points_3d.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
             y = float(points_2d[point_idx][camera_idx * 2 + 1])
             if x == -1 or y == -1:
                 continue
 
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
             p_derivs, q_derivs, r_derivs = calculate_translation_derivative(K, R, f_0)
 
@@ -293,18 +290,17 @@ def calculate_rotation_derivative_of_reprojection_error(
         K = Ks[camera_idx]
         R = Rs[camera_idx]
         t = ts[camera_idx]
-        points = points_3d["points_3d"]
-        for point_idx in range(len(points)):
+        for point_idx in range(points_3d.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
             y = float(points_2d[point_idx][camera_idx * 2 + 1])
             if x == -1 or y == -1:
                 continue
 
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
             p_derivs, q_derivs, r_derivs = calculate_rotation_derivative(
-                K, R, t, f_0, points, point_idx
+                K, R, t, f_0, points_3d, point_idx
             )
 
             p_deriv_w1 = p_derivs[0]
@@ -354,7 +350,7 @@ def calculate_second_derivative_about_point(
             continue
         P = Ps[camera_idx]
         p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-            P, points_3d["points_3d"][point_idx]
+            P, points_3d[point_idx]
         )
 
         p_deriv_0, q_deriv_0, r_deriv_0 = extract_3d_position_derivatie(point_idx_0, P)
@@ -368,8 +364,8 @@ def calculate_second_derivative_about_point(
 
 
 def calculate_points_hesssian_matrix(Ps, points_3d, points_2d, c):
-    Es = np.zeros((len(points_3d["points_3d"]), 3, 3))
-    for point_idx in range(len(points_3d["points_3d"])):
+    Es = np.zeros((points_3d.shape[0], 3, 3))
+    for point_idx in range(points_3d.shape[0]):
         E = np.zeros((3, 3))
         for camera_idx in range(Ps.shape[0]):
             x = float(points_2d[point_idx][camera_idx * 2])
@@ -378,7 +374,7 @@ def calculate_points_hesssian_matrix(Ps, points_3d, points_2d, c):
                 continue
             P = Ps[camera_idx]
             p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                P, points_3d["points_3d"][point_idx]
+                P, points_3d[point_idx]
             )
             p_deriv_x, q_deriv_x, r_deriv_x = calculate_3d_position_x_derivative(P)
             p_deriv_y, q_deriv_y, r_deriv_y = calculate_3d_position_y_derivative(P)
@@ -412,8 +408,8 @@ def calculate_points_hesssian_matrix(Ps, points_3d, points_2d, c):
 
 
 def calculate_points_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0):
-    Fs = np.zeros((len(points_3d["points_3d"]), 3, 9 * Ks.shape[0] - 7))
-    for point_idx in range(len(points_3d["points_3d"])):
+    Fs = np.zeros((points_3d.shape[0], 3, 9 * Ks.shape[0] - 7))
+    for point_idx in range(points_3d.shape[0]):
         F = np.zeros((3, 9 * Ks.shape[0] - 7))
         for idx in range(3):
             col_idx = 0
@@ -433,9 +429,8 @@ def calculate_points_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d
                 K = Ks[camera_idx]
                 R = Rs[camera_idx]
                 t = ts[camera_idx]
-                points = points_3d["points_3d"]
                 p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                    P, points_3d["points_3d"][point_idx]
+                    P, points_3d[point_idx]
                 )
                 p_deriv_x, q_deriv_x, r_deriv_x = calculate_3d_position_x_derivative(P)
                 p_deriv_y, q_deriv_y, r_deriv_y = calculate_3d_position_y_derivative(P)
@@ -560,7 +555,7 @@ def calculate_points_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d
                         col_idx += 1
 
                     p_derivs_r, q_derivs_r, r_derivs_r = calculate_rotation_derivative(
-                        K, R, t, f_0, points, point_idx
+                        K, R, t, f_0, points_3d, point_idx
                     )
                     # rotation w1
                     p_deriv_w1 = p_derivs_r[0]
@@ -663,7 +658,6 @@ def delete_fixed_elems(mat, idx_list, axis):
 
 def calculate_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0, c):
     G = np.zeros((9 * Ks.shape[0], 9 * Ks.shape[0]))
-    points = points_3d["points_3d"]
     for camera_idx_0 in range(Ps.shape[0]):
         for camera_idx_1 in range(Ps.shape[0]):
             if camera_idx_0 != camera_idx_1:
@@ -674,7 +668,7 @@ def calculate_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0, 
             t = ts[camera_idx_0]
             for i in range(9):
                 for j in range(9):
-                    for point_idx in range(len(points_3d["points_3d"])):
+                    for point_idx in range(points_3d.shape[0]):
                         x = float(points_2d[point_idx][camera_idx_0 * 2])
                         y = float(points_2d[point_idx][camera_idx_0 * 2 + 1])
                         if x == -1 or y == -1:
@@ -684,21 +678,21 @@ def calculate_images_hesssian_matrix(Ks, Rs, ts, Ps, points_3d, points_2d, f_0, 
                             q,
                             r,
                         ) = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-                            P, points_3d["points_3d"][point_idx]
+                            P, points_3d[point_idx]
                         )
                         (
                             p_deriv_0,
                             q_deriv_0,
                             r_deriv_0,
                         ) = calculate_second_derivative_of_camera_param(
-                            i, K, R, t, p, q, r, f_0, points, point_idx
+                            i, K, R, t, p, q, r, f_0, points_3d, point_idx
                         )
                         (
                             p_deriv_1,
                             q_deriv_1,
                             r_deriv_1,
                         ) = calculate_second_derivative_of_camera_param(
-                            j, K, R, t, p, q, r, f_0, points, point_idx
+                            j, K, R, t, p, q, r, f_0, points_3d, point_idx
                         )
                         G[camera_idx_0 * 9 + i][
                             camera_idx_1 * 9 + j
@@ -859,20 +853,19 @@ def calculate_second_derivative_about_image(
         # Not same frame
         return 0
 
-    points = points_3d["points_3d"]
     P = Ps[camera_idx_0]
     K = Ks[camera_idx_0]
     R = Rs[camera_idx_0]
     t = ts[camera_idx_0]
     deriv = 0
-    for point_idx in range(len(points)):
+    for point_idx in range(points_3d.shape[0]):
         x = float(points_2d[point_idx][camera_idx_0 * 2])
         y = float(points_2d[point_idx][camera_idx_0 * 2 + 1])
         if x == -1 or y == -1:
             continue
 
         p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-            P, points_3d["points_3d"][point_idx]
+            P, points_3d[point_idx]
         )
         p_deriv_0, q_deriv_0, r_deriv_0 = extract_derivative(
             target_type_0,
@@ -884,7 +877,7 @@ def calculate_second_derivative_about_image(
             q,
             r,
             f_0,
-            points,
+            points_3d,
             point_idx,
         )
         p_deriv_1, q_deriv_1, r_deriv_1 = extract_derivative(
@@ -897,7 +890,7 @@ def calculate_second_derivative_about_image(
             q,
             r,
             f_0,
-            points,
+            points_3d,
             point_idx,
         )
         deriv += calculate_second_derivative_of_reprojection_error(
@@ -938,7 +931,7 @@ def calculate_second_derivative_about_point_and_image(
         return 0
     P = Ps[camera_idx]
     p, q, r = calculate_rows_of_dot_between_camera_mat_and_3d_position(
-        P, points_3d["points_3d"][point_idx]
+        P, points_3d[point_idx]
     )
 
     # Calculate point derivative
@@ -946,7 +939,6 @@ def calculate_second_derivative_about_point_and_image(
         point_idx_point, P
     )
 
-    points = points_3d["points_3d"]
     P = Ps[camera_idx]
     K = Ks[camera_idx]
     R = Rs[camera_idx]
@@ -962,7 +954,7 @@ def calculate_second_derivative_about_point_and_image(
         q,
         r,
         f_0,
-        points,
+        points_3d,
         point_idx,
     )
 
